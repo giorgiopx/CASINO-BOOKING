@@ -299,13 +299,11 @@ export function AdminEnquiryDetails({
             onClick={() =>
               void run(
                 () =>
-                  supabase
-                    .from("itinerary_segments")
-                    .insert({
-                      enquiry_id: key,
-                      service_kind: segmentKind,
-                      summary: segmentSummary.trim(),
-                    }),
+                  supabase.from("itinerary_segments").insert({
+                    enquiry_id: key,
+                    service_kind: segmentKind,
+                    summary: segmentSummary.trim(),
+                  }),
                 "crm-segments",
                 () => setSegmentSummary(""),
               )
@@ -358,13 +356,11 @@ export function AdminEnquiryDetails({
             onClick={() =>
               void run(
                 () =>
-                  supabase
-                    .from("crm_notes")
-                    .insert({
-                      enquiry_id: key,
-                      author_id: session.user.id,
-                      body: noteDraft.trim(),
-                    }),
+                  supabase.from("crm_notes").insert({
+                    enquiry_id: key,
+                    author_id: session.user.id,
+                    body: noteDraft.trim(),
+                  }),
                 "crm-notes",
                 () => setNoteDraft(""),
               )
