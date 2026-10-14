@@ -85,8 +85,8 @@ try {
   assert(!!denied.error || !denied.data?.length,"customer B cannot change customer A request");
   const changed=await admin.api.from("enquiries").update({status:"reviewing"}).eq("id",enquiry.id).select("status").single();
   assert(!changed.error && changed.data?.status==="reviewing","admin can update request status");
-  const event=await admin.api.from("enquiry_status_events").select("status").eq("enquiry_id",enquiry.id).order("created_at",{ascending:false}).limit(1);
-  assert(!event.error && (event.data||[]).some(x=>x.status==="reviewing"),"status change recorded in audit trail");
+  const event=await admin.api.from("enquiry_status_events").select("new_status").eq("enquiry_id",enquiry.id).order("changed_at",{ascending:false}).limit(1);
+  assert(!event.error && (event.data||[]).some(x=>x.new_status==="reviewing"),"status change recorded in audit trail");
   console.log("SUCCESS: synthetic staging request",enquiry.ref);
   console.log("NOTE: synthetic test record remains in staging for inspection; do not use real personal data.");
 } catch(err) {
