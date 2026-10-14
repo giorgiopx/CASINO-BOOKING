@@ -20,6 +20,8 @@ jobs:
         run: bun install
       - name: Apply Prettier to project sources
         run: bunx prettier --write .
+      - name: Fix remaining ESLint-formatted JSX
+        run: bunx eslint src/components/casino/admin-details.tsx --fix
       - name: Save formatting on feature branch
         run: |
           git config user.name "github-actions[bot]"
