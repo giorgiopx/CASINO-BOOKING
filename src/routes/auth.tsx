@@ -32,14 +32,26 @@ function AuthPage() {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget));
-    if (mode === "signup" && (f["adultConfirmation"] !== "on" || f["privacyAcceptance"] !== "on")) {
-      setMsg(t("Please confirm your legal age and accept the privacy/terms notices before creating an account.",
-        "Επιβεβαιώστε τη νόμιμη ηλικία σας και αποδεχθείτε τις ενημερώσεις απορρήτου και όρων για να δημιουργήσετε λογαριασμό."));
+    if (
+      mode === "signup" &&
+      (f["adultConfirmation"] !== "on" || f["privacyAcceptance"] !== "on")
+    ) {
+      setMsg(
+        t(
+          "Please confirm your legal age and accept the privacy/terms notices before creating an account.",
+          "Επιβεβαιώστε τη νόμιμη ηλικία σας και αποδεχθείτε τις ενημερώσεις απορρήτου και όρων για να δημιουργήσετε λογαριασμό.",
+        ),
+      );
       return;
     }
     const parsed = creds.safeParse(f);
     if (!parsed.success) {
-      setMsg(t("Enter a valid email and a password of at least 8 characters.", "Εισάγετε έγκυρο email και κωδικό τουλάχιστον 8 χαρακτήρων."));
+      setMsg(
+        t(
+          "Enter a valid email and a password of at least 8 characters.",
+          "Εισάγετε έγκυρο email και κωδικό τουλάχιστον 8 χαρακτήρων.",
+        ),
+      );
       return;
     }
     setBusy(true);
@@ -49,17 +61,34 @@ function AuthPage() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/dashboard`, data: { full_name: fullName } },
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+          data: { full_name: fullName },
+        },
       });
       setBusy(false);
       if (error) return setMsg(error.message);
       if (!data.session) {
-        return setMsg(t("Check your inbox to confirm your email, then sign in.", "Ελέγξτε τα εισερχόμενά σας για επιβεβαίωση email και μετά συνδεθείτε."));
+        return setMsg(
+          t(
+            "Check your inbox to confirm your email, then sign in.",
+            "Ελέγξτε τα εισερχόμενά σας για επιβεβαίωση email και μετά συνδεθείτε.",
+          ),
+        );
       }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       setBusy(false);
-      if (error) return setMsg(t("Sign-in failed. Check your details or confirm your email.", "Η σύνδεση απέτυχε. Ελέγξτε τα στοιχεία ή επιβεβαιώστε το email σας."));
+      if (error)
+        return setMsg(
+          t(
+            "Sign-in failed. Check your details or confirm your email.",
+            "Η σύνδεση απέτυχε. Ελέγξτε τα στοιχεία ή επιβεβαιώστε το email σας.",
+          ),
+        );
     }
     navigate({ to: "/dashboard" });
   }
@@ -67,7 +96,11 @@ function AuthPage() {
   return (
     <main>
       <Intro
-        title={mode === "signin" ? ["Welcome back", "Καλώς ήρθατε ξανά"] : ["Create your account", "Δημιουργήστε λογαριασμό"]}
+        title={
+          mode === "signin"
+            ? ["Welcome back", "Καλώς ήρθατε ξανά"]
+            : ["Create your account", "Δημιουργήστε λογαριασμό"]
+        }
         subtitle={[
           "Your account keeps your travel enquiries and their status in one place. Enquiries are not confirmed bookings.",
           "Ο λογαριασμός σας κρατά τα ταξιδιωτικά αιτήματα και την κατάστασή τους σε ένα σημείο. Τα αιτήματα δεν είναι επιβεβαιωμένες κρατήσεις.",
@@ -75,7 +108,11 @@ function AuthPage() {
       />
       <section className="section">
         <div className="container" style={{ maxWidth: 480 }}>
-          <form onSubmit={submit} className="form-grid" style={{ gridTemplateColumns: "1fr" }}>
+          <form
+            onSubmit={submit}
+            className="form-grid"
+            style={{ gridTemplateColumns: "1fr" }}
+          >
             {mode === "signup" && (
               <label>
                 {t("Full name", "Ονοματεπώνυμο")}
@@ -84,39 +121,69 @@ function AuthPage() {
             )}
             <label>
               Email *
-              <input name="email" type="email" required maxLength={255} autoComplete="email" />
+              <input
+                name="email"
+                type="email"
+                required
+                maxLength={255}
+                autoComplete="email"
+              />
             </label>
             <label>
-              {t("Password (min. 8 characters)", "Κωδικός (τουλ. 8 χαρακτήρες)")} *
+              {t(
+                "Password (min. 8 characters)",
+                "Κωδικός (τουλ. 8 χαρακτήρες)",
+              )}{" "}
+              *
               <input
                 name="password"
                 type="password"
                 required
                 minLength={8}
                 maxLength={72}
-                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                autoComplete={
+                  mode === "signup" ? "new-password" : "current-password"
+                }
               />
             </label>
             {mode === "signup" && (
               <div className="grid gap-3 text-sm">
                 <label className="flex items-start gap-2">
                   <input type="checkbox" name="adultConfirmation" required />
-                  <span>{t("I am at least 18, and understand that each casino has its own legal age requirement (21+ in some US locations).",
-                    "Είμαι τουλάχιστον 18 ετών και κατανοώ ότι κάθε καζίνο εφαρμόζει τη νόμιμη ηλικία εισόδου (σε ορισμένες περιοχές των ΗΠΑ 21+).")}</span>
+                  <span>
+                    {t(
+                      "I am at least 18, and understand that each casino has its own legal age requirement (21+ in some US locations).",
+                      "Είμαι τουλάχιστον 18 ετών και κατανοώ ότι κάθε καζίνο εφαρμόζει τη νόμιμη ηλικία εισόδου (σε ορισμένες περιοχές των ΗΠΑ 21+).",
+                    )}
+                  </span>
                 </label>
                 <label className="flex items-start gap-2">
                   <input type="checkbox" name="privacyAcceptance" required />
-                  <span>{t("I have read the privacy notice and terms for a free travel enquiry account.",
-                    "Έχω διαβάσει την πολιτική απορρήτου και τους όρους του δωρεάν λογαριασμού ταξιδιωτικών αιτημάτων.")}{" "}
-                    <a className="underline" href="/privacy">{t("Privacy","Απόρρητο")}</a>{" · "}
-                    <a className="underline" href="/terms">{t("Terms","Όροι")}</a>
+                  <span>
+                    {t(
+                      "I have read the privacy notice and terms for a free travel enquiry account.",
+                      "Έχω διαβάσει την πολιτική απορρήτου και τους όρους του δωρεάν λογαριασμού ταξιδιωτικών αιτημάτων.",
+                    )}{" "}
+                    <a className="underline" href="/privacy">
+                      {t("Privacy", "Απόρρητο")}
+                    </a>
+                    {" · "}
+                    <a className="underline" href="/terms">
+                      {t("Terms", "Όροι")}
+                    </a>
                   </span>
                 </label>
               </div>
             )}
-            {msg && <p role="alert" className="notice my-0">{msg}</p>}
+            {msg && (
+              <p role="alert" className="notice my-0">
+                {msg}
+              </p>
+            )}
             <Button variant="secondary" size="lg" type="submit" disabled={busy}>
-              {mode === "signin" ? t("Sign in", "Σύνδεση") : t("Create account", "Δημιουργία λογαριασμού")}
+              {mode === "signin"
+                ? t("Sign in", "Σύνδεση")
+                : t("Create account", "Δημιουργία λογαριασμού")}
             </Button>
             <Button
               type="button"
@@ -127,7 +194,10 @@ function AuthPage() {
               }}
             >
               {mode === "signin"
-                ? t("New here? Create an account", "Νέος χρήστης; Δημιουργία λογαριασμού")
+                ? t(
+                    "New here? Create an account",
+                    "Νέος χρήστης; Δημιουργία λογαριασμού",
+                  )
                 : t("Already registered? Sign in", "Έχετε λογαριασμό; Σύνδεση")}
             </Button>
           </form>

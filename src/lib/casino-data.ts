@@ -81,7 +81,10 @@ export const casinos = [
     id: "hit",
     name: "HIT destinations",
     country: 2,
-    city: ["Slovenia · multiple locations", "Σλοβενία · πολλαπλές τοποθεσίες"] as Pair,
+    city: [
+      "Slovenia · multiple locations",
+      "Σλοβενία · πολλαπλές τοποθεσίες",
+    ] as Pair,
     summary: [
       "Explore the HIT group’s Slovenian hospitality and entertainment destinations.",
       "Ανακαλύψτε προορισμούς φιλοξενίας και ψυχαγωγίας του ομίλου HIT στη Σλοβενία.",

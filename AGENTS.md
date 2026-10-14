@@ -1,4 +1,5 @@
 <!-- LOVABLE:BEGIN -->
+
 > [!IMPORTANT]
 > This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
 > published git history — force pushing, or rebasing/amending/squashing commits
@@ -7,9 +8,11 @@
 >
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
+
 <!-- LOVABLE:END -->
 
 ## CasinoBooking.com scope — approved 14 October 2026
+
 - STRICT DESIGN LOCK: the user's approved screenshot is the exact visual model. `src/components/casino/visual-home.tsx` and matching CSS are staged in this branch; the twelve approved image crops plus hero MUST be copied from the downloadable handoff ZIP to `public/design-reference/` before release. Do not replace these photo crops with others. Photos from the generated design are illustrative and not proof of a particular venue's appearance.
 - There are **NO paid memberships, Stripe, crypto, payments, checkouts or subscriptions**. All destination browsing and travel coordination enquiries are free. A gold VIP-style CTA in artwork means free concierge enquiry, not a paid plan.
 - Public pages should advertise casino destinations with verifiable active venues only. Keep planned, closed or unverified casino venue records off verified public lists; never fabricate casino counts, formal partnerships, inventory, 24/7 service or security guarantees.

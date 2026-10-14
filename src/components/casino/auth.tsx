@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import type { Session } from "@supabase/supabase-js";
@@ -27,7 +33,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     const { data } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s);
-      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      if (
+        event !== "SIGNED_IN" &&
+        event !== "SIGNED_OUT" &&
+        event !== "USER_UPDATED"
+      )
+        return;
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
@@ -39,9 +50,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Never carry an admin UI state from one session into a new user's session.
     let active = true;
     setIsAdmin(false);
-    if (!userId) return () => { active = false; };
+    if (!userId)
+      return () => {
+        active = false;
+      };
     // A UI hint only: RLS remains the authoritative gate on database operations.
-    void supabase.from("user_roles")
+    void supabase
+      .from("user_roles")
       .select("role")
       .eq("user_id", userId)
       .eq("role", "admin")
@@ -49,7 +64,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(({ data, error }) => {
         if (active) setIsAdmin(!error && !!data);
       });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [userId]);
 
   async function signOut() {
@@ -59,7 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     navigate({ to: "/auth", replace: true });
   }
 
-  return <Ctx.Provider value={{ session, ready, isAdmin, signOut }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ session, ready, isAdmin, signOut }}>
+      {children}
+    </Ctx.Provider>
+  );
 }
 
 export function useAuth() {

@@ -11,7 +11,10 @@ import { CustomerProfileEditor } from "@/components/casino/profile-editor";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () =>
-    casinoHead("My enquiries", "Your CasinoBooking.com customer reference and travel enquiry status."),
+    casinoHead(
+      "My enquiries",
+      "Your CasinoBooking.com customer reference and travel enquiry status.",
+    ),
   component: Dashboard,
 });
 
@@ -19,18 +22,31 @@ function Dashboard() {
   const { t, p } = useCasino();
   const { session, isAdmin, signOut } = useAuth();
   const userId = session?.user.id ?? "";
-  const profile = useQuery({ queryKey: ["profile", userId], queryFn: () => fetchMyProfile(userId), enabled: !!userId });
-  const enquiries = useQuery({ queryKey: ["enquiries", "mine", userId], queryFn: fetchEnquiries, enabled: !!userId });
+  const profile = useQuery({
+    queryKey: ["profile", userId],
+    queryFn: () => fetchMyProfile(userId),
+    enabled: !!userId,
+  });
+  const enquiries = useQuery({
+    queryKey: ["enquiries", "mine", userId],
+    queryFn: fetchEnquiries,
+    enabled: !!userId,
+  });
   const mine = (enquiries.data ?? []).filter((e) => e.user_id === userId);
 
   return (
     <main className="section">
       <div className="container">
         <div className="eyebrow">{t("MY ACCOUNT", "Ο ΛΟΓΑΡΙΑΣΜΟΣ ΜΟΥ")}</div>
-        <h1 className="page-title">{t("Your travel enquiries", "Τα ταξιδιωτικά σας αιτήματα")}</h1>
+        <h1 className="page-title">
+          {t("Your travel enquiries", "Τα ταξιδιωτικά σας αιτήματα")}
+        </h1>
         <p className="section-subtitle">
           {t("Customer reference", "Αναφορά πελάτη")}:{" "}
-          <strong data-testid="customer-ref">{profile.data?.customer_ref ?? "…"}</strong> · {session?.user.email}
+          <strong data-testid="customer-ref">
+            {profile.data?.customer_ref ?? "…"}
+          </strong>{" "}
+          · {session?.user.email}
         </p>
         <div className="notice">
           {t(
@@ -70,11 +86,16 @@ function Dashboard() {
                     <strong>{e.ref}</strong>
                     <small>{new Date(e.created_at).toLocaleDateString()}</small>
                   </td>
-                  <td><strong>{e.destination}</strong>{e.casino_name&&<small>{e.casino_name}</small>}</td>
                   <td>
-                    {p(requestTypes[e.request_type])}<small>{e.services?.join(" · ")}</small>
+                    <strong>{e.destination}</strong>
+                    {e.casino_name && <small>{e.casino_name}</small>}
+                  </td>
+                  <td>
+                    {p(requestTypes[e.request_type])}
+                    <small>{e.services?.join(" · ")}</small>
                     <small>
-                      {e.start_date} → {e.end_date} · {e.party} {t("adults", "ενήλικες")}
+                      {e.start_date} → {e.end_date} · {e.party}{" "}
+                      {t("adults", "ενήλικες")}
                     </small>
                   </td>
                   <td>{p(statusPairs[e.status])}</td>
@@ -82,13 +103,21 @@ function Dashboard() {
               ))}
             </tbody>
           </table>
-          {enquiries.isLoading && <div className="empty">{t("Loading…", "Φόρτωση…")}</div>}
-          {enquiries.isError && <div className="empty">{t("Could not load enquiries.", "Αδυναμία φόρτωσης αιτημάτων.")}</div>}
+          {enquiries.isLoading && (
+            <div className="empty">{t("Loading…", "Φόρτωση…")}</div>
+          )}
+          {enquiries.isError && (
+            <div className="empty">
+              {t("Could not load enquiries.", "Αδυναμία φόρτωσης αιτημάτων.")}
+            </div>
+          )}
           {enquiries.isSuccess && mine.length === 0 && (
-            <div className="empty">{t("No enquiries yet.", "Δεν υπάρχουν αιτήματα ακόμη.")}</div>
+            <div className="empty">
+              {t("No enquiries yet.", "Δεν υπάρχουν αιτήματα ακόμη.")}
+            </div>
           )}
         </div>
-        <CustomerProfileEditor profile={profile.data}/>
+        <CustomerProfileEditor profile={profile.data} />
       </div>
     </main>
   );

@@ -34,7 +34,11 @@
     oklch(0.15 0.025 255 / 0.57) 48%,
     oklch(0.15 0.025 255 / 0.06) 100%
   );
-  --image-shade: linear-gradient(0deg, oklch(0.16 0.03 255 / 0.8), transparent 70%);
+  --image-shade: linear-gradient(
+    0deg,
+    oklch(0.16 0.03 255 / 0.8),
+    transparent 70%
+  );
   --shadow-soft: 0 10px 35px oklch(0.19 0.03 255 / 0.07);
   --font-body: "Manrope", Arial, sans-serif;
   --font-display: "Cormorant Garamond", Georgia, serif;

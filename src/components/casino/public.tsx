@@ -39,7 +39,11 @@ const destinations = [
     image: slovenia.url,
     caption: ["Nature meets discovery", "Φύση και ανακαλύψεις"] as Pair,
   },
-  { country: 4, image: hero.url, caption: ["A new perspective", "Μια νέα οπτική"] as Pair },
+  {
+    country: 4,
+    image: hero.url,
+    caption: ["A new perspective", "Μια νέα οπτική"] as Pair,
+  },
 ];
 export function Intro({ title, subtitle }: { title: Pair; subtitle: Pair }) {
   const { p } = useCasino();
@@ -80,7 +84,9 @@ export function DestinationCards() {
             <h3>{p(countries[d.country])}</h3>
             <p>{p(d.caption)}</p>
             {d.country === 4 && (
-              <p>{t("Illustrative resort image", "Ενδεικτική εικόνα θερέτρου")}</p>
+              <p>
+                {t("Illustrative resort image", "Ενδεικτική εικόνα θερέτρου")}
+              </p>
             )}
             <ArrowUpRight size={18} className="destination-arrow" />
           </div>
@@ -95,7 +101,12 @@ export function ResortCard({ casino }: { casino: (typeof casinos)[number] }) {
     <article className="resort-card">
       <div className="resort-placeholder">
         <Building2 />
-        <span>{t("PROPERTY IMAGE PENDING APPROVAL", "ΕΙΚΟΝΑ ΚΑΤΑΛΥΜΑΤΟΣ ΥΠΟ ΕΓΚΡΙΣΗ")}</span>
+        <span>
+          {t(
+            "PROPERTY IMAGE PENDING APPROVAL",
+            "ΕΙΚΟΝΑ ΚΑΤΑΛΥΜΑΤΟΣ ΥΠΟ ΕΓΚΡΙΣΗ",
+          )}
+        </span>
       </div>
       <div className="resort-body">
         <div className="resort-location">
@@ -112,7 +123,10 @@ export function ResortCard({ casino }: { casino: (typeof casinos)[number] }) {
           ))}
         </div>
         <div className="candidate-note">
-          {t("Partner status: Not yet confirmed", "Συνεργασία: Δεν έχει επιβεβαιωθεί")}
+          {t(
+            "Partner status: Not yet confirmed",
+            "Συνεργασία: Δεν έχει επιβεβαιωθεί",
+          )}
           <br />
           {t(
             "Verify local legal status before travel",
@@ -120,7 +134,12 @@ export function ResortCard({ casino }: { casino: (typeof casinos)[number] }) {
           )}
         </div>
         <div className="card-bottom">
-          <a href={casino.url} target="_blank" rel="noopener noreferrer" className="text-link">
+          <a
+            href={casino.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-link"
+          >
             {t("Official website", "Επίσημος ιστότοπος")}
             <ArrowUpRight />
           </a>
@@ -181,7 +200,11 @@ export function ServicesGrid() {
           <s.icon />
           <h3>{t(s.title[0], s.title[1])}</h3>
           <p>{t(s.text[0], s.text[1])}</p>
-          <Link to="/request" search={{ type: s.type }} className="text-link text-gold">
+          <Link
+            to="/request"
+            search={{ type: s.type }}
+            className="text-link text-gold"
+          >
             {t("Make an enquiry", "Στείλτε αίτημα")}
             <ArrowRight />
           </Link>
@@ -214,14 +237,20 @@ export function FAQ() {
       ],
     },
     {
-      q: ["What happens after I send a request?", "Τι συμβαίνει μετά την αποστολή αιτήματος;"],
+      q: [
+        "What happens after I send a request?",
+        "Τι συμβαίνει μετά την αποστολή αιτήματος;",
+      ],
       a: [
         "You receive a reference and your request appears in the demo portal for this browser session. No email, WhatsApp message or real booking is sent.",
         "Λαμβάνετε αριθμό αναφοράς και το αίτημα εμφανίζεται στην πύλη επίδειξης για αυτή τη συνεδρία. Δεν αποστέλλεται email, μήνυμα WhatsApp ή πραγματική κράτηση.",
       ],
     },
     {
-      q: ["Who can use these services?", "Ποιος μπορεί να χρησιμοποιήσει τις υπηρεσίες;"],
+      q: [
+        "Who can use these services?",
+        "Ποιος μπορεί να χρησιμοποιήσει τις υπηρεσίες;",
+      ],
       a: [
         "Adults only, subject to the higher local age minimum, residency rules and local law. Gambling involves risk; travel should never depend on winnings.",
         "Μόνο ενήλικες, βάσει του υψηλότερου τοπικού ορίου ηλικίας, κατοικίας και νόμου. Ο τζόγος ενέχει κίνδυνο· τα ταξίδια δεν πρέπει να εξαρτώνται από κέρδη.",
@@ -266,7 +295,9 @@ export function Home() {
           <h1>
             {t("Casino resort travel,", "Ταξίδια σε θέρετρα καζίνο,")}
             <br />
-            <em>{t("beautifully considered.", "με προσοχή στη λεπτομέρεια.")}</em>
+            <em>
+              {t("beautifully considered.", "με προσοχή στη λεπτομέρεια.")}
+            </em>
           </h1>
           <p className="hero-description">
             {t(
@@ -282,7 +313,9 @@ export function Home() {
               </Link>
             </Button>
             <Button asChild variant="heroOutline" size="lg">
-              <Link to="/request">{t("Plan my journey", "Σχεδιάστε το ταξίδι μου")}</Link>
+              <Link to="/request">
+                {t("Plan my journey", "Σχεδιάστε το ταξίδι μου")}
+              </Link>
             </Button>
           </div>
           <div className="hero-note">
@@ -302,11 +335,23 @@ export function Home() {
         </div>
       </section>
       <div className="container-site">
-        <form className="search-strip" onSubmit={(e) => { e.preventDefault(); void navigate({ to: "/request", search: { country, start: date, party } }); }}>
+        <form
+          className="search-strip"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void navigate({
+              to: "/request",
+              search: { country, start: date, party },
+            });
+          }}
+        >
           <div className="search-field">
             <label>
               {t("YOUR DESTINATION", "ΠΡΟΟΡΙΣΜΟΣ")}
-              <select value={country} onChange={(e) => setCountry(e.target.value)}>
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              >
                 {countries.map((c, i) => (
                   <option value={i} key={i}>
                     {t(...c)}
@@ -354,7 +399,10 @@ export function Home() {
           </span>
           <span>
             <Lock />
-            {t("Privacy-conscious by design", "Σχεδιασμένο με σεβασμό στο απόρρητο")}
+            {t(
+              "Privacy-conscious by design",
+              "Σχεδιασμένο με σεβασμό στο απόρρητο",
+            )}
           </span>
           <span>
             <GlobeIcon />
@@ -370,7 +418,10 @@ export function Home() {
                 {t("A WORLD WORTH DISCOVERING", "ΕΝΑΣ ΚΟΣΜΟΣ ΓΙΑ ΑΝΑΚΑΛΥΨΗ")}
               </div>
               <h2>
-                {t("Where will your journey take you?", "Πού θα σας οδηγήσει το ταξίδι σας;")}
+                {t(
+                  "Where will your journey take you?",
+                  "Πού θα σας οδηγήσει το ταξίδι σας;",
+                )}
               </h2>
               <p className="section-subtitle">
                 {t(
@@ -391,9 +442,14 @@ export function Home() {
         <div className="container-site">
           <div className="section-heading">
             <div>
-              <div className="eyebrow">{t("THE INITIAL COLLECTION", "Η ΑΡΧΙΚΗ ΣΥΛΛΟΓΗ")}</div>
+              <div className="eyebrow">
+                {t("THE INITIAL COLLECTION", "Η ΑΡΧΙΚΗ ΣΥΛΛΟΓΗ")}
+              </div>
               <h2>
-                {t("Resorts to inspire your next escape", "Θέρετρα για την επόμενη απόδραση")}
+                {t(
+                  "Resorts to inspire your next escape",
+                  "Θέρετρα για την επόμενη απόδραση",
+                )}
               </h2>
               <p className="section-subtitle">
                 {t(
@@ -441,15 +497,23 @@ export function Home() {
       <section className="section">
         <div className="container-site two-column">
           <div>
-            <div className="eyebrow">{t("CONFIDENCE IN EVERY STEP", "ΣΙΓΟΥΡΙΑ ΣΕ ΚΑΘΕ ΒΗΜΑ")}</div>
+            <div className="eyebrow">
+              {t("CONFIDENCE IN EVERY STEP", "ΣΙΓΟΥΡΙΑ ΣΕ ΚΑΘΕ ΒΗΜΑ")}
+            </div>
             <h2>
-              {t("Personal service. Clear intentions.", "Προσωπική φροντίδα. Ξεκάθαρες προθέσεις.")}
+              {t(
+                "Personal service. Clear intentions.",
+                "Προσωπική φροντίδα. Ξεκάθαρες προθέσεις.",
+              )}
             </h2>
             <div className="info-list">
               {[
                 {
                   icon: ShieldCheck,
-                  title: ["Independent & transparent", "Ανεξάρτητοι & διαφανείς"],
+                  title: [
+                    "Independent & transparent",
+                    "Ανεξάρτητοι & διαφανείς",
+                  ],
                   text: [
                     "No unverified partnerships, no hidden promises. Just a clear, considered approach.",
                     "Χωρίς ανεπιβεβαίωτες συνεργασίες ή κρυφές υποσχέσεις. Μόνο ξεκάθαρη προσέγγιση.",
@@ -483,8 +547,12 @@ export function Home() {
             </div>
           </div>
           <div>
-            <div className="eyebrow">{t("GOOD TO KNOW", "ΧΡΗΣΙΜΕΣ ΠΛΗΡΟΦΟΡΙΕΣ")}</div>
-            <h2>{t("A few thoughtful answers", "Μερικές προσεκτικές απαντήσεις")}</h2>
+            <div className="eyebrow">
+              {t("GOOD TO KNOW", "ΧΡΗΣΙΜΕΣ ΠΛΗΡΟΦΟΡΙΕΣ")}
+            </div>
+            <h2>
+              {t("A few thoughtful answers", "Μερικές προσεκτικές απαντήσεις")}
+            </h2>
             <FAQ />
           </div>
         </div>
@@ -543,7 +611,10 @@ export function Explore({ initialCountry = "0" }: { initialCountry?: string }) {
         <div className="container-site">
           <div className="filter-bar">
             <input
-              placeholder={t("Search resort, city or country…", "Αναζητήστε θέρετρο, πόλη ή χώρα…")}
+              placeholder={t(
+                "Search resort, city or country…",
+                "Αναζητήστε θέρετρο, πόλη ή χώρα…",
+              )}
               aria-label={t("Search resorts", "Αναζήτηση θερέτρων")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -593,7 +664,10 @@ export function Destinations() {
   return (
     <main>
       <Intro
-        title={["Destinations, thoughtfully selected", "Προορισμοί, προσεκτικά επιλεγμένοι"]}
+        title={[
+          "Destinations, thoughtfully selected",
+          "Προορισμοί, προσεκτικά επιλεγμένοι",
+        ]}
         subtitle={[
           "Four countries. Distinctive experiences. Start with a destination and explore the initial directory.",
           "Τέσσερις χώρες. Ξεχωριστές εμπειρίες. Ξεκινήστε από έναν προορισμό και εξερευνήστε τον αρχικό κατάλογο.",
@@ -604,7 +678,10 @@ export function Destinations() {
           <DestinationCards />
           <div className="my-6 text-center">
             <a href="/global-casinos" className="text-link">
-              {t("Discover US Casino Resorts & UAE planned projects →","Ανακαλύψτε casino resorts στις ΗΠΑ και μελλοντικά έργα στα ΗΑΕ →")}
+              {t(
+                "Discover US Casino Resorts & UAE planned projects →",
+                "Ανακαλύψτε casino resorts στις ΗΠΑ και μελλοντικά έργα στα ΗΑΕ →",
+              )}
             </a>
           </div>
           <div className="notice">
@@ -623,7 +700,10 @@ export function Services() {
   return (
     <main>
       <Intro
-        title={["Travel, brought together", "Ταξίδια, με ολοκληρωμένο συντονισμό"]}
+        title={[
+          "Travel, brought together",
+          "Ταξίδια, με ολοκληρωμένο συντονισμό",
+        ]}
         subtitle={[
           "A personal approach to introductions, flights, transfers and group travel. No live prices or availability are implied.",
           "Προσωπική προσέγγιση σε γνωριμίες, πτήσεις, μεταφορές και ομαδικά ταξίδια. Δεν υπονοούνται ζωντανές τιμές ή διαθεσιμότητα.",
@@ -653,7 +733,10 @@ export function HowItWorks() {
   return (
     <main>
       <Intro
-        title={["A simpler path to your next journey", "Μια απλούστερη διαδρομή για το ταξίδι σας"]}
+        title={[
+          "A simpler path to your next journey",
+          "Μια απλούστερη διαδρομή για το ταξίδι σας",
+        ]}
         subtitle={[
           "Personal coordination begins with understanding what matters to you.",
           "Ο προσωπικός συντονισμός αρχίζει κατανοώντας τι έχει σημασία για εσάς.",
@@ -786,7 +869,12 @@ export function Legal({ kind }: { kind: "privacy" | "terms" }) {
           </div>
           {kind === "privacy" ? (
             <>
-              <h2>{t("Prototype data handling", "Διαχείριση δεδομένων πρωτοτύπου")}</h2>
+              <h2>
+                {t(
+                  "Prototype data handling",
+                  "Διαχείριση δεδομένων πρωτοτύπου",
+                )}
+              </h2>
               <p>
                 {t(
                   "The enquiry form uses name, contact details, residence, travel preferences and your message to demonstrate request coordination. Data is held in memory for this session, not sent to a production database or contact service. Do not submit real personal details, identity documents, payment data, gambling history or sensitive information.",
@@ -820,7 +908,9 @@ export function Legal({ kind }: { kind: "privacy" | "terms" }) {
                   "Ο τζόγος ενέχει οικονομικούς κινδύνους και κινδύνους ευημερίας. Θέστε όρια και μην κυνηγάτε απώλειες. Το ταξίδι δεν πρέπει να εξαρτάται από κέρδη. Αναζητήστε ανεξάρτητη υποστήριξη εάν υπάρχει ανησυχία.",
                 )}
               </p>
-              <h2>{t("Legal completion required", "Απαιτείται νομική ολοκλήρωση")}</h2>
+              <h2>
+                {t("Legal completion required", "Απαιτείται νομική ολοκλήρωση")}
+              </h2>
               <p>
                 {t(
                   "Operator identity, governing law, liability, complaints and provider relationship terms are pending legal review before real services begin.",

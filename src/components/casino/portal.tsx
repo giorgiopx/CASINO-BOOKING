@@ -24,8 +24,16 @@ const tabs: { id: string; title: Pair; icon: typeof Inbox }[] = [
   { id: "overview", title: ["Overview", "Επισκόπηση"], icon: LayoutDashboard },
   { id: "customers", title: ["Customers", "Πελάτες"], icon: Users },
   { id: "requests", title: ["Requests", "Αιτήματα"], icon: Inbox },
-  { id: "partners", title: ["Casino partners", "Συνεργάτες καζίνο"], icon: Building2 },
-  { id: "travel", title: ["Travel coordination", "Ταξιδιωτικός συντονισμός"], icon: Plane },
+  {
+    id: "partners",
+    title: ["Casino partners", "Συνεργάτες καζίνο"],
+    icon: Building2,
+  },
+  {
+    id: "travel",
+    title: ["Travel coordination", "Ταξιδιωτικός συντονισμός"],
+    icon: Plane,
+  },
   { id: "commissions", title: ["Commissions", "Προμήθειες"], icon: Wallet },
   { id: "reports", title: ["Reports", "Αναφορές"], icon: BarChart3 },
   { id: "settings", title: ["Settings", "Ρυθμίσεις"], icon: Settings },
@@ -49,7 +57,14 @@ export function Portal() {
   );
   function exportReport() {
     const rows = [
-      ["reference", "customer_reference", "destination", "type", "status", "demo"],
+      [
+        "reference",
+        "customer_reference",
+        "destination",
+        "type",
+        "status",
+        "demo",
+      ],
       ...requests.map((r) => [
         r.ref,
         r.customerId,
@@ -100,7 +115,10 @@ export function Portal() {
         <div className="portal-heading">
           <div>
             <div className="eyebrow">
-              {t("CASINOBOOKING.COM · DEMO PORTAL", "CASINOBOOKING.COM · ΠΥΛΗ ΕΠΙΔΕΙΞΗΣ")}
+              {t(
+                "CASINOBOOKING.COM · DEMO PORTAL",
+                "CASINOBOOKING.COM · ΠΥΛΗ ΕΠΙΔΕΙΞΗΣ",
+              )}
             </div>
             <h1>
               {mode === "customer"
@@ -133,7 +151,9 @@ export function Portal() {
         </div>
         {mode === "customer" ? (
           <div className="portal-customer">
-            <h2 className="page-title">{t("Find a demo request", "Βρείτε αίτημα επίδειξης")}</h2>
+            <h2 className="page-title">
+              {t("Find a demo request", "Βρείτε αίτημα επίδειξης")}
+            </h2>
             <p className="section-subtitle">
               {t(
                 "Reference lookup is a prototype, not authentication. Use your session reference or CB-DEMO-001.",
@@ -169,7 +189,8 @@ export function Portal() {
                     {t("Status", "Κατάσταση")}: {p(statusPairs[found.status])}
                   </p>
                   <p>
-                    {t("Customer reference", "Αναφορά πελάτη")}: {found.customerId}
+                    {t("Customer reference", "Αναφορά πελάτη")}:{" "}
+                    {found.customerId}
                   </p>
                 </div>
               ) : (
@@ -191,7 +212,10 @@ export function Portal() {
                     t("New requests", "Νέα αιτήματα"),
                     requests.filter((r) => r.status === "new").length,
                   ],
-                  [t("Directory candidates", "Υποψήφιοι καταλόγου"), casinos.length],
+                  [
+                    t("Directory candidates", "Υποψήφιοι καταλόγου"),
+                    casinos.length,
+                  ],
                   [t("Confirmed partners", "Επιβεβαιωμένοι συνεργάτες"), 0],
                 ].map(([label, value]) => (
                   <div className="kpi" key={label}>
@@ -211,14 +235,19 @@ export function Portal() {
                       "Search name, reference or destination…",
                       "Αναζήτηση ονόματος, αναφοράς ή προορισμού…",
                     )}
-                    aria-label={t("Search demo records", "Αναζήτηση εγγραφών demo")}
+                    aria-label={t(
+                      "Search demo records",
+                      "Αναζήτηση εγγραφών demo",
+                    )}
                   />
                   <select
                     aria-label={t("Request status filter", "Φίλτρο κατάστασης")}
                     value={status}
                     onChange={(e) => setFilterStatus(e.target.value)}
                   >
-                    <option value="all">{t("All statuses", "Όλες οι καταστάσεις")}</option>
+                    <option value="all">
+                      {t("All statuses", "Όλες οι καταστάσεις")}
+                    </option>
                     {Object.entries(statusPairs).map(([k, v]) => (
                       <option key={k} value={k}>
                         {p(v)}
@@ -230,7 +259,9 @@ export function Portal() {
                   <table>
                     <thead>
                       <tr>
-                        <th>{t("Customer / reference", "Πελάτης / αναφορά")}</th>
+                        <th>
+                          {t("Customer / reference", "Πελάτης / αναφορά")}
+                        </th>
                         <th>{t("Destination", "Προορισμός")}</th>
                         <th>
                           {tab === "customers"
@@ -259,7 +290,10 @@ export function Portal() {
                           <td>
                             {tab === "customers"
                               ? r.email
-                              : p(requestTypes[r.type] || requestTypes["introduction"])}
+                              : p(
+                                  requestTypes[r.type] ||
+                                    requestTypes["introduction"],
+                                )}
                             <small>
                               {tab === "customers"
                                 ? r.customerType === "individual"
@@ -286,7 +320,9 @@ export function Portal() {
                     </tbody>
                   </table>
                   {filtered.length === 0 && (
-                    <div className="empty">{t("No matching records", "Δεν βρέθηκαν εγγραφές")}</div>
+                    <div className="empty">
+                      {t("No matching records", "Δεν βρέθηκαν εγγραφές")}
+                    </div>
                   )}
                 </div>
               </>
@@ -297,7 +333,9 @@ export function Portal() {
                   <thead>
                     <tr>
                       <th>{t("Directory candidate", "Υποψήφιος καταλόγου")}</th>
-                      <th>{t("Partnership status", "Κατάσταση συνεργασίας")}</th>
+                      <th>
+                        {t("Partnership status", "Κατάσταση συνεργασίας")}
+                      </th>
                       <th>{t("Agreement", "Συμφωνία")}</th>
                     </tr>
                   </thead>
@@ -307,10 +345,22 @@ export function Portal() {
                         <td>
                           {c.name}
                           <small>{p(c.city)}</small>
-                          <small>{t("Verify local law/licensing before travel", "Ελέγξτε τοπικούς νόμους/άδειες πριν ταξιδέψετε")}</small>
+                          <small>
+                            {t(
+                              "Verify local law/licensing before travel",
+                              "Ελέγξτε τοπικούς νόμους/άδειες πριν ταξιδέψετε",
+                            )}
+                          </small>
                         </td>
-                        <td>{t("Not yet confirmed", "Δεν έχει επιβεβαιωθεί")}</td>
-                        <td>{t("No signed agreement", "Χωρίς υπογεγραμμένη συμφωνία")}</td>
+                        <td>
+                          {t("Not yet confirmed", "Δεν έχει επιβεβαιωθεί")}
+                        </td>
+                        <td>
+                          {t(
+                            "No signed agreement",
+                            "Χωρίς υπογεγραμμένη συμφωνία",
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -321,7 +371,9 @@ export function Portal() {
               <>
                 <div className="kpis">
                   <div className="kpi">
-                    <p>{t("Confirmed commissions", "Επιβεβαιωμένες προμήθειες")}</p>
+                    <p>
+                      {t("Confirmed commissions", "Επιβεβαιωμένες προμήθειες")}
+                    </p>
                     <strong>0</strong>
                   </div>
                   <div className="kpi">
@@ -333,7 +385,9 @@ export function Portal() {
                   <table>
                     <thead>
                       <tr>
-                        <th>{t("Illustrative record", "Ενδεικτική εγγραφή")}</th>
+                        <th>
+                          {t("Illustrative record", "Ενδεικτική εγγραφή")}
+                        </th>
                         <th>{t("Status", "Κατάσταση")}</th>
                         <th>{t("Amount", "Ποσό")}</th>
                       </tr>
@@ -342,9 +396,16 @@ export function Portal() {
                       <tr>
                         <td>
                           COM-DEMO-001
-                          <small>{t("Fictional workflow only", "Μόνο φανταστική ροή")}</small>
+                          <small>
+                            {t(
+                              "Fictional workflow only",
+                              "Μόνο φανταστική ροή",
+                            )}
+                          </small>
                         </td>
-                        <td>{t("Agreement required", "Απαιτείται συμφωνία")}</td>
+                        <td>
+                          {t("Agreement required", "Απαιτείται συμφωνία")}
+                        </td>
                         <td>{t("Not agreed", "Δεν έχει συμφωνηθεί")}</td>
                       </tr>
                     </tbody>
@@ -355,7 +416,10 @@ export function Portal() {
             {tab === "reports" && (
               <>
                 <h2 className="page-title">
-                  {t("Session activity report", "Αναφορά δραστηριότητας συνεδρίας")}
+                  {t(
+                    "Session activity report",
+                    "Αναφορά δραστηριότητας συνεδρίας",
+                  )}
                 </h2>
                 <p className="section-subtitle">
                   {t(
@@ -363,7 +427,11 @@ export function Portal() {
                     "Εξαγωγή τρεχουσών αναφορών και καταστάσεων demo. Δεν υπονοούνται έσοδα ή πραγματική απόδοση.",
                   )}
                 </p>
-                <Button className="mt-6" variant="secondary" onClick={exportReport}>
+                <Button
+                  className="mt-6"
+                  variant="secondary"
+                  onClick={exportReport}
+                >
                   <Download />
                   {t("Export demo CSV", "Εξαγωγή CSV demo")}
                 </Button>
@@ -379,8 +447,15 @@ export function Portal() {
                   )}
                 </p>
                 <h2>{t("Security recommendations", "Συστάσεις ασφάλειας")}</h2>
-                <p>{t("Require HTTPS/TLS, administrator multi-factor authentication, least-privilege access, validated inputs and privacy-reviewed audit logs. Set retention and deletion rules; test backups and recovery. No system is guaranteed 100% secure.", "Απαιτούνται HTTPS/TLS, έλεγχος πολλαπλών παραγόντων για διαχειριστές, ελάχιστα δικαιώματα, έλεγχος εισόδων και καταγραφές με σεβασμό στο απόρρητο. Ορίστε κανόνες διατήρησης/διαγραφής και ελέγξτε αντίγραφα ασφαλείας και ανάκτηση. Κανένα σύστημα δεν είναι εγγυημένα 100% ασφαλές.")}</p>
-                <h2>{t("Before real operation", "Πριν από πραγματική λειτουργία")}</h2>
+                <p>
+                  {t(
+                    "Require HTTPS/TLS, administrator multi-factor authentication, least-privilege access, validated inputs and privacy-reviewed audit logs. Set retention and deletion rules; test backups and recovery. No system is guaranteed 100% secure.",
+                    "Απαιτούνται HTTPS/TLS, έλεγχος πολλαπλών παραγόντων για διαχειριστές, ελάχιστα δικαιώματα, έλεγχος εισόδων και καταγραφές με σεβασμό στο απόρρητο. Ορίστε κανόνες διατήρησης/διαγραφής και ελέγξτε αντίγραφα ασφαλείας και ανάκτηση. Κανένα σύστημα δεν είναι εγγυημένα 100% ασφαλές.",
+                  )}
+                </p>
+                <h2>
+                  {t("Before real operation", "Πριν από πραγματική λειτουργία")}
+                </h2>
                 <p>
                   {t(
                     "Enable Lovable Cloud; configure profiles, requests, casino partners, travel requests and commission records with separate roles and least-privilege access. Apply privacy retention rules and complete legal/provider reviews before collecting real data.",

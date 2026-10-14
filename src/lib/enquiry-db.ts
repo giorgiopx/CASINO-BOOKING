@@ -5,7 +5,11 @@ export type Enquiry = Tables<"enquiries">;
 export type Profile = Tables<"profiles">;
 
 export async function fetchMyProfile(userId: string) {
-  const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).maybeSingle();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -23,7 +27,10 @@ export async function fetchEnquiries() {
 
 export async function fetchProfilesByIds(ids: string[]) {
   if (ids.length === 0) return [] as Profile[];
-  const { data, error } = await supabase.from("profiles").select("*").in("id", ids);
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .in("id", ids);
   if (error) throw error;
   return data;
 }

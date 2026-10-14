@@ -29,7 +29,10 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="container-site header-inner">
         <Brand />
-        <nav className="main-nav" aria-label={t("Main navigation", "Κύρια πλοήγηση")}>
+        <nav
+          className="main-nav"
+          aria-label={t("Main navigation", "Κύρια πλοήγηση")}
+        >
           {links.map(([to, title]) => (
             <Link key={to} to={to}>
               {title}
@@ -57,7 +60,9 @@ export function SiteHeader() {
               ΕΛ
             </Button>
           </div>
-          <Link to="/dashboard" className="text-xs portal-link">{t("My account", "Ο λογαριασμός μου")}</Link>
+          <Link to="/dashboard" className="text-xs portal-link">
+            {t("My account", "Ο λογαριασμός μου")}
+          </Link>
           <Link to="/portal" className="text-xs portal-link">
             {t("Portal", "Πύλη")}
           </Link>
@@ -132,10 +137,16 @@ export function SiteFooter() {
           <div>
             <h3>{t("Explore", "Ανακαλύψτε")}</h3>
             <div className="footer-links">
-              <Link to="/explore">{t("Casino directory", "Κατάλογος καζίνο")}</Link>
+              <Link to="/explore">
+                {t("Casino directory", "Κατάλογος καζίνο")}
+              </Link>
               <Link to="/destinations">{t("Destinations", "Προορισμοί")}</Link>
-              <Link to="/services">{t("Travel services", "Ταξιδιωτικές υπηρεσίες")}</Link>
-              <Link to="/how-it-works">{t("How it works", "Πώς λειτουργεί")}</Link>
+              <Link to="/services">
+                {t("Travel services", "Ταξιδιωτικές υπηρεσίες")}
+              </Link>
+              <Link to="/how-it-works">
+                {t("How it works", "Πώς λειτουργεί")}
+              </Link>
             </div>
           </div>
           <div>
@@ -144,16 +155,30 @@ export function SiteFooter() {
               <Link to="/about">{t("Our approach", "Η προσέγγισή μας")}</Link>
               <Link to="/contact">{t("Contact us", "Επικοινωνία")}</Link>
               <Link to="/portal">{t("Demo portal", "Πύλη επίδειξης")}</Link>
-              <Link to="/about">{t("Mobile app roadmap", "Σχέδιο εφαρμογής κινητού")}</Link>
+              <Link to="/about">
+                {t("Mobile app roadmap", "Σχέδιο εφαρμογής κινητού")}
+              </Link>
             </div>
           </div>
           <div>
             <h3>{t("Your peace of mind", "Η ηρεμία σας")}</h3>
             <div className="footer-links">
-              <Link to="/privacy">{t("Privacy · legal draft", "Απόρρητο · νομικό προσχέδιο")}</Link>
-              <Link to="/terms">{t("Terms · legal draft", "Όροι · νομικό προσχέδιο")}</Link>
-              <a href="https://www.gamblingtherapy.org/" target="_blank" rel="noopener noreferrer">
-                {t("Responsible gambling support", "Υποστήριξη υπεύθυνου παιχνιδιού")} ↗
+              <Link to="/privacy">
+                {t("Privacy · legal draft", "Απόρρητο · νομικό προσχέδιο")}
+              </Link>
+              <Link to="/terms">
+                {t("Terms · legal draft", "Όροι · νομικό προσχέδιο")}
+              </Link>
+              <a
+                href="https://www.gamblingtherapy.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t(
+                  "Responsible gambling support",
+                  "Υποστήριξη υπεύθυνου παιχνιδιού",
+                )}{" "}
+                ↗
               </a>
               <span className="flex items-center gap-2">
                 <ShieldCheck size={14} />
@@ -172,7 +197,10 @@ export function SiteFooter() {
         <div className="footer-bottom">
           <span>
             © {new Date().getFullYear()} CasinoBooking.com ·{" "}
-            {t("Frontend prototype · no live bookings", "Πρωτότυπο · χωρίς ζωντανές κρατήσεις")}
+            {t(
+              "Frontend prototype · no live bookings",
+              "Πρωτότυπο · χωρίς ζωντανές κρατήσεις",
+            )}
           </span>
           <span>
             {t(

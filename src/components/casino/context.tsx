@@ -1,5 +1,10 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { demoRequests, type Lang, type Pair, type RequestRecord } from "@/lib/casino-data";
+import {
+  demoRequests,
+  type Lang,
+  type Pair,
+  type RequestRecord,
+} from "@/lib/casino-data";
 type AppContext = {
   lang: Lang;
   setLang: (v: Lang) => void;
@@ -13,7 +18,8 @@ const Context = createContext<AppContext | undefined>(undefined);
 export function CasinoProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>("en");
   const [requests, setRequests] = useState(demoRequests);
-  const t = (a: string | undefined, b: string | undefined) => (lang === "en" ? a : b) || a || "";
+  const t = (a: string | undefined, b: string | undefined) =>
+    (lang === "en" ? a : b) || a || "";
   return (
     <Context.Provider
       value={{
@@ -24,7 +30,9 @@ export function CasinoProvider({ children }: { children: ReactNode }) {
         requests,
         addRequest: (r) => setRequests((old) => [r, ...old]),
         setStatus: (ref, status) =>
-          setRequests((old) => old.map((r) => (r.ref === ref ? { ...r, status } : r))),
+          setRequests((old) =>
+            old.map((r) => (r.ref === ref ? { ...r, status } : r)),
+          ),
       }}
     >
       {children}
