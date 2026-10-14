@@ -7,6 +7,7 @@ Source of truth: existing Lovable project 6a0edc79-9b33-4814-81bd-abcd323cb86e; 
 DO NOT merge or publish automatically unless every listed gate is confirmed and user approves.
 
 ## Critical asset import (FIRST)
+
 The user will attach `CasinoBooking_Design_and_GitHub_Handoff_2026-10-14.zip` containing EXACT approved photos. From repository root run:
 
 ```bash
@@ -15,9 +16,11 @@ git add public/design-reference
 git commit -m "Import exact approved CasinoBooking design photos"
 git push origin feature/restore-lovable-casinobooking
 ```
+
 Script SHA256-validates all 13 WebP photos. Do not change visual design or crop selection. Never replace with unrelated stock images.
 
 ## Review gates
+
 1. `bun install && bun run build && bunx tsc --noEmit && bun run lint && bun run test`
 2. Inspect `/global-casinos`, `/request`, `/auth`, `/dashboard`, `/admin` and 12 original European photo cards on desktop/tablet/phone; capture screenshots.
 3. Confirm all 18 US operating venue rows and Wynn Al Marjan planned-only record, with official links and region photo attribution; no partnership claims or invented inventory.
@@ -28,4 +31,5 @@ Script SHA256-validates all 13 WebP photos. Do not change visual design or crop 
 8. Email/WhatsApp Business remain for the final phase. Absolutely no payments/subscriptions.
 
 ## Publishing rule
+
 Only after passing every gate and confirming deploy target: require explicit owner release approval; merge PR #1 then deploy exactly the tested commit to verified hosting. Smoke-test live URL; add Google Search Console DNS verification, sitemap. Google indexing is not guaranteed.
