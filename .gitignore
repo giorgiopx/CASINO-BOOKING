@@ -30,3 +30,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Never commit local customer data or production credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
