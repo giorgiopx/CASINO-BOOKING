@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useLocation,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
@@ -134,14 +135,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const isVisualHome = useLocation({select:loc=>loc.pathname==='/' });
 
   return (
     <QueryClientProvider client={queryClient}>
       <CasinoProvider>
         <AuthProvider>
-        <SiteHeader />
+        {!isVisualHome && <SiteHeader />}
         <Outlet />
-        <SiteFooter />
+        {!isVisualHome && <SiteFooter />}
         <Toaster />
         </AuthProvider>
       </CasinoProvider>
