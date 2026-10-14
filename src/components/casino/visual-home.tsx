@@ -13,6 +13,7 @@ import {
   ShieldCheck, Headset, ArrowRight, Menu, X, Globe2, Hotel, Dices,
   Crown, LockKeyhole
 } from 'lucide-react';
+import { globalDestinations, photoUrl } from '@/lib/global-casino-catalog';
 import './visual-home.css';
 
 type Country = { name: string; el: string; flag: string; asset: string };
@@ -119,6 +120,24 @@ export function VisualHome() {
               {shown.map(c=><article className="cb-country" key={c.name}><img loading="lazy" src={photo(c.asset)} alt={`${lang==='el'?c.el:c.name} — approved illustrative visual reference`} /><div className="cb-country-overlay"><strong><span className="cb-flag">{c.flag}</span>{lang==='el'?c.el:c.name}</strong><div><small>{t('Casino travel enquiries','Αιτήματα ταξιδιού')}</small><Link to="/request" search={{interest:c.name}}>{t('Explore','Εξερεύνηση')} <ArrowRight size={12}/></Link></div></div></article>)}
             </div>
             <p className="cb-disclosure">{t('Destination photos reproduce the approved design reference and may be illustrative. Casino availability and venue operating status must be independently verified. We coordinate travel enquiries; no booking is confirmed on submission. Adults only.','Οι φωτογραφίες προέρχονται από το εγκεκριμένο σχεδιαστικό πρότυπο και ενδέχεται να είναι ενδεικτικές. Η λειτουργία κάθε καζίνο επιβεβαιώνεται ανεξάρτητα. Συντονίζουμε ταξιδιωτικά αιτήματα· η υποβολή δεν αποτελεί επιβεβαιωμένη κράτηση. Μόνο ενήλικες.')}</p>
+          </section>
+          <section className="cb-global-extension" aria-label="American casino destinations">
+            <div className="cb-section-heading">
+              <div>
+                <h2>{t('American Casino Destinations','Προορισμοί Καζίνο στην Αμερική')}</h2>
+                <p>{t('Curated operating casino resorts across the United States, with official source links.','Επιλεγμένα λειτουργούντα casino resorts στις ΗΠΑ, με επίσημες πηγές.')}</p>
+              </div>
+              <a href="/global-casinos">{t('Explore United States & UAE status','ΗΠΑ και πληροφορίες για ΗΑΕ')} <ArrowRight size={16}/></a>
+            </div>
+            <div className="cb-global-photo-grid">
+              {globalDestinations.filter(d=>d.country==='US' && d.photoFile).slice(0,4).map(d=>(
+                <a href={'/global-casinos'} className="cb-global-photo-card" key={d.slug}>
+                  {photoUrl(d)&& <img loading="lazy" src={photoUrl(d)!} alt={t(d.name[0],d.name[1])+' — editorial destination photography'} onError={e=>e.currentTarget.style.display='none'}/>}
+                  <span><strong>{t(d.name[0],d.name[1])}</strong><small>{t('View verified casino venues','Δείτε τα τεκμηριωμένα καζίνο')}</small></span>
+                </a>
+              ))}
+            </div>
+            <p className="cb-disclosure">{t('New destination photography is credited by creator and license in the international directory. No casino partnerships or live flight/hotel inventory are implied.','Οι δημιουργοί και οι άδειες των νέων φωτογραφιών αναφέρονται στον διεθνή κατάλογο. Δεν υπονοούνται συνεργασίες ή πραγματική διαθεσιμότητα πτήσεων και ξενοδοχείων.')}</p>
           </section>
         </div>
       </main>
