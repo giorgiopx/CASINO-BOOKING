@@ -553,7 +553,7 @@ export function Explore({ initialCountry = "0" }: { initialCountry?: string }) {
               value={country}
               onChange={(e) => setCountry(e.target.value)}
             >
-              {countries.map((c, i) => (
+              {countries.slice(0, 5).map((c, i) => (
                 <option key={i} value={i}>
                   {p(c)}
                 </option>
@@ -602,6 +602,11 @@ export function Destinations() {
       <section className="section">
         <div className="container-site">
           <DestinationCards />
+          <div className="my-6 text-center">
+            <a href="/global-casinos" className="text-link">
+              {t("Discover US Casino Resorts & UAE planned projects →","Ανακαλύψτε casino resorts στις ΗΠΑ και μελλοντικά έργα στα ΗΑΕ →")}
+            </a>
+          </div>
           <div className="notice">
             {t(
               "Destination photography is illustrative, not a representation of a listed casino or confirmed partner. Northern Cyprus is not included as a verified jurisdiction; legal status and changing regulations must always be checked.",
