@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowRight, ExternalLink, MapPin, Search, ShieldCheck } from "lucide-react";
 import { useCasino } from "@/components/casino/context";
-import { globalDestinations, globalVenues, photoUrl } from "@/lib/global-casino-catalog";
+import { globalDestinations, globalVenues, globalCasinoHotels, photoUrl } from "@/lib/global-casino-catalog";
 import { casinoHead } from "@/lib/casino-seo";
 import "./global-casinos.css";
 
@@ -51,6 +51,10 @@ function GlobalCasinos() {
               {venues.map(v=><div className="global-venue" key={v.id}>
                 <h3>{v.name}</h3><span>{v.locality} · {v.status==="operating"?t("Operating venue","Λειτουργών χώρος"):t("Future development","Μελλοντικό έργο")}</span>
                 <p>{lang==="el"?v.notes[1]:v.notes[0]}</p>
+                {globalCasinoHotels.filter(h=>h.venueId===v.id).map(h=><p className="global-hotel" key={h.hotelName}>
+                  <strong>{t("Hotel","Ξενοδοχείο")}:</strong> {h.hotelName} <small>({t(h.location==="nearby"?"nearby":h.location==="adjacent"?"adjacent":"on-site", h.location==="nearby"?"κοντά":h.location==="adjacent"?"δίπλα":"εντός συγκροτήματος")})</small>
+                  {" · "}<a href={h.officialHotelUrl} target="_blank" rel="noopener noreferrer">{t("hotel source ↗","πηγή ξενοδοχείου ↗")}</a>
+                </p>)}
                 <div className="global-venue-actions">
                   <a href={v.officialUrl} target="_blank" rel="noopener noreferrer">{t("Official source","Επίσημη πηγή")} <ExternalLink size={13}/></a>
                   {v.status==="operating" && <Link to="/request" search={{interest:v.name}}>{t("Request trip","Αίτημα ταξιδιού")} <ArrowRight size={13}/></Link>}
