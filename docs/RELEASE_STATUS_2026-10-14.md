@@ -42,4 +42,5 @@ Approved midnight navy / champagne gold / ivory design remains locked. The exist
 Travel requests are coordination leads, never confirmed flights/hotels/casino bookings until external provider acceptance. Do not advertise a partnership. Google indexing has no guaranteed schedule.
 
 ## International photo-source completion
+
 All 12 listed international destination areas now reference distinct verified Wikimedia Commons source photos and display author/license attribution; these are destination/editorial images, not proof of a partner casino. Four final additions: Tampa (Dennis Ludlow, CC BY-SA 4.0), Sacramento (Quintin Soloviev, CC BY 4.0), Biloxi (Nicolas Henderson, CC BY 2.0), Durant (Fkbowen, CC BY-SA 4.0). Browser image-loading/CDN tests and image-rights review remain required before release.
