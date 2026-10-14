@@ -7,6 +7,7 @@ import { useAuth } from "@/components/casino/auth";
 import { fetchEnquiries, fetchMyProfile } from "@/lib/enquiry-db";
 import { requestTypes, statusPairs } from "@/lib/casino-data";
 import { casinoHead } from "@/lib/casino-seo";
+import { CustomerProfileEditor } from "@/components/casino/profile-editor";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () =>
@@ -69,9 +70,9 @@ function Dashboard() {
                     <strong>{e.ref}</strong>
                     <small>{new Date(e.created_at).toLocaleDateString()}</small>
                   </td>
-                  <td>{e.destination}</td>
+                  <td><strong>{e.destination}</strong>{e.casino_name&&<small>{e.casino_name}</small>}</td>
                   <td>
-                    {p(requestTypes[e.request_type])}
+                    {p(requestTypes[e.request_type])}<small>{e.services?.join(" · ")}</small>
                     <small>
                       {e.start_date} → {e.end_date} · {e.party} {t("adults", "ενήλικες")}
                     </small>
@@ -87,6 +88,7 @@ function Dashboard() {
             <div className="empty">{t("No enquiries yet.", "Δεν υπάρχουν αιτήματα ακόμη.")}</div>
           )}
         </div>
+        <CustomerProfileEditor profile={profile.data}/>
       </div>
     </main>
   );
