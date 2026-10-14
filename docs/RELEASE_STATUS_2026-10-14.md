@@ -17,6 +17,7 @@ Approved midnight navy / champagne gold / ivory design remains locked. The exist
 - Email/WhatsApp Business notifications deferred until business address/number and providers are available.
 
 ## CI note
+
 2026-10-14: formatting-only fixes applied with GitHub Actions. Full application verification requires successful checks on the latest commit; end-to-end customer flows remain separate blockers.
 
 ## Verified so far

@@ -415,7 +415,8 @@ export const globalDestinations: GlobalDestination[] = [
     photoFile: "Sacramento, California skyline 2026.jpg",
     photoCreator: "Quintin Soloviev",
     photoLicense: "CC BY 4.0",
-    photoPage: "https://commons.wikimedia.org/wiki/File:Sacramento,_California_skyline_2026.jpg",
+    photoPage:
+      "https://commons.wikimedia.org/wiki/File:Sacramento,_California_skyline_2026.jpg",
     venueIds: ["thunder-valley"],
   },
   {
@@ -494,7 +495,8 @@ export const globalDestinations: GlobalDestination[] = [
     photoFile: "Casinos and beach in Biloxi, Mississippi.jpg",
     photoCreator: "Nicolas Henderson",
     photoLicense: "CC BY 2.0",
-    photoPage: "https://commons.wikimedia.org/wiki/File:Casinos_and_beach_in_Biloxi,_Mississippi.jpg",
+    photoPage:
+      "https://commons.wikimedia.org/wiki/File:Casinos_and_beach_in_Biloxi,_Mississippi.jpg",
     venueIds: ["beau-rivage"],
   },
   {
@@ -509,7 +511,8 @@ export const globalDestinations: GlobalDestination[] = [
     photoFile: "Choctaw Casino Durant 2023.jpg",
     photoCreator: "Fkbowen",
     photoLicense: "CC BY-SA 4.0",
-    photoPage: "https://commons.wikimedia.org/wiki/File:Choctaw_Casino_Durant_2023.jpg",
+    photoPage:
+      "https://commons.wikimedia.org/wiki/File:Choctaw_Casino_Durant_2023.jpg",
     venueIds: ["choctaw-durant"],
   },
   {
