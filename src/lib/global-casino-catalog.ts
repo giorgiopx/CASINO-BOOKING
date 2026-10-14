@@ -40,7 +40,7 @@ export const globalVenues: GlobalCasinoVenue[] = [
   { id:"yaamava",name:"Yaamava' Resort & Casino at San Manuel",locality:"Highland",state:"California",country:"US",officialUrl:"https://www.yaamava.com/",status:"operating",accommodation:"on-site",gaming:"casino",sourceChecked:"2026-10-14",notes:["Resort casino in the San Bernardino region.","Casino resort στην περιοχή Σαν Μπερναρντίνο."] },
   { id:"morongo",name:"Morongo Casino Resort & Spa",locality:"Cabazon",state:"California",country:"US",officialUrl:"https://www.morongocasinoresort.com/",status:"operating",accommodation:"on-site",gaming:"casino",sourceChecked:"2026-10-14",notes:["Casino and hotel near Palm Springs.","Καζίνο και ξενοδοχείο κοντά στο Παλμ Σπρινγκς."] },
   { id:"thunder-valley",name:"Thunder Valley Casino Resort",locality:"Lincoln (Sacramento region)",state:"California",country:"US",officialUrl:"https://www.thundervalleyresort.com/",status:"operating",accommodation:"on-site",gaming:"casino",sourceChecked:"2026-10-14",notes:["Casino hotel near Sacramento.","Ξενοδοχείο-καζίνο κοντά στο Σακραμέντο."] },
-  { id:"resorts-world-nyc",name:"Resorts World New York City",locality:"Queens, New York City",state:"New York",country:"US",officialUrl:"https://rwnewyork.com/about/",status:"operating",accommodation:"nearby",gaming:"electronic-gaming",sourceChecked:"2026-10-14",notes:["Queens gaming facility: slots/electronic games; do not imply traditional live tables or on-site hotel.","Χώρος ηλεκτρονικών παιχνιδιών στο Κουίνς, όχι ισοδύναμος με ολοκληρωμένο casino resort."] },
+  { id:"resorts-world-nyc",name:"Resorts World New York City",locality:"Queens, New York City",state:"New York",country:"US",officialUrl:"https://rwnewyork.com/about/",status:"operating",accommodation:"on-site",gaming:"electronic-gaming",sourceChecked:"2026-10-14",notes:["Queens gaming facility with electronic games and adjacent Hyatt Regency JFK Airport hotel; traditional live tables are not implied.","Χώρος ηλεκτρονικών παιχνιδιών στο Κουίνς, με γειτονικό ξενοδοχείο Hyatt Regency JFK Airport."] },
   { id:"empire-city",name:"Empire City Casino at Yonkers Raceway",locality:"Yonkers (NYC area)",state:"New York",country:"US",officialUrl:"https://empirecitycasino.mgmresorts.com/en.html",status:"operating",accommodation:"nearby",gaming:"electronic-gaming",sourceChecked:"2026-10-14",notes:["Gaming/racetrack facility north of Manhattan, not a central Manhattan hotel.","Χώρος ηλεκτρονικών παιχνιδιών στο Γιόνκερς, βόρεια του Μανχάταν."] },
   { id:"borgata",name:"Borgata Hotel Casino & Spa",locality:"Atlantic City",state:"New Jersey",country:"US",officialUrl:"https://borgata.mgmresorts.com/en.html",status:"operating",accommodation:"on-site",gaming:"casino",sourceChecked:"2026-10-14",notes:["Atlantic City marina-district casino resort and hotel.","Casino resort και ξενοδοχείο στο Atlantic City."] },
   { id:"hard-rock-atlantic-city",name:"Hard Rock Hotel & Casino Atlantic City",locality:"Atlantic City",state:"New Jersey",country:"US",officialUrl:"https://casino.hardrock.com/atlantic-city/hotel-and-casino",status:"operating",accommodation:"on-site",gaming:"casino",sourceChecked:"2026-10-14",notes:["Boardwalk casino hotel and entertainment complex.","Ξενοδοχείο-καζίνο στο Boardwalk του Atlantic City."] },
@@ -71,3 +71,26 @@ export function photoUrl(destination: GlobalDestination): string | null {
   return destination.photoFile ? commons(destination.photoFile) : null;
 }
 export const operatingGlobalVenues = globalVenues.filter(v => v.status === 'operating');
+
+export type GlobalCasinoHotel = { venueId:string; hotelName:string; officialHotelUrl:string; location:"on-site"|"adjacent"|"nearby" };
+/** Hotel sources are operator/hotel official pages; no room inventory or rates are integrated. */
+export const globalCasinoHotels: GlobalCasinoHotel[] = [
+  {venueId:"bellagio",hotelName:"Bellagio Las Vegas Hotel",officialHotelUrl:"https://bellagio.mgmresorts.com/en.html",location:"on-site"},
+  {venueId:"wynn-las-vegas",hotelName:"Wynn Las Vegas & Encore Hotels",officialHotelUrl:"https://www.wynnlasvegas.com/",location:"on-site"},
+  {venueId:"venetian",hotelName:"The Venetian & The Palazzo Suites",officialHotelUrl:"https://www.venetianlasvegas.com/",location:"on-site"},
+  {venueId:"hard-rock-hollywood",hotelName:"The Guitar Hotel / Oasis Tower",officialHotelUrl:"https://casino.hardrock.com/hollywood",location:"on-site"},
+  {venueId:"hard-rock-tampa",hotelName:"Seminole Hard Rock Hotel Tampa",officialHotelUrl:"https://casino.hardrock.com/tampa/hotel",location:"on-site"},
+  {venueId:"pechanga",hotelName:"Pechanga Resort Hotel",officialHotelUrl:"https://www.pechanga.com/stay",location:"on-site"},
+  {venueId:"yaamava",hotelName:"Yaamava' Resort Hotel",officialHotelUrl:"https://www.yaamava.com/",location:"on-site"},
+  {venueId:"morongo",hotelName:"Morongo Resort Hotel",officialHotelUrl:"https://www.morongocasinoresort.com/",location:"on-site"},
+  {venueId:"thunder-valley",hotelName:"Thunder Valley Resort Hotel",officialHotelUrl:"https://www.thundervalleyresort.com/hotel/rooms",location:"on-site"},
+  {venueId:"resorts-world-nyc",hotelName:"Hyatt Regency JFK Airport at Resorts World New York",officialHotelUrl:"https://rwnewyork.com/hotel/",location:"adjacent"},
+  {venueId:"empire-city",hotelName:"Hampton Inn & Suites Yonkers – Westchester / Area Hotels",officialHotelUrl:"https://empirecitycasino.mgmresorts.com/en/getting-here/area-hotels.html",location:"nearby"},
+  {venueId:"borgata",hotelName:"Borgata Hotel & MGM Tower",officialHotelUrl:"https://borgata.mgmresorts.com/en.html",location:"on-site"},
+  {venueId:"hard-rock-atlantic-city",hotelName:"Hard Rock Hotel Atlantic City",officialHotelUrl:"https://casino.hardrock.com/atlantic-city/hotel-and-casino",location:"on-site"},
+  {venueId:"mohegan-sun",hotelName:"Mohegan Sun Hotel",officialHotelUrl:"https://mohegansun.com/",location:"on-site"},
+  {venueId:"foxwoods",hotelName:"Grand Pequot Tower / Fox Tower / Great Cedar Hotel",officialHotelUrl:"https://foxwoods.com/hotels",location:"on-site"},
+  {venueId:"mgm-national-harbor",hotelName:"MGM National Harbor Hotel",officialHotelUrl:"https://mgmnationalharbor.mgmresorts.com/en.html",location:"on-site"},
+  {venueId:"beau-rivage",hotelName:"Beau Rivage Hotel",officialHotelUrl:"https://beaurivage.mgmresorts.com/en/hotel.html",location:"on-site"},
+  {venueId:"choctaw-durant",hotelName:"Choctaw Durant Sky / Grand / Spa Tower Hotels",officialHotelUrl:"https://www.choctawcasinos.com/durant/stay/",location:"on-site"}
+];
