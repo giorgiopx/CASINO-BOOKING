@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +24,7 @@ export function CustomerProfileEditor({ profile }: { profile: Profile | null | u
     setCustomerType(profile.customer_type||"individual");
     setCompanyName(profile.company_name||"");
   },[profile]);
-  async function save(e:React.FormEvent) {
+  async function save(e:FormEvent) {
     e.preventDefault();
     if(!session)return;
     setBusy(true);
