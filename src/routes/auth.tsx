@@ -32,6 +32,11 @@ function AuthPage() {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget));
+    if (mode === "signup" && (f["adultConfirmation"] !== "on" || f["privacyAcceptance"] !== "on")) {
+      setMsg(t("Please confirm your legal age and accept the privacy/terms notices before creating an account.",
+        "Επιβεβαιώστε τη νόμιμη ηλικία σας και αποδεχθείτε τις ενημερώσεις απορρήτου και όρων για να δημιουργήσετε λογαριασμό."));
+      return;
+    }
     const parsed = creds.safeParse(f);
     if (!parsed.success) {
       setMsg(t("Enter a valid email and a password of at least 8 characters.", "Εισάγετε έγκυρο email και κωδικό τουλάχιστον 8 χαρακτήρων."));
@@ -92,6 +97,23 @@ function AuthPage() {
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
               />
             </label>
+            {mode === "signup" && (
+              <div className="grid gap-3 text-sm">
+                <label className="flex items-start gap-2">
+                  <input type="checkbox" name="adultConfirmation" required />
+                  <span>{t("I am at least 18, and understand that each casino has its own legal age requirement (21+ in some US locations).",
+                    "Είμαι τουλάχιστον 18 ετών και κατανοώ ότι κάθε καζίνο εφαρμόζει τη νόμιμη ηλικία εισόδου (σε ορισμένες περιοχές των ΗΠΑ 21+).")}</span>
+                </label>
+                <label className="flex items-start gap-2">
+                  <input type="checkbox" name="privacyAcceptance" required />
+                  <span>{t("I have read the privacy notice and terms for a free travel enquiry account.",
+                    "Έχω διαβάσει την πολιτική απορρήτου και τους όρους του δωρεάν λογαριασμού ταξιδιωτικών αιτημάτων.")}{" "}
+                    <a className="underline" href="/privacy">{t("Privacy","Απόρρητο")}</a>{" · "}
+                    <a className="underline" href="/terms">{t("Terms","Όροι")}</a>
+                  </span>
+                </label>
+              </div>
+            )}
             {msg && <p role="alert" className="notice my-0">{msg}</p>}
             <Button variant="secondary" size="lg" type="submit" disabled={busy}>
               {mode === "signin" ? t("Sign in", "Σύνδεση") : t("Create account", "Δημιουργία λογαριασμού")}
