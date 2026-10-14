@@ -17,9 +17,5 @@ jobs:
       - run: bunx tsc --noEmit
       - run: bun run lint
       - run: bun run test
-      - name: Verify approved design images
-        run: |
-          test -f public/design-reference/hero-reference.webp
-          for country in monaco cyprus greece italy france spain portugal serbia romania slovenia bulgaria croatia; do
-            test -f "public/design-reference/$country.webp"
-          done
+      - name: Verify exact approved design images (SHA256)
+        run: node scripts/import-approved-design.mjs
