@@ -41,3 +41,6 @@
 .global-empty{padding:65px;text-align:center}
 @media(max-width:1120px){.global-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:720px){.global-shell{padding:0 16px}.global-grid{grid-template-columns:1fr}.global-hero{padding:38px 0}.global-card-photo{height:235px}}
+
+.global-hotel{border-left:2px solid #d2a560;padding:7px 9px;background:#faf6ef;color:#344151!important;font-size:11px!important;line-height:1.6!important}
+.global-hotel strong{color:#846127}.global-hotel small{color:#68778a}.global-hotel a{color:#1d5a7e;text-decoration:underline}
