@@ -8,6 +8,7 @@ import { useAuth } from "@/components/casino/auth";
 import { fetchEnquiries, fetchProfilesByIds } from "@/lib/enquiry-db";
 import { requestTypes, statusPairs } from "@/lib/casino-data";
 import { casinoHead } from "@/lib/casino-seo";
+import { AdminEnquiryDetails } from "@/components/casino/admin-details";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => casinoHead("Admin CRM", "Administrator-only enquiry management for CasinoBooking.com."),
@@ -20,6 +21,7 @@ function Admin() {
   const qc = useQueryClient();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const enquiries = useQuery({ queryKey: ["enquiries", "admin"], queryFn: fetchEnquiries, enabled: isAdmin });
   const ids = [...new Set((enquiries.data ?? []).map((e) => e.user_id))];
   const profiles = useQuery({
@@ -62,7 +64,7 @@ function Admin() {
   }
 
   return (
-    <main className="section">
+    <main className="section" style={{background:"linear-gradient(180deg,#f8f5f0,#fff)",minHeight:"95vh"}}>
       <div className="container">
         <div className="eyebrow">{t("ADMIN CRM · ADMINISTRATORS ONLY", "CRM · ΜΟΝΟ ΔΙΑΧΕΙΡΙΣΤΕΣ")}</div>
         <h1 className="page-title">{t("Enquiry requests", "Αιτήματα")}</h1>
@@ -118,9 +120,16 @@ function Admin() {
                     {e.destination}
                     <small>{p(requestTypes[e.request_type])}</small>
                     <small>{e.start_date} → {e.end_date} · {e.party} {t("adults", "ενήλικες")}</small>
+                    <small>{(e.services || []).join(" · ")}</small>
+                    {e.casino_name && <small>{t("Casino","Καζίνο")}: {e.casino_name}</small>}
+                    {e.company_name && <small>{t("Company","Εταιρεία")}: {e.company_name}</small>}
                     {e.message && <small>{e.message}</small>}
                   </td>
                   <td>
+                    <button type="button" style={{background:"#e4b56f",color:"#092038",padding:"6px 10px",borderRadius:6,fontWeight:700,display:"block",marginBottom:8}}
+                      onClick={()=>setSelectedId(selectedId===e.id?null:e.id)} aria-expanded={selectedId===e.id}>
+                      {selectedId===e.id?t("Close file","Κλείσιμο καρτέλας"):t("Open customer file","Άνοιγμα καρτέλας")}
+                    </button>
                     <select value={e.status} onChange={(ev) => changeStatus(e.id, ev.target.value)} aria-label={`${t("Status for", "Κατάσταση για")} ${e.ref}`}>
                       {Object.entries(statusPairs).map(([k, v]) => (
                         <option key={k} value={k}>{p(v)}</option>
@@ -133,6 +142,9 @@ function Admin() {
           </table>
           {enquiries.isSuccess && rows.length === 0 && <div className="empty">{t("No matching records", "Δεν βρέθηκαν εγγραφές")}</div>}
         </div>
+        {selectedId && (()=>{const current=(enquiries.data||[]).find(e=>e.id===selectedId);
+          return current?<AdminEnquiryDetails enquiry={current} customerRef={refOf(current.user_id)}/>:null;})()}
+        {enquiries.isError && <p role="alert">{t("Could not load CRM enquiries.","Αδυναμία φόρτωσης αιτημάτων CRM.")}</p>}
       </div>
     </main>
   );
