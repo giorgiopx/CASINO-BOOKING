@@ -17,6 +17,10 @@ export type Database = {
       enquiries: {
         Row: {
           created_at: string
+          casino_name: string | null
+          company_name: string | null
+          services: string[]
+          trip_preferences: Json
           customer_type: string
           destination: string
           email: string
@@ -38,6 +42,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          casino_name?: string | null
+          company_name?: string | null
+          services?: string[]
+          trip_preferences?: Json
           customer_type: string
           destination: string
           email: string
@@ -59,6 +67,10 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          casino_name?: string | null
+          company_name?: string | null
+          services?: string[]
+          trip_preferences?: Json
           customer_type?: string
           destination?: string
           email?: string
@@ -80,23 +92,59 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_notes: {
+        Row: { id: string; enquiry_id: string; author_id: string; body: string; created_at: string }
+        Insert: { id?: string; enquiry_id: string; author_id: string; body: string; created_at?: string }
+        Update: { id?: string; enquiry_id?: string; author_id?: string; body?: string; created_at?: string }
+        Relationships: []
+      }
+      crm_tasks: {
+        Row: { id: string; enquiry_id: string; title: string; assigned_to: string | null; due_date: string | null; status: string; created_by: string; created_at: string }
+        Insert: { id?: string; enquiry_id: string; title: string; assigned_to?: string | null; due_date?: string | null; status?: string; created_by?: string; created_at?: string }
+        Update: { id?: string; enquiry_id?: string; title?: string; assigned_to?: string | null; due_date?: string | null; status?: string; created_by?: string; created_at?: string }
+        Relationships: []
+      }
+      itinerary_segments: {
+        Row: { id: string; enquiry_id: string; service_kind: string; summary: string; details: Json; status: string; created_at: string; updated_at: string }
+        Insert: { id?: string; enquiry_id: string; service_kind: string; summary: string; details?: Json; status?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; enquiry_id?: string; service_kind?: string; summary?: string; details?: Json; status?: string; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      enquiry_status_events: {
+        Row: { id: string; enquiry_id: string; customer_id: string; actor_id: string | null; old_status: string | null; new_status: string; changed_at: string }
+        Insert: { id?: string; enquiry_id: string; customer_id: string; actor_id?: string | null; old_status?: string | null; new_status: string; changed_at?: string }
+        Update: { id?: string; enquiry_id?: string; customer_id?: string; actor_id?: string | null; old_status?: string | null; new_status?: string; changed_at?: string }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           customer_ref: string
           full_name: string | null
+          phone: string | null
+          residence: string | null
+          customer_type: string | null
+          company_name: string | null
           id: string
         }
         Insert: {
           created_at?: string
           customer_ref?: string
           full_name?: string | null
+          phone?: string | null
+          residence?: string | null
+          customer_type?: string | null
+          company_name?: string | null
           id: string
         }
         Update: {
           created_at?: string
           customer_ref?: string
           full_name?: string | null
+          phone?: string | null
+          residence?: string | null
+          customer_type?: string | null
+          company_name?: string | null
           id?: string
         }
         Relationships: []
