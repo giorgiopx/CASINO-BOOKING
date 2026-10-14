@@ -22,5 +22,7 @@ jobs:
         run: bun run build
       - name: Unit tests
         run: bun run test
+      - name: Normalize Lovable-generated formatting (CI workspace only)
+        run: bunx prettier --write .
       - name: Lint
         run: bun run lint
