@@ -6,6 +6,27 @@ export const countries: Pair[] = [
   ["Slovenia", "Σλοβενία"],
   ["Greece", "Ελλάδα"],
   ["Bulgaria", "Βουλγαρία"],
+  // Existing indices 0–4 are stable and referenced by the original directory.
+  ["Monaco", "Μονακό"],
+  ["Italy", "Ιταλία"],
+  ["France", "Γαλλία"],
+  ["Spain", "Ισπανία"],
+  ["Portugal", "Πορτογαλία"],
+  ["Serbia", "Σερβία"],
+  ["Romania", "Ρουμανία"],
+  ["Croatia", "Κροατία"],
+  // US destinations are searchable travel areas, not separate sovereign countries.
+  ["Las Vegas, Nevada", "Λας Βέγκας, Νεβάδα"],
+  ["Miami area, Florida", "Περιοχή Μαϊάμι, Φλόριντα"],
+  ["Tampa, Florida", "Τάμπα, Φλόριντα"],
+  ["Southern California", "Νότια Καλιφόρνια"],
+  ["Sacramento area, California", "Περιοχή Σακραμέντο, Καλιφόρνια"],
+  ["New York City area", "Περιοχή Νέας Υόρκης"],
+  ["Atlantic City, New Jersey", "Ατλάντικ Σίτι, Νιου Τζέρσεϊ"],
+  ["Connecticut", "Κονέκτικατ"],
+  ["Washington DC area, Maryland", "Περιοχή Ουάσινγκτον, Μέριλαντ"],
+  ["Biloxi, Mississippi", "Μπιλόξι, Μισισίπι"],
+  ["Durant, Oklahoma", "Ντουράντ, Οκλαχόμα"],
 ];
 export const casinos = [
   {
