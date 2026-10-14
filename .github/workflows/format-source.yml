@@ -1,8 +1,6 @@
 name: Format and verify CasinoBooking source
 on:
   push:
-    paths:
-      - '.github/workflows/format-source.yml'
     branches:
       - feature/restore-lovable-casinobooking
 permissions:
