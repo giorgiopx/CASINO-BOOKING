@@ -36,18 +36,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const userId = session?.user.id;
   useEffect(() => {
-    if (!userId) {
-      setIsAdmin(false);
-      return;
-    }
-    // UI hint only — the database RLS policies are what actually enforce admin access.
-    supabase
-      .from("user_roles")
+    // Never carry an admin UI state from one session into a new user's session.
+    let active = true;
+    setIsAdmin(false);
+    if (!userId) return () => { active = false; };
+    // A UI hint only: RLS remains the authoritative gate on database operations.
+    void supabase.from("user_roles")
       .select("role")
       .eq("user_id", userId)
       .eq("role", "admin")
       .maybeSingle()
-      .then(({ data }) => setIsAdmin(!!data));
+      .then(({ data, error }) => {
+        if (active) setIsAdmin(!error && !!data);
+      });
+    return () => { active = false; };
   }, [userId]);
 
   async function signOut() {
