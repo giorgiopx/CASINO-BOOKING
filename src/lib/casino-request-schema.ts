@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { casinos, countries } from "./casino-data";
+import { operatingGlobalVenues } from "./global-casino-catalog";
 
 const requiredText = z.string().trim().min(1).max(80);
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
@@ -13,7 +14,7 @@ export const enquirySchema = z.object({
   phone: z.string().trim().max(24).regex(/^\+[\d\s()-]{7,22}$/).refine((value) => value.replace(/\D/g, "").length >= 7 && value.replace(/\D/g, "").length <= 15),
   residence: requiredText,
   customerType: z.enum(["individual", "business"]),
-  destination: z.string().refine((value) => value === "undecided" || casinos.some((casino) => casino.name === value) || countries.slice(1).some((country) => country[0] === value)),
+  destination: z.string().refine((value) => value === "undecided" || casinos.some((casino) => casino.name === value) || countries.slice(1).some((country) => country[0] === value) || operatingGlobalVenues.some((venue) => venue.name === value)),
   start: date,
   end: date,
   party: z.string().regex(/^\d+$/).refine((value) => Number(value) >= 1 && Number(value) <= 200),
