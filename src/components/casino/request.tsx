@@ -4,6 +4,7 @@ import { CheckCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { casinos, countries, requestTypes } from "@/lib/casino-data";
+import { operatingGlobalVenues } from "@/lib/global-casino-catalog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./auth";
 import { useCasino } from "./context";
@@ -220,6 +221,13 @@ export function RequestPage({
                             : ""}
                         </option>
                       ))}
+                      <optgroup label={t("United States — verified venue candidates","ΗΠΑ — τεκμηριωμένοι χώροι")}>
+                        {operatingGlobalVenues.map((venue) => (
+                          <option key={venue.id} value={venue.name}>
+                            {venue.name} — {venue.locality}, {venue.state}
+                          </option>
+                        ))}
+                      </optgroup>
                       {countries.slice(1).map((c) => (
                         <option key={c[0]} value={c[0]}>
                           {p(c)}
