@@ -24,5 +24,7 @@ jobs:
         run: bun run test
       - name: Normalize Lovable-generated formatting (CI workspace only)
         run: bunx prettier --write .
+      - name: Normalize lint autofixable formatting (CI workspace only)
+        run: bunx eslint . --fix
       - name: Lint
         run: bun run lint
