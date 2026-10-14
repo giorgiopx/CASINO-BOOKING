@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCasino } from "./context";
@@ -7,9 +7,9 @@ import type { Enquiry } from "@/lib/enquiry-db";
 import { toast } from "sonner";
 
 const kinds = ["casino","flight","hotel","transfer","cruise","package"] as const;
-const card: React.CSSProperties = { border:"1px solid #d8c49a", borderRadius:12, padding:20, background:"#ffffff", boxShadow:"0 2px 8px #001c3012" };
-const head: React.CSSProperties = { color:"#092239", fontFamily:"Georgia,serif", fontSize:24, fontWeight:500 };
-const button: React.CSSProperties = { background:"#d9ac68", color:"#082039", fontWeight:700, padding:"9px 18px", border:0, borderRadius:8, cursor:"pointer" };
+const card: CSSProperties = { border:"1px solid #d8c49a", borderRadius:12, padding:20, background:"#ffffff", boxShadow:"0 2px 8px #001c3012" };
+const head: CSSProperties = { color:"#092239", fontFamily:"Georgia,serif", fontSize:24, fontWeight:500 };
+const button: CSSProperties = { background:"#d9ac68", color:"#082039", fontWeight:700, padding:"9px 18px", border:0, borderRadius:8, cursor:"pointer" };
 export function AdminEnquiryDetails({ enquiry, customerRef }: { enquiry: Enquiry; customerRef: string }) {
   const { t } = useCasino();
   const { session, isAdmin } = useAuth();
