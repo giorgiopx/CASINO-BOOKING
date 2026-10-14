@@ -25,6 +25,25 @@ export function RequestPage({
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const v = (key: string) => String(f.get(key) || "").trim();
+    const serviceAllowed = ["casino", "flight", "hotel", "transfer", "cruise", "package"];
+    const services = f.getAll("services").map(String).filter(x => serviceAllowed.includes(x));
+    if (services.length === 0) {
+      setError(t("Select at least one travel service.", "Επιλέξτε τουλάχιστον μία ταξιδιωτική υπηρεσία."));
+      return;
+    }
+    const tripPreferences = {
+      flightOrigin: v("flightOrigin").slice(0,120),
+      flightDestination: v("flightDestination").slice(0,120),
+      flightType: v("flightType"),
+      preferredAirline: v("preferredAirline").slice(0,100),
+      hotelCategory: v("hotelCategory"),
+      rooms: v("rooms"),
+      transferPickup: v("transferPickup").slice(0,140),
+      transferDestination: v("transferDestination").slice(0,140),
+      transferBags: v("transferBags"),
+      vehicleType: v("vehicleType"),
+      specialRequirements: v("specialRequirements").slice(0,1200),
+    };
     if (v("end") < v("start")) {
       setError(
         t(
@@ -66,6 +85,10 @@ export function RequestPage({
         residence: d.residence,
         customer_type: d.customerType,
         destination: d.destination,
+        casino_name: v("casinoName").slice(0,160) || null,
+        company_name: d.customerType === "business" ? v("companyName").slice(0,160) || null : null,
+        services,
+        trip_preferences: tripPreferences,
         start_date: d.start,
         end_date: d.end,
         party: Number(d.party),
@@ -170,6 +193,14 @@ export function RequestPage({
                       <option value="business">{t("Business", "Επιχείρηση")}</option>
                     </select>
                   </label>
+                  <label>
+                    {t("Company name (if applicable)", "Επωνυμία εταιρείας (εάν υπάρχει)")}
+                    <input name="companyName" maxLength={160} autoComplete="organization" />
+                  </label>
+                  <label>
+                    {t("Specific casino (optional)", "Συγκεκριμένο καζίνο (προαιρετικά)")}
+                    <input name="casinoName" maxLength={160} placeholder={t("Any casino / specify name", "Οποιοδήποτε / γράψτε το όνομα")} />
+                  </label>
                   <label className="span-two">
                     {t("Destination / casino interest", "Προορισμός / καζίνο ενδιαφέροντος")} *
                     <select
@@ -198,6 +229,58 @@ export function RequestPage({
                         {t("Help me choose", "Βοηθήστε με να επιλέξω")}
                       </option>
                     </select>
+                  </label>
+                  <fieldset className="span-two" style={{border:"1px solid #d2c4a8", padding:18, borderRadius:8}}>
+                    <legend style={{padding:"0 8px",fontWeight:700}}>{t("Services required (select all)", "Ζητούμενες υπηρεσίες (πολλαπλή επιλογή)")}</legend>
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(145px,1fr))",gap:12}}>
+                      {[
+                        ["casino","Casino assistance","Εξυπηρέτηση καζίνο"],
+                        ["flight","Flights","Αεροπορικά"],
+                        ["hotel","Hotel stay","Διαμονή"],
+                        ["transfer","Transfers","Μεταφορές"],
+                        ["cruise","Cruises","Κρουαζιέρες"],
+                        ["package","Complete package","Πλήρες πακέτο"],
+                      ].map(([key,en,el]) => <label key={key} style={{display:"flex",gap:8,alignItems:"center"}}>
+                        <input type="checkbox" name="services" value={key} defaultChecked={key==="casino"} />
+                        {t(en,el)}
+                      </label>)}
+                    </div>
+                  </fieldset>
+                  <div className="span-two"><h3 style={{fontWeight:700,margin:"18px 0 0"}}>{t("Travel preferences", "Ταξιδιωτικές προτιμήσεις")}</h3>
+                    <p style={{fontSize:12}}>{t("Complete the fields that apply. No passport or payment information is required.", "Συμπληρώστε όσα ισχύουν. Δεν απαιτούνται διαβατήρια ή στοιχεία πληρωμής.")}</p>
+                  </div>
+                  <label>{t("Origin airport / city", "Αεροδρόμιο / πόλη αναχώρησης")}
+                    <input name="flightOrigin" maxLength={120} placeholder="ATH / Athens" />
+                  </label>
+                  <label>{t("Destination airport / city", "Αεροδρόμιο / πόλη άφιξης")}
+                    <input name="flightDestination" maxLength={120} placeholder="NCE / Nice" />
+                  </label>
+                  <label>{t("Flight type", "Τύπος πτήσης")}
+                    <select name="flightType"><option value="return">{t("Return", "Με επιστροφή")}</option><option value="one_way">{t("One way", "Μονή")}</option></select>
+                  </label>
+                  <label>{t("Preferred airline", "Προτιμώμενη αεροπορική")}
+                    <input name="preferredAirline" maxLength={100} placeholder={t("Any airline", "Οποιαδήποτε")} />
+                  </label>
+                  <label>{t("Hotel category", "Κατηγορία ξενοδοχείου")}
+                    <select name="hotelCategory"><option value="any">{t("Any", "Οποιαδήποτε")}</option><option value="4-star">4★</option><option value="5-star">5★</option><option value="resort">Resort</option></select>
+                  </label>
+                  <label>{t("Number of rooms", "Αριθμός δωματίων")}
+                    <input name="rooms" type="number" min="1" max="100" defaultValue="1"/>
+                  </label>
+                  <label>{t("Transfer pickup", "Σημείο παραλαβής transfer")}
+                    <input name="transferPickup" maxLength={140}/>
+                  </label>
+                  <label>{t("Transfer destination", "Προορισμός transfer")}
+                    <input name="transferDestination" maxLength={140}/>
+                  </label>
+                  <label>{t("Luggage", "Αποσκευές")}
+                    <select name="transferBags"><option value="standard">{t("Standard luggage", "Τυπικές αποσκευές")}</option><option value="large">{t("Large / extra luggage", "Μεγάλες / επιπλέον")}</option></select>
+                  </label>
+                  <label>{t("Vehicle preference", "Επιθυμητό όχημα")}
+                    <select name="vehicleType"><option value="any">{t("Any", "Οποιοδήποτε")}</option><option value="sedan">Sedan</option><option value="minivan">Minivan</option><option value="luxury">Luxury</option></select>
+                  </label>
+                  <label className="span-two">{t("Additional travel requirements", "Επιπλέον ταξιδιωτικές απαιτήσεις")}
+                    <textarea name="specialRequirements" maxLength={1200} rows={3}/>
                   </label>
                   <label>
                     {t("Departure date", "Ημερομηνία αναχώρησης")} *
