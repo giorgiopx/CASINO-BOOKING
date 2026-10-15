@@ -1,0 +1,43 @@
+name: Import Licensed Global Destination Photos
+on:
+  push:
+    branches:
+      - casino-preview
+    paths:
+      - ".github/workflows/import-global-preview-images.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: casino-preview
+          persist-credentials: true
+      - uses: oven-sh/setup-bun@v2
+      - name: Download properly attributed licensed travel photographs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p showcase/design-reference
+          curl -L --fail --retry 3 --connect-timeout 15 --max-time 120 -A 'CasinoBookingTravelPreview/1.0 (editorial asset rights)' -o showcase/design-reference/usa.jpg 'https://commons.wikimedia.org/wiki/Special:FilePath/Las_Vegas_Strip_at_night_-_panoramio.jpg'
+          curl -L --fail --retry 3 --connect-timeout 15 --max-time 120 -A 'CasinoBookingTravelPreview/1.0 (editorial asset rights)' -o showcase/design-reference/russia.jpg 'https://commons.wikimedia.org/wiki/Special:FilePath/Krasnaya_Polyana_Mountains.JPG'
+          curl -L --fail --retry 3 --connect-timeout 15 --max-time 120 -A 'CasinoBookingTravelPreview/1.0 (editorial asset rights)' -o showcase/design-reference/uae.jpg 'https://commons.wikimedia.org/wiki/Special:FilePath/Ras_al_khaimah_mountains.jpg'
+          for x in usa russia uae; do
+            echo "$x: $(file -b --mime-type showcase/design-reference/$x.jpg)"
+            test "$(file -b --mime-type showcase/design-reference/$x.jpg)" = "image/jpeg"
+            test "$(stat -c%s showcase/design-reference/$x.jpg)" -gt 30000
+          done
+      - name: Use local assets for reliable card rendering
+        run: |
+          bun -e 'const p="showcase/catalog.json";const d=JSON.parse(await Bun.file(p).text());for(const c of d.countries){if(["usa","russia","uae"].includes(c.slug)) c.image="./design-reference/"+c.slug+".jpg"}await Bun.write(p,JSON.stringify(d))'
+      - name: Commit only preview images and references
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add showcase/catalog.json showcase/design-reference/usa.jpg showcase/design-reference/russia.jpg showcase/design-reference/uae.jpg
+          git commit -m "assets: bundle Wikimedia-licensed USA Russia UAE photographs for offline-safe showcase"
+          git push origin HEAD:casino-preview
