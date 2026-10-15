@@ -63,7 +63,7 @@ try {
     assert.ok(await desktop.locator("body").evaluate((el) => el.scrollHeight > 2200));
     const enquiry = desktop.locator(".cb-extra-finale a[href^='/request']").first();
     await enquiry.click();
-    await desktop.waitForURL(/\\/request(?:\\?|$)/, { timeout: 12000 });
+    await desktop.waitForURL((url) => url.pathname === "/request", { timeout: 12000 });
     assert.ok((await desktop.locator('select[name="destination"]').count()) > 0);
   });
 
