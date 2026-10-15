@@ -1,0 +1,35 @@
+name: Probe Verified Temporary Preview Hosts
+on:
+  push:
+    branches: [casino-preview]
+    paths:
+      - ".github/workflows/probe-preview-hosts.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Test trustworthy public file-preview services
+        shell: bash
+        run: |
+          set +e
+          URLS=(
+            "https://cdn.jsdelivr.net/gh/giorgiopx/CASINO-BOOKING@casino-preview/showcase/index.html"
+            "https://rawcdn.githack.com/giorgiopx/CASINO-BOOKING/casino-preview/showcase/index.html"
+            "https://htmlpreview.github.io/?https://raw.githubusercontent.com/giorgiopx/CASINO-BOOKING/casino-preview/showcase/index.html"
+            "https://raw.githack.com/giorgiopx/CASINO-BOOKING/casino-preview/showcase/index.html"
+          )
+          for URL in "${URLS[@]}"; do
+            echo "::group::CHECK $URL"
+            curl -L -sS --max-time 20 -D /tmp/headers -o /tmp/body "$URL"
+            grep -iE '^HTTP/|^content-type:|^location:|^content-security-policy:' /tmp/headers || true
+            echo "FIRST 180 BYTES:"
+            head -c 180 /tmp/body | tr '\n' ' '
+            echo
+            echo "CASINOBOOKING HTML MARKER: "
+            grep -qi 'Popular Casino Destinations' /tmp/body && echo YES || echo NO
+            echo "::endgroup::"
+          done
