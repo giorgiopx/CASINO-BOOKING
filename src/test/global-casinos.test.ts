@@ -76,5 +76,23 @@ describe("Worldwide casino research and enquiry integration", () => {
         destination: "Wynn Al Marjan Island",
       }).success,
     ).toBe(false);
+    expect(
+      enquirySchema.safeParse({
+        ...example,
+        destination: "Hard Rock Hotel & Casino Athens",
+      }).success,
+    ).toBe(false);
+    expect(
+      enquirySchema.safeParse({
+        ...example,
+        destination: "City of Dreams Mediterranean",
+      }).success,
+    ).toBe(true);
+    expect(
+      enquirySchema.safeParse({
+        ...example,
+        destination: "Non-existent Casino Club",
+      }).success,
+    ).toBe(false);
   });
 });
