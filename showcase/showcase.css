@@ -859,3 +859,5 @@ select:focus-visible {
     height: 190px;
   }
 }
+
+.photo-credits{font-size:11px;color:#526172;line-height:1.6;margin:15px 12px 0}.photo-credits a{text-decoration:underline;text-decoration-color:#d9a25f}
