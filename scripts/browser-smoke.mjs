@@ -45,6 +45,28 @@ try {
       );
     },
   );
+  await check("Scrollable luxury landing sections and working enquiry CTA", async () => {
+    await desktop.goto(base + "/", { waitUntil: "domcontentloaded" });
+    for (const selector of [
+      ".cb-country-grid .cb-country",
+      ".cb-extra-featured .cb-extra-feature-card",
+      ".cb-extra-cruises",
+      ".cb-extra-concierge",
+      ".cb-extra-steps .cb-extra-step",
+      ".cb-extra-portals .cb-extra-portal-card",
+      ".cb-extra-accordion details",
+      ".cb-extra-footer",
+    ]) {
+      assert.ok((await desktop.locator(selector).count()) > 0, selector);
+    }
+    assert.equal(await desktop.locator(".cb-extra-steps .cb-extra-step").count(), 4);
+    assert.ok(await desktop.locator("body").evaluate((el) => el.scrollHeight > 2200));
+    const enquiry = desktop.locator(".cb-extra-finale a[href^='/request']").first();
+    await enquiry.click();
+    await desktop.waitForURL(/\\/request(?:\\?|$)/, { timeout: 12000 });
+    assert.ok((await desktop.locator('select[name="destination"]').count()) > 0);
+  });
+
   await desktop.screenshot({
     path: shots + "/home-desktop.png",
     fullPage: true,
