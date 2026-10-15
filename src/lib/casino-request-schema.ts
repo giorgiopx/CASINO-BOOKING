@@ -39,7 +39,9 @@ export const enquirySchema = z
           casinos.some((casino) => !casino.planned && casino.name === value) ||
           countries.slice(1).some((country) => country[0] === value) ||
           operatingGlobalVenues.some((venue) => venue.name === value) ||
-          approvedOperatingCandidates.some((venue) => venue.countrySlug !== "russia" && venue.name === value),
+          approvedOperatingCandidates.some(
+            (venue) => venue.countrySlug !== "russia" && venue.name === value,
+          ),
       ),
     start: date,
     end: date,

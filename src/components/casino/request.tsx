@@ -348,9 +348,17 @@ export function RequestPage({
                           </option>
                         ))}
                       </optgroup>
-                      <optgroup label={t("Europe — approved operator-listed venues", "Ευρώπη — καταχωρισμένα καζίνο")}>
+                      <optgroup
+                        label={t(
+                          "Europe — approved operator-listed venues",
+                          "Ευρώπη — καταχωρισμένα καζίνο",
+                        )}
+                      >
                         {approvedOperatingCandidates
-                          .filter((venue) => !["usa", "russia"].includes(venue.countrySlug))
+                          .filter(
+                            (venue) =>
+                              !["usa", "russia"].includes(venue.countrySlug),
+                          )
                           .map((venue) => (
                             <option key={venue.id} value={venue.name}>
                               {venue.name} — {venue.locality[0]}
