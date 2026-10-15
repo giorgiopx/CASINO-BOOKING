@@ -35,7 +35,7 @@ export const enquirySchema = z
       .refine(
         (value) =>
           value === "undecided" ||
-          casinos.some((casino) => casino.name === value) ||
+          casinos.some((casino) => !casino.planned && casino.name === value) ||
           countries.slice(1).some((country) => country[0] === value) ||
           operatingGlobalVenues.some((venue) => venue.name === value),
       ),
