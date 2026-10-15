@@ -147,7 +147,7 @@ function ApprovedDestinations() {
         <div className="approved-country-list">
           {results.map(({ country, venues }) => (
             <section key={country.slug} className="approved-country">
-              <div className="approved-country-heading">
+              <div className="approved-country-heading"><Link to="/destination/$slug" params={{ slug: country.slug }} className="approved-country-photo"><img src={country.image} alt={t(country.name[0],country.name[1]) + " — editorial destination photograph"} loading="lazy" onError={e=>{e.currentTarget.hidden=true}} /></Link>
                 <div className="approved-country-flag" aria-hidden="true">
                   {country.flag}
                 </div>
@@ -160,7 +160,7 @@ function ApprovedDestinations() {
                           "Ανεξάρτητος κατάλογος",
                         )}
                   </p>
-                  <h2>{country.name[lang === "el" ? 1 : 0]}</h2>
+                  <h2><Link to="/destination/$slug" params={{ slug: country.slug }}>{country.name[lang === "el" ? 1 : 0]} →</Link></h2>
                   <small>
                     {venues.length} {t("listed venues", "καταχωρίσεις")}
                   </small>
