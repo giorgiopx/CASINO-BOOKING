@@ -14,7 +14,7 @@ export const Route = createFileRoute("/request")({
   head: () =>
     casinoHead(
       "Plan your journey",
-      "Submit a sample travel enquiry and receive a visible reference. Demo only: no booking or contact message is sent.",
+      "Submit a free casino travel enquiry and track its reference in your account. An enquiry is not a confirmed booking; email and WhatsApp notifications are not yet enabled.",
     ),
   component: Page,
 });
