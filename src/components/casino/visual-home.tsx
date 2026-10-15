@@ -382,24 +382,72 @@ export function VisualHome() {
               )}
             </p>
           </section>
-          <section className="cb-global-extension" aria-label="International casino destination countries">
+          <section
+            className="cb-global-extension"
+            aria-label="International casino destination countries"
+          >
             <div className="cb-section-heading">
               <div>
-                <h2>{t("Global Premium Casino Destinations","Διεθνείς Premium Προορισμοί Καζίνο")}</h2>
-                <p>{t("Discover the United States, Russia and future resort development in the UAE. View casino information and official sources.","Ανακαλύψτε ΗΠΑ, Ρωσία και το μελλοντικό resort στα ΗΑΕ με επίσημες πηγές.")}</p>
+                <h2>
+                  {t(
+                    "Global Premium Casino Destinations",
+                    "Διεθνείς Premium Προορισμοί Καζίνο",
+                  )}
+                </h2>
+                <p>
+                  {t(
+                    "Discover the United States, Russia and future resort development in the UAE. View casino information and official sources.",
+                    "Ανακαλύψτε ΗΠΑ, Ρωσία και το μελλοντικό resort στα ΗΑΕ με επίσημες πηγές.",
+                  )}
+                </p>
               </div>
-              <Link to="/destinations">{t("All 15 countries","Και οι 15 χώρες")} <ArrowRight size={16}/></Link>
+              <Link to="/destinations">
+                {t("All 15 countries", "Και οι 15 χώρες")}{" "}
+                <ArrowRight size={16} />
+              </Link>
             </div>
             <div className="cb-global-photo-grid">
-              {approvedCountries.filter(c => c.kind !== "europe").map(c => (
-                <Link to="/destination/$slug" params={{ slug: c.slug }} className="cb-global-photo-card" key={c.slug}>
-                  <img loading="lazy" src={c.image} alt={t(c.name[0], c.name[1]) + " — editorial region photo"} onError={e => {e.currentTarget.hidden=true}} />
-                  <span><strong>{c.flag} {t(c.name[0],c.name[1])}</strong>
-                    <small>{c.kind === "planned" ? t("Future resort · not operating yet","Μελλοντικό resort · δεν λειτουργεί") : t("Explore casino venues","Εξερευνήστε τα καζίνο")}</small></span>
-                </Link>
-              ))}
+              {approvedCountries
+                .filter((c) => c.kind !== "europe")
+                .map((c) => (
+                  <Link
+                    to="/destination/$slug"
+                    params={{ slug: c.slug }}
+                    className="cb-global-photo-card"
+                    key={c.slug}
+                  >
+                    <img
+                      loading="lazy"
+                      src={c.image}
+                      alt={
+                        t(c.name[0], c.name[1]) + " — editorial region photo"
+                      }
+                      onError={(e) => {
+                        e.currentTarget.hidden = true;
+                      }}
+                    />
+                    <span>
+                      <strong>
+                        {c.flag} {t(c.name[0], c.name[1])}
+                      </strong>
+                      <small>
+                        {c.kind === "planned"
+                          ? t(
+                              "Future resort · not operating yet",
+                              "Μελλοντικό resort · δεν λειτουργεί",
+                            )
+                          : t("Explore casino venues", "Εξερευνήστε τα καζίνο")}
+                      </small>
+                    </span>
+                  </Link>
+                ))}
             </div>
-            <p className="cb-disclosure">{t("Russia is information-only pending sanctions and travel-compliance review. Wynn Al Marjan Island is planned for 2027, not open. Photos are editorial destination illustrations.","Η Ρωσία εμφανίζεται μόνο ενημερωτικά μέχρι τον έλεγχο ταξιδιωτικών περιορισμών και κυρώσεων. Το Wynn Al Marjan Island προβλέπεται για το 2027, δεν λειτουργεί ακόμη. Οι φωτογραφίες είναι ενδεικτικές προορισμών.")}</p>
+            <p className="cb-disclosure">
+              {t(
+                "Russia is information-only pending sanctions and travel-compliance review. Wynn Al Marjan Island is planned for 2027, not open. Photos are editorial destination illustrations.",
+                "Η Ρωσία εμφανίζεται μόνο ενημερωτικά μέχρι τον έλεγχο ταξιδιωτικών περιορισμών και κυρώσεων. Το Wynn Al Marjan Island προβλέπεται για το 2027, δεν λειτουργεί ακόμη. Οι φωτογραφίες είναι ενδεικτικές προορισμών.",
+              )}
+            </p>
           </section>
           <section
             className="cb-global-extension"
