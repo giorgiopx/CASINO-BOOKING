@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { casinos, countries, requestTypes } from "@/lib/casino-data";
 import { operatingGlobalVenues } from "@/lib/global-casino-catalog";
+import { approvedOperatingCandidates } from "@/lib/approved-casino-directory";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./auth";
 import { useCasino } from "./context";
@@ -346,6 +347,15 @@ export function RequestPage({
                             {venue.name} — {venue.locality}, {venue.state}
                           </option>
                         ))}
+                      </optgroup>
+                      <optgroup label={t("Europe — approved operator-listed venues", "Ευρώπη — καταχωρισμένα καζίνο")}>
+                        {approvedOperatingCandidates
+                          .filter((venue) => !["usa", "russia"].includes(venue.countrySlug))
+                          .map((venue) => (
+                            <option key={venue.id} value={venue.name}>
+                              {venue.name} — {venue.locality[0]}
+                            </option>
+                          ))}
                       </optgroup>
                       {countries.slice(1).map((c) => (
                         <option key={c[0]} value={c[0]}>
