@@ -36,7 +36,17 @@ jobs:
             page.on('pageerror',e=>errors.push(e.message));
             const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
             assert.equal(response.status(),200);
-            await page.locator('#europeGrid .card').first().waitFor({timeout:30000});
+            page.on('console',m=>{if(m.type()==='error') console.log('BROWSER CONSOLE',m.text())});
+            page.on('requestfailed',req=>console.log('FAILED REQUEST',req.url(),req.failure()?.errorText));
+            try {
+              await page.locator('#europeGrid .card').first().waitFor({timeout:15000});
+            } catch(error) {
+              console.log('DEBUG HTML:',(await page.locator('body').innerText()).slice(0,1800));
+              console.log('DEBUG JS PAGE ERRORS:',JSON.stringify(errors));
+              console.log('DEBUG innerHTML:',(await page.locator('#europeGrid').innerHTML()).slice(0,800));
+              await page.screenshot({path:'/tmp/casinobooking-debug.png',fullPage:true});
+              throw error;
+            }
             assert.equal(await page.locator('#europeGrid .card').count(),12,'Exactly 12 approved Europe cards');
             assert.equal(await page.locator('#globalGrid .card').count(),3,'Exactly USA Russia UAE cards');
             assert.equal(await page.locator('#destinationSelect option').count(),16);
