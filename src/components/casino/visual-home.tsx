@@ -31,6 +31,7 @@ import {
 import { globalDestinations, photoUrl } from "@/lib/global-casino-catalog";
 import { approvedCountries } from "@/lib/approved-casino-directory";
 import "./visual-home.css";
+import { VisualMore } from "./visual-more";
 
 type Country = { name: string; el: string; flag: string; asset: string };
 const destinations: Country[] = [
@@ -520,43 +521,7 @@ export function VisualHome() {
           </section>
         </div>
       </main>
-      <footer className="cb-bottom-bar">
-        <div>
-          <MapPin />
-          <span>
-            {t("Popular destinations", "Δημοφιλείς προορισμοί")}
-            <small>{t("Casino-focused travel", "Ταξίδια με καζίνο")}</small>
-          </span>
-        </div>
-        <div>
-          <ShieldCheck />
-          <span>
-            {t("Privacy conscious", "Σεβασμός στο απόρρητο")}
-            <small>
-              {t("Secure customer accounts", "Ασφαλείς λογαριασμοί")}
-            </small>
-          </span>
-        </div>
-        <div>
-          <Headset />
-          <span>
-            {t("Concierge assistance", "Βοήθεια concierge")}
-            <small>{t("By enquiry", "Κατόπιν αιτήματος")}</small>
-          </span>
-        </div>
-        <Link className="cb-free-button" to="/request">
-          <Crown size={18} />
-          <span>
-            {t("Request Free Concierge", "Δωρεάν αίτημα concierge")}
-            <small>
-              {t(
-                "Hotels · Flights · Transfers",
-                "Ξενοδοχεία · Πτήσεις · Μεταφορές",
-              )}
-            </small>
-          </span>
-        </Link>
-      </footer>
+      <VisualMore />
     </div>
   );
 }
