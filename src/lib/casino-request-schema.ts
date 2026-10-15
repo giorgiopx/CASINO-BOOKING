@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { casinos, countries } from "./casino-data";
 import { operatingGlobalVenues } from "./global-casino-catalog";
+import { approvedOperatingCandidates } from "./approved-casino-directory";
 
 const requiredText = z.string().trim().min(1).max(80);
 const date = z
@@ -37,7 +38,8 @@ export const enquirySchema = z
           value === "undecided" ||
           casinos.some((casino) => !casino.planned && casino.name === value) ||
           countries.slice(1).some((country) => country[0] === value) ||
-          operatingGlobalVenues.some((venue) => venue.name === value),
+          operatingGlobalVenues.some((venue) => venue.name === value) ||
+          approvedOperatingCandidates.some((venue) => venue.countrySlug !== "russia" && venue.name === value),
       ),
     start: date,
     end: date,
