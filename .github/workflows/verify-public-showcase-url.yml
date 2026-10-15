@@ -1,0 +1,28 @@
+name: Verify CasinoBooking Public Preview URL
+on:
+  push:
+    branches: [casino-preview]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-url:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify CDN hostname, real HTTP response and exact current content
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://raw.githack.com/giorgiopx/CASINO-BOOKING/casino-preview/showcase"
+          for file in index.html showcase.css showcase.js catalog.json design-reference/hero-reference.webp design-reference/cyprus.webp; do
+            echo "Fetching $URL/$file"
+            curl --fail --location --retry 3 --retry-delay 3 --connect-timeout 15 --max-time 45 --silent --show-error -D /tmp/cb-headers -o "/tmp/cb-$(basename "$file")" "$URL/$file"
+            head -n 10 /tmp/cb-headers
+            test -s "/tmp/cb-$(basename "$file")"
+          done
+          grep -q 'CasinoBooking.com' /tmp/cb-index.html
+          grep -q 'Popular Casino Destinations' /tmp/cb-index.html
+          grep -q 'hero-reference.webp' /tmp/cb-showcase.css
+          grep -q '"slug":"uae"' /tmp/cb-catalog.json
+          echo "PUBLIC PREVIEW URL VERIFIED"
