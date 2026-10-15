@@ -1,0 +1,59 @@
+name: CasinoBooking approved country browser QA
+on:
+  push:
+    branches:
+      - feature/approved-15-country-directory-20261015
+    paths:
+      - "scripts/browser-approved-directory.mjs"
+      - ".github/workflows/browser-approved-directory.yml"
+  pull_request:
+    paths:
+      - "scripts/browser-approved-directory.mjs"
+      - "src/lib/approved-casino-directory.ts"
+      - "src/routes/casino-country.$slug.tsx"
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      VITE_SUPABASE_URL: https://example.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_browser_mock
+      SUPABASE_URL: https://example.supabase.co
+      SUPABASE_PUBLISHABLE_KEY: sb_publishable_browser_mock
+      SMOKE_URL: http://127.0.0.1:4173
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install
+        run: |
+          bun install
+          bun add --dev playwright
+          bunx playwright install chromium --with-deps
+      - name: Start temporary local web app
+        shell: bash
+        run: |
+          (bun run dev -- --host 127.0.0.1 --port 4173 > /tmp/cb-app.log 2>&1 &)
+          for i in $(seq 1 65); do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then
+              echo "Browser test server ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          tail -100 /tmp/cb-app.log
+          exit 1
+      - name: Test 15 countries and all approved travel forms
+        run: node scripts/browser-approved-directory.mjs
+      - name: QA screenshots (mock user data only)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casino-15-country-browser-QA
+          path: artifacts/approved-directory-smoke/
+          retention-days: 7
+          if-no-files-found: ignore
+      - name: Show server errors on failure
+        if: failure()
+        run: tail -100 /tmp/cb-app.log || true
