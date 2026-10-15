@@ -50,3 +50,6 @@ The owner expressly approved exactly **15 destination countries; 51 selected non
 
 ## Deployment gates
 This is a **feature branch**, not a production release. Existing `feature/restore-lovable-casinobooking` main development branch was already missing some approved binary image files, so its dedicated design check still fails. Lovable production runs in a separate codebase not proven to sync from GitHub. Do not merge into `main` or publish to `casino-booking-com.lovable.app` until design images, browser smoke tests, Supabase end-to-end permissions and deployment targets are verified.
+
+## CI formatting and review
+The approved React and TypeScript pages were autoformatted on the isolated feature branch. A fresh pull-request-triggered quality run is required before integrating into the parent development branch. The full visual-asset release gate remains independent and is not a reason to modify the original imagery.
