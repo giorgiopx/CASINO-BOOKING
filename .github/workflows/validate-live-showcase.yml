@@ -22,7 +22,7 @@ jobs:
           bunx playwright install chromium --with-deps
       - name: Browser verify real public preview, 15 countries, page navigation and mobile
         env:
-          PREVIEW_URL: https://raw.githack.com/giorgiopx/CASINO-BOOKING/casino-preview/showcase/index.html
+          PREVIEW_URL: https://rawcdn.githack.com/giorgiopx/CASINO-BOOKING/casino-preview/showcase/index.html
         shell: bash
         run: |
           node --input-type=module <<'JS'
