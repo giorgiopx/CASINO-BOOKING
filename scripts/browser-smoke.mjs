@@ -39,7 +39,7 @@ try {
       assert.equal(response?.status(), 200);
       await desktop.locator(".cb-design").waitFor({ timeout: 15000 });
       assert.equal(
-        (await desktop.locator(".cb-card").count()) >= 12,
+        (await desktop.locator(".cb-country").count()) >= 12,
         true,
         "Expected 12 photo cards",
       );
@@ -69,12 +69,19 @@ try {
     });
     assert.equal(response?.status(), 200);
     await desktop.locator('input[name="email"]').waitFor({ timeout: 12000 });
+    // Wait for client hydration; server-rendered controls may be visible before handlers bind.
+    await desktop.waitForLoadState("networkidle");
     await desktop
       .getByRole("button", {
         name: /create an account|δημιουργία λογαριασμού/i,
       })
       .first()
       .click();
+    // Retry only if the initial click raced the page hydration.
+    if ((await desktop.locator('input[name="adultConfirmation"]').count()) === 0) {
+      await desktop.waitForTimeout(500);
+      await desktop.getByRole("button", { name: /create an account|δημιουργία λογαριασμού/i }).first().click();
+    }
     await desktop
       .locator('input[name="adultConfirmation"]')
       .waitFor({ timeout: 8000 });
