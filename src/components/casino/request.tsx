@@ -3,8 +3,8 @@ import { Link } from "@tanstack/react-router";
 import { CheckCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
-import { casinos, countries, requestTypes } from "@/lib/casino-data";
-import { operatingGlobalVenues } from "@/lib/global-casino-catalog";
+import { countries, requestTypes } from "@/lib/casino-data";
+import { approvedCountries, approvedOperatingCandidates } from "@/lib/approved-casino-directory";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./auth";
 import { useCasino } from "./context";
@@ -322,36 +322,20 @@ export function RequestPage({
                       <option value="">
                         {t("Select an interest", "Επιλέξτε ενδιαφέρον")}
                       </option>
-                      {casinos
-                        .filter((c) => !c.planned)
-                        .map((c) => (
-                          <option key={c.id} value={c.name}>
-                            {c.name}
-                            {c.planned
-                              ? t(
-                                  " · planned, not open",
-                                  " · υπό ανάπτυξη, μη ανοικτό",
-                                )
-                              : ""}
-                          </option>
-                        ))}
-                      <optgroup
-                        label={t(
-                          "United States — verified venue candidates",
-                          "ΗΠΑ — τεκμηριωμένοι χώροι",
-                        )}
-                      >
-                        {operatingGlobalVenues.map((venue) => (
-                          <option key={venue.id} value={venue.name}>
-                            {venue.name} — {venue.locality}, {venue.state}
+                      <optgroup label={t("Approved destination countries", "Εγκεκριμένες χώρες προορισμών")}>
+                        {approvedCountries.filter(c => c.kind !== "planned").map(c => (
+                          <option key={c.slug} value={c.name[0]}>
+                            {c.flag} {p(c.name)}
                           </option>
                         ))}
                       </optgroup>
-                      {countries.slice(1).map((c) => (
-                        <option key={c[0]} value={c[0]}>
-                          {p(c)}
-                        </option>
-                      ))}
+                      <optgroup label={t("Selected casino venues", "Επιλεγμένα καζίνο")}>
+                        {approvedOperatingCandidates.map(venue => (
+                          <option key={venue.id} value={venue.name}>
+                            {venue.name} — {p(venue.locality)}
+                          </option>
+                        ))}
+                      </optgroup>
                       <option value="undecided">
                         {t("Help me choose", "Βοηθήστε με να επιλέξω")}
                       </option>
