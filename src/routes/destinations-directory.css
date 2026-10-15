@@ -1,1 +1,236 @@
-.approved-directory{background:#f6f5f1;color:#19283a;min-height:100vh}.approved-container{width:min(1170px,calc(100% - 38px));margin:0 auto}.approved-hero{background:linear-gradient(120deg,#0b1b2c,#19364b);color:#f7f4e9;padding:66px 0 56px}.approved-eyebrow{color:#d6b981;font-size:12px;letter-spacing:.18em;font-weight:700}.approved-hero h1{font:400 clamp(35px,5vw,62px)/1.07 Georgia,serif;max-width:780px;margin:18px 0}.approved-hero p:not(.approved-eyebrow){color:#d4deea;max-width:760px;line-height:1.8}.approved-stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:25px}.approved-stats span{border:1px solid #a1a9b450;padding:12px 16px;background:#ffffff0e;color:#f7f4e9;border-radius:4px;font-size:13px}.approved-stats strong{font:500 26px Georgia,serif;color:#e8c488;margin-right:5px}.approved-main{padding:34px 0 70px}.approved-search{background:white;border:1px solid #e1e0d9;box-shadow:0 8px 24px #0d1b2810;padding:22px;display:grid;gap:11px}.approved-search label{font-weight:700;font-size:14px}.approved-search input{padding:13px 15px;width:100%;border:1px solid #c4cbd1;border-radius:4px;color:#152535;background:#fff}.approved-filters{display:flex;flex-wrap:wrap;gap:9px}.approved-filters button{border:1px solid #d1d6d9;background:#fff;color:#243950;padding:8px 15px;border-radius:3px;font-size:13px}.approved-filters button[aria-pressed=true]{background:#1a3347;border-color:#1a3347;color:white}.approved-caution{margin:24px 0 26px;background:#fdf9ef;border-left:3px solid #c9a66d;padding:18px 20px;font-size:13px;line-height:1.75;color:#5b513d}.approved-country-list{display:grid;gap:22px}.approved-country{background:#fff;border:1px solid #e2e1da;box-shadow:0 5px 16px #0d1b2809;overflow:hidden}.approved-country-heading{display:flex;gap:19px;align-items:center;padding:22px 25px;border-bottom:1px solid #eae8e0;background:linear-gradient(95deg,#fdfcfa,#f7f4ee)}.approved-country-flag{font-size:35px;line-height:1}.approved-country-overline{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:#926d35;font-weight:700}.approved-country-heading h2{font:400 28px Georgia,serif;margin:5px 0 2px;color:#192d41}.approved-country-heading small{color:#6e7782;font-size:12px}.approved-venues{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.approved-venues li{padding:20px 25px;min-width:0;border-bottom:1px solid #f0eee8;display:flex;flex-wrap:wrap;gap:15px;align-items:flex-start;justify-content:space-between}.approved-venues li:nth-child(odd){border-right:1px solid #f0eee8}.approved-venues h3{font:600 16px/1.45 Manrope,Arial,sans-serif;overflow-wrap:anywhere}.approved-venues p{font-size:13px;color:#667688;margin:6px 0}.approved-listed,.approved-planned{font-size:11px;display:inline-block;color:#5d6c79}.approved-planned{color:#a0621b;font-weight:700}.approved-actions{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;align-self:center}.approved-actions a{color:#775725;text-decoration:underline;text-underline-offset:3px}.approved-actions a:hover,.approved-source a:hover{color:#b78a49}.approved-source{display:block;padding:11px 24px;color:#6e7782;font-size:11px}.approved-source a{text-decoration:underline}@media(max-width:720px){.approved-hero{padding:40px 0}.approved-container{width:min(100% - 26px,1170px)}.approved-venues{grid-template-columns:1fr}.approved-venues li:nth-child(odd){border-right:0}.approved-venues li{padding:17px 18px}.approved-country-heading{padding:18px}.approved-search{padding:15px}.approved-hero h1{font-size:37px}}
+.approved-directory {
+  background: #f6f5f1;
+  color: #19283a;
+  min-height: 100vh;
+}
+.approved-container {
+  width: min(1170px, calc(100% - 38px));
+  margin: 0 auto;
+}
+.approved-hero {
+  background: linear-gradient(120deg, #0b1b2c, #19364b);
+  color: #f7f4e9;
+  padding: 66px 0 56px;
+}
+.approved-eyebrow {
+  color: #d6b981;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+.approved-hero h1 {
+  font:
+    400 clamp(35px, 5vw, 62px)/1.07 Georgia,
+    serif;
+  max-width: 780px;
+  margin: 18px 0;
+}
+.approved-hero p:not(.approved-eyebrow) {
+  color: #d4deea;
+  max-width: 760px;
+  line-height: 1.8;
+}
+.approved-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 25px;
+}
+.approved-stats span {
+  border: 1px solid #a1a9b450;
+  padding: 12px 16px;
+  background: #ffffff0e;
+  color: #f7f4e9;
+  border-radius: 4px;
+  font-size: 13px;
+}
+.approved-stats strong {
+  font:
+    500 26px Georgia,
+    serif;
+  color: #e8c488;
+  margin-right: 5px;
+}
+.approved-main {
+  padding: 34px 0 70px;
+}
+.approved-search {
+  background: white;
+  border: 1px solid #e1e0d9;
+  box-shadow: 0 8px 24px #0d1b2810;
+  padding: 22px;
+  display: grid;
+  gap: 11px;
+}
+.approved-search label {
+  font-weight: 700;
+  font-size: 14px;
+}
+.approved-search input {
+  padding: 13px 15px;
+  width: 100%;
+  border: 1px solid #c4cbd1;
+  border-radius: 4px;
+  color: #152535;
+  background: #fff;
+}
+.approved-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.approved-filters button {
+  border: 1px solid #d1d6d9;
+  background: #fff;
+  color: #243950;
+  padding: 8px 15px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+.approved-filters button[aria-pressed="true"] {
+  background: #1a3347;
+  border-color: #1a3347;
+  color: white;
+}
+.approved-caution {
+  margin: 24px 0 26px;
+  background: #fdf9ef;
+  border-left: 3px solid #c9a66d;
+  padding: 18px 20px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: #5b513d;
+}
+.approved-country-list {
+  display: grid;
+  gap: 22px;
+}
+.approved-country {
+  background: #fff;
+  border: 1px solid #e2e1da;
+  box-shadow: 0 5px 16px #0d1b2809;
+  overflow: hidden;
+}
+.approved-country-heading {
+  display: flex;
+  gap: 19px;
+  align-items: center;
+  padding: 22px 25px;
+  border-bottom: 1px solid #eae8e0;
+  background: linear-gradient(95deg, #fdfcfa, #f7f4ee);
+}
+.approved-country-flag {
+  font-size: 35px;
+  line-height: 1;
+}
+.approved-country-overline {
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #926d35;
+  font-weight: 700;
+}
+.approved-country-heading h2 {
+  font:
+    400 28px Georgia,
+    serif;
+  margin: 5px 0 2px;
+  color: #192d41;
+}
+.approved-country-heading small {
+  color: #6e7782;
+  font-size: 12px;
+}
+.approved-venues {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.approved-venues li {
+  padding: 20px 25px;
+  min-width: 0;
+  border-bottom: 1px solid #f0eee8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.approved-venues li:nth-child(odd) {
+  border-right: 1px solid #f0eee8;
+}
+.approved-venues h3 {
+  font:
+    600 16px/1.45 Manrope,
+    Arial,
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+.approved-venues p {
+  font-size: 13px;
+  color: #667688;
+  margin: 6px 0;
+}
+.approved-listed,
+.approved-planned {
+  font-size: 11px;
+  display: inline-block;
+  color: #5d6c79;
+}
+.approved-planned {
+  color: #a0621b;
+  font-weight: 700;
+}
+.approved-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  align-self: center;
+}
+.approved-actions a {
+  color: #775725;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approved-actions a:hover,
+.approved-source a:hover {
+  color: #b78a49;
+}
+.approved-source {
+  display: block;
+  padding: 11px 24px;
+  color: #6e7782;
+  font-size: 11px;
+}
+.approved-source a {
+  text-decoration: underline;
+}
+@media (max-width: 720px) {
+  .approved-hero {
+    padding: 40px 0;
+  }
+  .approved-container {
+    width: min(100% - 26px, 1170px);
+  }
+  .approved-venues {
+    grid-template-columns: 1fr;
+  }
+  .approved-venues li:nth-child(odd) {
+    border-right: 0;
+  }
+  .approved-venues li {
+    padding: 17px 18px;
+  }
+  .approved-country-heading {
+    padding: 18px;
+  }
+  .approved-search {
+    padding: 15px;
+  }
+  .approved-hero h1 {
+    font-size: 37px;
+  }
+}
