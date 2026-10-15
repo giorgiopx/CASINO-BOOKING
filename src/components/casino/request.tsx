@@ -322,17 +322,19 @@ export function RequestPage({
                       <option value="">
                         {t("Select an interest", "Επιλέξτε ενδιαφέρον")}
                       </option>
-                      {casinos.filter((c) => !c.planned).map((c) => (
-                        <option key={c.id} value={c.name}>
-                          {c.name}
-                          {c.planned
-                            ? t(
-                                " · planned, not open",
-                                " · υπό ανάπτυξη, μη ανοικτό",
-                              )
-                            : ""}
-                        </option>
-                      ))}
+                      {casinos
+                        .filter((c) => !c.planned)
+                        .map((c) => (
+                          <option key={c.id} value={c.name}>
+                            {c.name}
+                            {c.planned
+                              ? t(
+                                  " · planned, not open",
+                                  " · υπό ανάπτυξη, μη ανοικτό",
+                                )
+                              : ""}
+                          </option>
+                        ))}
                       <optgroup
                         label={t(
                           "United States — verified venue candidates",
