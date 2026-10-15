@@ -63,16 +63,22 @@ try {
     fullPage: true,
   });
 
-  await check("Approved 15-country directory displays 51 candidates and one planned project", async () => {
-    const response = await desktop.goto(base + "/destinations", {
-      waitUntil: "domcontentloaded",
-    });
-    assert.equal(response?.status(), 200);
-    await desktop.locator(".approved-country").first().waitFor({ timeout: 12000 });
-    assert.equal(await desktop.locator(".approved-country").count(), 15);
-    assert.equal(await desktop.locator(".approved-venues li").count(), 52);
-    assert.equal(await desktop.locator(".approved-planned").count(), 1);
-  });
+  await check(
+    "Approved 15-country directory displays 51 candidates and one planned project",
+    async () => {
+      const response = await desktop.goto(base + "/destinations", {
+        waitUntil: "domcontentloaded",
+      });
+      assert.equal(response?.status(), 200);
+      await desktop
+        .locator(".approved-country")
+        .first()
+        .waitFor({ timeout: 12000 });
+      assert.equal(await desktop.locator(".approved-country").count(), 15);
+      assert.equal(await desktop.locator(".approved-venues li").count(), 52);
+      assert.equal(await desktop.locator(".approved-planned").count(), 1);
+    },
+  );
   await desktop.screenshot({
     path: shots + "/approved-15-country-directory.png",
     fullPage: true,
