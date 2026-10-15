@@ -23,7 +23,7 @@ describe("User-approved 15 country catalogue, free enquiries", () => {
     expect(countryVenues("usa")).toHaveLength(18);
     expect(countryVenues("russia")).toHaveLength(3);
     expect(countryVenues("uae")).toHaveLength(1);
-    expect(countryVenues("uae")[0].status).toBe("planned");
+    expect(countryVenues("uae")[0]?.status).toBe("planned");
   });
 
   it("provides traceable venue sources and country pages", () => {
