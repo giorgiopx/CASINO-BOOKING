@@ -1,0 +1,74 @@
+name: Validate Live CasinoBooking Showcase in Chromium
+on:
+  push:
+    branches:
+      - casino-preview
+    paths:
+      - "showcase/**"
+      - ".github/workflows/validate-live-showcase.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install Chromium test runner
+        run: |
+          bun add -d playwright
+          bunx playwright install chromium --with-deps
+      - name: Browser verify real public preview, 15 countries, page navigation and mobile
+        env:
+          PREVIEW_URL: https://raw.githack.com/giorgiopx/CASINO-BOOKING/casino-preview/showcase/index.html
+        shell: bash
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          const url=process.env.PREVIEW_URL;
+          for(const width of [1440,390]){
+            const page=await browser.newPage({viewport:{width,height:880},deviceScaleFactor:1});
+            const errors=[];
+            page.on('pageerror',e=>errors.push(e.message));
+            const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
+            assert.equal(response.status(),200);
+            await page.locator('#europeGrid .card').first().waitFor({timeout:30000});
+            assert.equal(await page.locator('#europeGrid .card').count(),12,'Exactly 12 approved Europe cards');
+            assert.equal(await page.locator('#globalGrid .card').count(),3,'Exactly USA Russia UAE cards');
+            assert.equal(await page.locator('#destinationSelect option').count(),16);
+            const hero=page.locator('.hero-image');
+            const background=await hero.evaluate(e=>getComputedStyle(e).backgroundImage);
+            assert.match(background,/hero-reference.webp/);
+            const photo=await page.locator('#europeGrid .card img').first().evaluate(e=>e.complete&&e.naturalWidth>0);
+            assert.ok(photo,'Approved Monaco image must load');
+            if(width===390){
+              const overflow=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,inner:window.innerWidth}));
+              assert.ok(overflow.scroll<=overflow.inner+6,'Mobile horizontal overflow '+JSON.stringify(overflow));
+            }
+            await page.locator('#europeGrid .card').first().click();
+            await page.locator('#venueList .venue').first().waitFor({timeout:10000});
+            assert.ok(await page.locator('#venueList .venue').count()>=2,'Monaco casino listing');
+            await page.goto(url,{waitUntil:'domcontentloaded'});
+            await page.locator('#globalGrid .card').first().waitFor();
+            await page.locator('#globalGrid .card').first().click();
+            await page.locator('#venueList .venue').first().waitFor();
+            assert.ok(await page.locator('#venueList .venue').count()>=18,'USA 18 casino venues');
+            assert.deepEqual(errors,[],'Browser runtime errors');
+            await page.screenshot({path:'/tmp/casinobooking-preview-'+width+'.png',fullPage:true});
+            console.log('PASS',width+'px','12 Europe cards, 3 global cards, 18 USA records, details, exact photos, no JS crashes');
+            await page.close();
+          }
+          await browser.close();
+          JS
+      - name: Save actual screen captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casinobooking-live-preview-screenshots
+          path: /tmp/casinobooking-preview-*.png
+          if-no-files-found: ignore
+          retention-days: 10
