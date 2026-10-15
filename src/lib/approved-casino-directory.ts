@@ -326,7 +326,7 @@ const approvedRegionalVenues: ApprovedCasino[] = [
     countrySlug: "spain",
     name: "Casino Torrequebrada",
     locality: ["Benalmádena / Málaga", "Μπεναλμάδενα / Μάλαγα"],
-    officialUrl: "https://casinogranmadrid.com/en/plan-your-visit",
+    officialUrl: "https://casinogranmadrid.com/en/torrequebrada",
     status: "operator-listed",
     gaming: "casino",
     sourceChecked: "2026-10-15",
