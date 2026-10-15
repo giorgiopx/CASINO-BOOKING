@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { approvedCountries, approvedOperatingCandidates } from "./approved-casino-directory";
+import {
+  approvedCountries,
+  approvedOperatingCandidates,
+} from "./approved-casino-directory";
 
 const requiredText = z.string().trim().min(1).max(80);
 const date = z
@@ -29,12 +32,16 @@ export const enquirySchema = z
       ),
     residence: requiredText,
     customerType: z.enum(["individual", "business"]),
-    destination: z.string().refine(
-      value =>
-        value === "undecided" ||
-        approvedCountries.some(c => c.kind !== "planned" && c.name[0] === value) ||
-        approvedOperatingCandidates.some(v => v.name === value)
-    ),
+    destination: z
+      .string()
+      .refine(
+        (value) =>
+          value === "undecided" ||
+          approvedCountries.some(
+            (c) => c.kind !== "planned" && c.name[0] === value,
+          ) ||
+          approvedOperatingCandidates.some((v) => v.name === value),
+      ),
     start: date,
     end: date,
     party: z

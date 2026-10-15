@@ -28,7 +28,10 @@ import {
   Crown,
   LockKeyhole,
 } from "lucide-react";
-import { approvedCountries, countryVenues } from "@/lib/approved-casino-directory";
+import {
+  approvedCountries,
+  countryVenues,
+} from "@/lib/approved-casino-directory";
 import "./visual-home.css";
 
 type Country = { name: string; el: string; flag: string; asset: string };
@@ -258,11 +261,13 @@ export function VisualHome() {
                       {lang === "el" ? c.el : c.name}
                     </option>
                   ))}
-                  {approvedCountries.filter((c) => c.kind === "international").map((c) => (
-                    <option key={c.slug} value={c.name[0]}>
-                      {c.flag} {c.name[lang === "el" ? 1 : 0]}
-                    </option>
-                  ))}
+                  {approvedCountries
+                    .filter((c) => c.kind === "international")
+                    .map((c) => (
+                      <option key={c.slug} value={c.name[0]}>
+                        {c.flag} {c.name[lang === "el" ? 1 : 0]}
+                      </option>
+                    ))}
                 </select>
               </label>
             </div>
@@ -371,7 +376,10 @@ export function VisualHome() {
                       <small>
                         {t("Casino travel enquiries", "Αιτήματα ταξιδιού")}
                       </small>
-                      <Link to="/casino-country/$slug" params={{ slug: c.asset }}>
+                      <Link
+                        to="/casino-country/$slug"
+                        params={{ slug: c.asset }}
+                      >
                         {t("Explore", "Εξερεύνηση")} <ArrowRight size={12} />
                       </Link>
                     </div>
@@ -386,35 +394,78 @@ export function VisualHome() {
               )}
             </p>
           </section>
-          <section className="cb-global-extension" aria-label="Global premium casino destinations">
+          <section
+            className="cb-global-extension"
+            aria-label="Global premium casino destinations"
+          >
             <div className="cb-section-heading">
               <div>
-                <h2>{t("Global Premium Casino Destinations", "Παγκόσμιοι Premium Προορισμοί Καζίνο")}</h2>
-                <p>{t("United States, Russia and an upcoming UAE resort — added below your original European destinations.",
-                  "ΗΠΑ, Ρωσία και μελλοντικό resort στα ΗΑΕ — κάτω από τους αρχικούς ευρωπαϊκούς προορισμούς.")}</p>
+                <h2>
+                  {t(
+                    "Global Premium Casino Destinations",
+                    "Παγκόσμιοι Premium Προορισμοί Καζίνο",
+                  )}
+                </h2>
+                <p>
+                  {t(
+                    "United States, Russia and an upcoming UAE resort — added below your original European destinations.",
+                    "ΗΠΑ, Ρωσία και μελλοντικό resort στα ΗΑΕ — κάτω από τους αρχικούς ευρωπαϊκούς προορισμούς.",
+                  )}
+                </p>
               </div>
-              <Link to="/destinations">{t("All 15 Countries", "Και οι 15 χώρες")} <ArrowRight size={16} /></Link>
+              <Link to="/destinations">
+                {t("All 15 Countries", "Και οι 15 χώρες")}{" "}
+                <ArrowRight size={16} />
+              </Link>
             </div>
             <div className="cb-global-photo-grid">
-              {approvedCountries.filter(c => c.kind !== "europe").map(c => (
-                <Link key={c.slug} to="/casino-country/$slug" params={{slug:c.slug}}
-                      className="cb-global-photo-card">
-                  <img loading="lazy" src={c.image}
-                    alt={t(c.name[0],c.name[1])+" — destination image"}
-                    onError={(e)=>{e.currentTarget.style.display="none";}} />
-                  {c.kind === "planned" && <b className="cb-global-upcoming">{t("Coming 2027 · Not Open", "Αναμένεται 2027 · Δεν λειτουργεί")}</b>}
-                  <span>
-                    <strong>{c.flag} {t(c.name[0],c.name[1])}</strong>
-                    <small>{c.kind === "planned"
-                      ? t("Upcoming Wynn Al Marjan Island", "Μελλοντικό Wynn Al Marjan Island")
-                      : `${countryVenues(c.slug).length} ${t("selected casino venues", "επιλεγμένα καζίνο")}`}</small>
-                  </span>
-                </Link>
-              ))}
+              {approvedCountries
+                .filter((c) => c.kind !== "europe")
+                .map((c) => (
+                  <Link
+                    key={c.slug}
+                    to="/casino-country/$slug"
+                    params={{ slug: c.slug }}
+                    className="cb-global-photo-card"
+                  >
+                    <img
+                      loading="lazy"
+                      src={c.image}
+                      alt={t(c.name[0], c.name[1]) + " — destination image"}
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                    {c.kind === "planned" && (
+                      <b className="cb-global-upcoming">
+                        {t(
+                          "Coming 2027 · Not Open",
+                          "Αναμένεται 2027 · Δεν λειτουργεί",
+                        )}
+                      </b>
+                    )}
+                    <span>
+                      <strong>
+                        {c.flag} {t(c.name[0], c.name[1])}
+                      </strong>
+                      <small>
+                        {c.kind === "planned"
+                          ? t(
+                              "Upcoming Wynn Al Marjan Island",
+                              "Μελλοντικό Wynn Al Marjan Island",
+                            )
+                          : `${countryVenues(c.slug).length} ${t("selected casino venues", "επιλεγμένα καζίνο")}`}
+                      </small>
+                    </span>
+                  </Link>
+                ))}
             </div>
-            <p className="cb-disclosure">{t(
-              "The additional region photographs are credited on each destination page. UAE's Wynn Al Marjan project is planned for 2027, not open. Country and casino sources must be checked before travel; enquiries do not confirm supplier bookings.",
-              "Οι πρόσθετες φωτογραφίες έχουν αναφορά πηγής στις σελίδες προορισμών. Το Wynn Al Marjan στα ΗΑΕ αναμένεται το 2027 και δεν λειτουργεί. Ελέγχουμε πηγές και διαθεσιμότητα πριν από κάθε ταξίδι· τα αιτήματα δεν αποτελούν επιβεβαιωμένες κρατήσεις.")}</p>
+            <p className="cb-disclosure">
+              {t(
+                "The additional region photographs are credited on each destination page. UAE's Wynn Al Marjan project is planned for 2027, not open. Country and casino sources must be checked before travel; enquiries do not confirm supplier bookings.",
+                "Οι πρόσθετες φωτογραφίες έχουν αναφορά πηγής στις σελίδες προορισμών. Το Wynn Al Marjan στα ΗΑΕ αναμένεται το 2027 και δεν λειτουργεί. Ελέγχουμε πηγές και διαθεσιμότητα πριν από κάθε ταξίδι· τα αιτήματα δεν αποτελούν επιβεβαιωμένες κρατήσεις.",
+              )}
+            </p>
           </section>
         </div>
       </main>

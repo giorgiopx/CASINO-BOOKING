@@ -4,7 +4,10 @@ import { CheckCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { countries, requestTypes } from "@/lib/casino-data";
-import { approvedCountries, approvedOperatingCandidates } from "@/lib/approved-casino-directory";
+import {
+  approvedCountries,
+  approvedOperatingCandidates,
+} from "@/lib/approved-casino-directory";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./auth";
 import { useCasino } from "./context";
@@ -322,15 +325,24 @@ export function RequestPage({
                       <option value="">
                         {t("Select an interest", "Επιλέξτε ενδιαφέρον")}
                       </option>
-                      <optgroup label={t("Approved destination countries", "Εγκεκριμένες χώρες προορισμών")}>
-                        {approvedCountries.filter(c => c.kind !== "planned").map(c => (
-                          <option key={c.slug} value={c.name[0]}>
-                            {c.flag} {p(c.name)}
-                          </option>
-                        ))}
+                      <optgroup
+                        label={t(
+                          "Approved destination countries",
+                          "Εγκεκριμένες χώρες προορισμών",
+                        )}
+                      >
+                        {approvedCountries
+                          .filter((c) => c.kind !== "planned")
+                          .map((c) => (
+                            <option key={c.slug} value={c.name[0]}>
+                              {c.flag} {p(c.name)}
+                            </option>
+                          ))}
                       </optgroup>
-                      <optgroup label={t("Selected casino venues", "Επιλεγμένα καζίνο")}>
-                        {approvedOperatingCandidates.map(venue => (
+                      <optgroup
+                        label={t("Selected casino venues", "Επιλεγμένα καζίνο")}
+                      >
+                        {approvedOperatingCandidates.map((venue) => (
                           <option key={venue.id} value={venue.name}>
                             {venue.name} — {p(venue.locality)}
                           </option>
