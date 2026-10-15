@@ -1,0 +1,59 @@
+name: Publish CasinoBooking Visual Showcase
+on:
+  push:
+    branches:
+      - feature/restore-lovable-casinobooking
+    paths:
+      - "showcase/**"
+      - "public/design-reference/**"
+      - "src/lib/approved-casino-directory.ts"
+      - "src/lib/global-casino-catalog.ts"
+      - ".github/workflows/showcase-pages.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: casinobooking-showcase-pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Load canonical 15-country approved directory
+        run: |
+          bun -e 'import { approvedCountries, approvedCasinoDirectory } from "./src/lib/approved-casino-directory.ts"; await Bun.write("showcase/catalog.json",JSON.stringify({countries:approvedCountries,venues:approvedCasinoDirectory})); console.log("Approved catalogue:",approvedCountries.length,"countries,",approvedCasinoDirectory.length,"entries"); if(approvedCountries.length!==15||approvedCasinoDirectory.length!==52) process.exit(1)'
+      - name: Include EXACT 13 approved original photos
+        run: |
+          mkdir -p showcase/design-reference
+          cp public/design-reference/*.webp showcase/design-reference/
+          COUNT=$(find showcase/design-reference -maxdepth 1 -name '*.webp' | wc -l)
+          echo "Image count $COUNT"
+          test "$COUNT" -eq 13
+          touch showcase/.nojekyll
+      - name: Validate static preview contents
+        run: |
+          test -s showcase/index.html
+          test -s showcase/showcase.js
+          test -s showcase/showcase.css
+          test -s showcase/catalog.json
+          test -s showcase/design-reference/hero-reference.webp
+      - name: Configure free GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload public-preview artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: showcase
+      - name: Deploy new preview to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
