@@ -234,3 +234,15 @@
     font-size: 37px;
   }
 }
+
+/* Country photo links and country detail — inherit approved navy/gold style. */
+.approved-country-photo{display:block;width:112px;height:88px;flex:0 0 112px;overflow:hidden;border-radius:9px;background:#0b2037;border:1px solid #d5b57b}
+.approved-country-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.approved-country-heading h2 a{color:inherit;text-decoration:none}
+.approved-country-heading h2 a:hover{text-decoration:underline;text-decoration-color:#c99d54}
+.approved-back{display:inline-flex;align-items:center;gap:8px;color:#cda45f;margin:15px 0;text-decoration:underline}
+.approved-detail-image{height:min(38vw,340px);min-height:200px;overflow:hidden;background:linear-gradient(130deg,#071b32,#2b4c6b);border-radius:14px;border:1px solid #b38f5b}
+.approved-detail-image img{width:100%;height:100%;object-fit:cover}
+.approved-detail-title{font:normal 29px Georgia,serif;color:#122a42;margin:20px 0}
+.approved-detail-venues{list-style:none;margin-bottom:22px}
+@media(max-width:600px){.approved-country-photo{width:82px;flex-basis:82px;height:74px}.approved-detail-title{font-size:23px}}
