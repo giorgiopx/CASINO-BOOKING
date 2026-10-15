@@ -36,6 +36,10 @@ jobs:
             page.on('pageerror',e=>errors.push(e.message));
             const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
             assert.equal(response.status(),200);
+            if((await page.locator('body').innerText()).includes('One more step')){
+              console.log('First visit requires third-party CDN preview confirmation.');
+              await page.getByText('Open the page',{exact:true}).click();
+            }
             page.on('console',m=>{if(m.type()==='error') console.log('BROWSER CONSOLE',m.text())});
             page.on('requestfailed',req=>console.log('FAILED REQUEST',req.url(),req.failure()?.errorText));
             try {
