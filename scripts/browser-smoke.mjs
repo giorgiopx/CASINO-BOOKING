@@ -78,9 +78,16 @@ try {
       .first()
       .click();
     // Retry only if the initial click raced the page hydration.
-    if ((await desktop.locator('input[name="adultConfirmation"]').count()) === 0) {
+    if (
+      (await desktop.locator('input[name="adultConfirmation"]').count()) === 0
+    ) {
       await desktop.waitForTimeout(500);
-      await desktop.getByRole("button", { name: /create an account|δημιουργία λογαριασμού/i }).first().click();
+      await desktop
+        .getByRole("button", {
+          name: /create an account|δημιουργία λογαριασμού/i,
+        })
+        .first()
+        .click();
     }
     await desktop
       .locator('input[name="adultConfirmation"]')
