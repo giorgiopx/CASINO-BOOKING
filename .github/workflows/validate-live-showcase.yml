@@ -57,8 +57,14 @@ jobs:
             const hero=page.locator('.hero-image');
             const background=await hero.evaluate(e=>getComputedStyle(e).backgroundImage);
             assert.match(background,/hero-reference.webp/);
-            const photo=await page.locator('#europeGrid .card img').first().evaluate(e=>e.complete&&e.naturalWidth>0);
-            assert.ok(photo,'Approved Monaco image must load');
+            await page.locator('#europeGrid .card img').first().scrollIntoViewIfNeeded();
+            try {
+              await page.waitForFunction(()=>{const image=document.querySelector('#europeGrid .card img'); return image && image.complete && image.naturalWidth>0;},null,{timeout:12000});
+            } catch(error) {
+              const pic=await page.locator('#europeGrid .card img').first().evaluate(e=>({src:e.currentSrc,complete:e.complete,naturalWidth:e.naturalWidth}));
+              console.log('IMAGE DEBUG',JSON.stringify(pic));
+              throw error;
+            }
             if(width===390){
               const overflow=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,inner:window.innerWidth}));
               assert.ok(overflow.scroll<=overflow.inner+6,'Mobile horizontal overflow '+JSON.stringify(overflow));
