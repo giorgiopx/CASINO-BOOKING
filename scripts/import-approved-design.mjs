@@ -35,7 +35,7 @@ const expected = {
   "hero-reference.webp":
     "bca98dd4a0c632dbf6911118ea853879c9e3b4a0996998ce63e53d346cad0e3a",
   "portugal.webp":
-    "50c22e3f3d73e63b6d5448c5265b1daea828f6b8d0fa3c027309046021d81e6",
+    "50c22e3f3d73e63bf4a55378120e4144c967bf4a388cd347c81b2c4c60cef714",
 };
 const zip = process.argv[2];
 const out = resolve("public/design-reference");
