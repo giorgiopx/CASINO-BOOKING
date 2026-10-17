@@ -1,0 +1,36 @@
+name: CasinoBooking real staging customer and CRM E2E
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  staging-real-rls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: casino-staging
+    env:
+      STAGING_CONFIRMED: "YES"
+      SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+      TEST_CUSTOMER_A_EMAIL: ${{ secrets.TEST_CUSTOMER_A_EMAIL }}
+      TEST_CUSTOMER_A_PASSWORD: ${{ secrets.TEST_CUSTOMER_A_PASSWORD }}
+      TEST_CUSTOMER_B_EMAIL: ${{ secrets.TEST_CUSTOMER_B_EMAIL }}
+      TEST_CUSTOMER_B_PASSWORD: ${{ secrets.TEST_CUSTOMER_B_PASSWORD }}
+      TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
+      TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Validate required staging secrets
+        shell: bash
+        run: |
+          for name in SUPABASE_URL SUPABASE_ANON_KEY TEST_CUSTOMER_A_EMAIL TEST_CUSTOMER_A_PASSWORD TEST_CUSTOMER_B_EMAIL TEST_CUSTOMER_B_PASSWORD TEST_ADMIN_EMAIL TEST_ADMIN_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Staging secret missing: $name"
+              exit 1
+            fi
+          done
+      - name: End-to-end signup/request/CRM database isolation
+        run: node scripts/verify-enquiry-staging.mjs

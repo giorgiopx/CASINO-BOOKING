@@ -1,0 +1,42 @@
+name: Prepare CasinoBooking Public Showcase
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: casinobooking-showcase-prep
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/restore-lovable-casinobooking
+          persist-credentials: true
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Export exact approved directory as static JSON
+        run: |
+          bun -e 'import { approvedCountries, approvedCasinoDirectory } from "./src/lib/approved-casino-directory.ts"; await Bun.write("showcase/catalog.json",JSON.stringify({countries:approvedCountries,venues:approvedCasinoDirectory})); console.log("Countries",approvedCountries.length,"entries",approvedCasinoDirectory.length); if(approvedCountries.length!==15||approvedCasinoDirectory.length!==52) process.exit(1)'
+      - name: Bundle 13 untouched design-reference images
+        run: |
+          mkdir -p showcase/design-reference
+          cp public/design-reference/*.webp showcase/design-reference/
+          test "$(find showcase/design-reference -name '*.webp' | wc -l)" -eq 13
+          test -s showcase/index.html
+          test -s showcase/showcase.css
+          test -s showcase/showcase.js
+          test -s showcase/catalog.json
+      - name: Commit rendered preview assets without changing application
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add showcase/catalog.json showcase/design-reference/
+          if ! git diff --cached --quiet; then
+            git commit -m "build: publish 15-country approved preview assets and exact 13 WebP"
+            git push origin HEAD:feature/restore-lovable-casinobooking
+          else
+            echo "Preview assets are already current"
+          fi
