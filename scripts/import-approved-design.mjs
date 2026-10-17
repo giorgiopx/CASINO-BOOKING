@@ -69,3 +69,14 @@ if (zip) {
 }
 for (const name of Object.keys(expected)) verify(name);
 console.log("PASS: 13 exact CasinoBooking design images verified by SHA256.");
+
+// The later, separately uploaded whole hero photo supplements the original ZIP.
+// Keep its bytes intact and preserve every original WebP hash above.
+const heroPhoto = resolve("public/images/mediterranean-casino-sunset.jpg");
+if (!existsSync(heroPhoto)) throw Error("Missing uploaded whole hero photo");
+if (
+  sha(readFileSync(heroPhoto)) !==
+  "c961e9f3a046bd3bcebce852f02eef5ab42a32dd73eee037780d90a082194a02"
+)
+  throw Error("Uploaded whole hero photo SHA256 mismatch: refusing to release");
+console.log("PASS: exact uploaded whole hero photo verified by SHA256.");

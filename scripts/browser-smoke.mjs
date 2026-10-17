@@ -110,6 +110,62 @@ async function noOverflow(page) {
     `Horizontal overflow: ${JSON.stringify(sizes)}`,
   );
 }
+async function wholeHeroPhoto(page) {
+  const photo = page.locator("img.cb-hero-photo");
+  assert.equal(await photo.count(), 1, "One whole uploaded hero photo");
+  await photo.evaluate((element) => element.decode());
+  const layout = await photo.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const clippedBy = [];
+    for (
+      let parent = element.parentElement;
+      parent && parent !== document.body;
+      parent = parent.parentElement
+    ) {
+      const parentRect = parent.getBoundingClientRect();
+      const parentStyle = getComputedStyle(parent);
+      const clipsX = /hidden|clip|auto|scroll/.test(parentStyle.overflowX);
+      const clipsY = /hidden|clip|auto|scroll/.test(parentStyle.overflowY);
+      if (
+        (clipsX &&
+          (rect.left < parentRect.left - 1 ||
+            rect.right > parentRect.right + 1)) ||
+        (clipsY &&
+          (rect.top < parentRect.top - 1 ||
+            rect.bottom > parentRect.bottom + 1))
+      )
+        clippedBy.push(parent.className || parent.tagName);
+    }
+    return {
+      source: new URL(element.currentSrc).pathname,
+      naturalWidth: element.naturalWidth,
+      naturalHeight: element.naturalHeight,
+      width: rect.width,
+      height: rect.height,
+      objectFit: style.objectFit,
+      transform: style.transform,
+      clipPath: style.clipPath,
+      clippedBy,
+    };
+  });
+  assert.equal(layout.source, "/images/mediterranean-casino-sunset.jpg");
+  assert.equal(layout.naturalWidth, 1280);
+  assert.equal(layout.naturalHeight, 720);
+  assert.equal(
+    layout.objectFit,
+    "contain",
+    "Hero must preserve all photo edges",
+  );
+  assert.equal(layout.transform, "none", "Hero must not be zoomed or shifted");
+  assert.equal(layout.clipPath, "none", "Hero must not be masked");
+  assert.ok(layout.width > 0 && layout.height > 0, "Hero is visible");
+  assert.ok(
+    Math.abs((layout.width * 720) / 1280 - layout.height) <= 1,
+    `Hero preserves the full 16:9 composition: ${JSON.stringify(layout)}`,
+  );
+  assert.deepEqual(layout.clippedBy, [], "No ancestor crops the hero photo");
+}
 async function language(page, lang) {
   const control = page.locator(".cb-language");
   if ((await page.locator("html").getAttribute("lang")) !== lang)
@@ -153,6 +209,7 @@ try {
             lang === "el" ? /Κορυφαία Καζίνο/ : /World-Class Casinos/,
           );
           await noOverflow(page);
+          await wholeHeroPhoto(page);
           // Scroll each approved crop into view so lazy images are decoded as well.
           for (const img of await page
             .locator('.cb-country-grid img[src^="/design-reference/"]')
@@ -222,7 +279,7 @@ try {
 
   const page = await newPage();
   await check(
-    "All thirteen approved WebP files are served and decode in Chromium",
+    "All thirteen approved WebPs and the whole uploaded hero photo decode in Chromium",
     async () => {
       await visit(page, "/");
       for (const asset of assets) {
@@ -249,12 +306,7 @@ try {
           `${asset}: ${JSON.stringify(dimensions)}`,
         );
       }
-      assert.match(
-        await page
-          .locator(".cb-hero-photo")
-          .evaluate((element) => getComputedStyle(element).backgroundImage),
-        /hero-reference\.webp/,
-      );
+      await wholeHeroPhoto(page);
     },
     page,
   );

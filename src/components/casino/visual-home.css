@@ -1,4 +1,4 @@
-/* Pixel-conscious recreation of the user-approved CasinoBooking screenshot. */
+/* Existing approved layout, refreshed with the full user-supplied sunset image. */
 .cb-design {
   --cb-navy: #031629;
   --cb-deep: #00101f;
@@ -118,75 +118,88 @@
   background: none;
 }
 .cb-hero {
-  height: 300px;
-  background: #001325;
+  background: #031629;
   color: #fff;
   position: relative;
-  overflow: hidden;
+  isolation: isolate;
 }
 .cb-hero-photo {
-  position: absolute;
-  inset: 0 0 0 27%;
-  background-image: url("/design-reference/hero-reference.webp");
-  background-size: cover;
-  background-position: center center;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
 }
 .cb-hero-shade {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      90deg,
-      #001321 0%,
-      #001321 43%,
-      #001321db 48%,
-      #00132165 56%,
-      transparent 74%
-    ),
-    linear-gradient(0deg, #001321 0%, #001321 10%, transparent 28%);
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    #001426b8,
+    #00142666 28%,
+    transparent 58%
+  );
 }
 .cb-hero-inner {
-  position: relative;
+  position: absolute;
+  inset: 0 0 auto;
   z-index: 1;
-  padding: 34px 4.4% 0;
-  max-width: 760px;
+  padding: clamp(30px, 4.4vw, 80px) 24px 0;
+  text-align: center;
+  text-shadow: 0 2px 20px #001426c4;
+}
+.cb-hero-eyebrow {
+  color: #ffdfad;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  line-height: 1.7;
+  margin-bottom: 20px;
 }
 .cb-hero h1 {
-  margin: 0 0 12px;
-  font-size: 28px;
-  line-height: 1.04;
-  font-weight: 700;
+  margin: 0 0 18px;
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1.2;
+  font-weight: 400;
 }
 .cb-hero h1 span {
   display: block;
+  margin-bottom: 7px;
 }
 .cb-hero h1 strong {
+  display: block;
   font-family: Georgia, serif;
-  font-size: 49px;
-  line-height: 1.05;
+  font-size: clamp(42px, 4.6vw, 72px);
+  line-height: 1.12;
   font-weight: 400;
-  color: #f1be74;
-  letter-spacing: -0.8px;
+  color: #ffe0a9;
+  letter-spacing: -0.025em;
 }
 .cb-hero-inner > p {
-  font-size: 16px;
-  line-height: 1.24;
-  max-width: 640px;
-  margin: 7px 0 27px;
-  color: #fff;
+  font-size: clamp(13px, 1.1vw, 17px);
+  line-height: 1.7;
+  max-width: 720px;
+  margin: 0 auto;
+  color: #fffaf2;
 }
 .cb-trust-strip {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0;
+  padding: 24px;
+  color: #f8f2e6;
+  background: #031629;
+  border-bottom: 1px solid #be96593d;
 }
 .cb-trust-strip > span {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 22px;
+  padding: 0 36px;
   border-right: 1px solid #3b4b57;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
 }
 .cb-trust-strip > span:first-child {
@@ -194,32 +207,26 @@
 }
 .cb-trust-strip > span:last-child {
   border: 0;
+  padding-right: 0;
 }
 .cb-trust-strip svg {
-  width: 31px;
-  height: 31px;
+  width: 29px;
+  height: 29px;
   color: #f1be74;
-  stroke-width: 1.7;
+  stroke-width: 1.5;
   flex-shrink: 0;
 }
 .cb-hero-caption {
   position: absolute;
-  right: 4%;
-  bottom: 32px;
-  display: flex;
-  gap: 7px;
-  font-weight: 600;
-  font-size: 11px;
-  z-index: 1;
-  text-shadow: 0 2px 4px #000;
-}
-.cb-hero-caption svg {
-  color: #f1be74;
-}
-.cb-hero-caption small {
-  display: block;
+  right: 24px;
+  bottom: 18px;
+  padding: 6px 12px;
+  border: 1px solid #fff3d73b;
+  background: #031629a6;
+  border-radius: 4px;
   font-size: 10px;
-  font-weight: 400;
+  letter-spacing: 0.06em;
+  z-index: 1;
 }
 .cb-content {
   padding: 0 2.35% 14px;
@@ -227,7 +234,7 @@
 .cb-search {
   position: relative;
   z-index: 2;
-  margin: -35px auto 0;
+  margin: 24px auto 0;
   min-height: 72px;
   background: #001428;
   border: 1px solid #344d62;
@@ -588,58 +595,13 @@
   .cb-nav {
     top: 58px;
   }
-  .cb-hero {
-    height: 375px;
-  }
-  .cb-hero-photo {
-    inset: 0;
-    background-position: 62% center;
-    opacity: 0.75;
-  }
-  .cb-hero-shade {
-    background:
-      linear-gradient(90deg, #001321f2, #0013218c),
-      linear-gradient(0deg, #001321, #00132100 60%);
-  }
-  .cb-hero-inner {
-    padding: 35px 20px 0;
-  }
-  .cb-hero h1 {
-    font-size: 23px;
-  }
-  .cb-hero h1 strong {
-    font-size: 40px;
-  }
-  .cb-hero-inner > p {
-    font-size: 13px;
-    line-height: 1.4;
-  }
-  .cb-trust-strip {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .cb-trust-strip > span {
-    width: calc(50% - 6px);
-    border: 0;
-    padding: 0;
-    font-size: 9px;
-  }
-  .cb-trust-strip svg {
-    width: 24px;
-    height: 24px;
-  }
-  .cb-hero-caption {
-    bottom: 16px;
-    right: 15px;
-    font-size: 10px;
-  }
   .cb-content {
     padding: 0 14px 15px;
   }
   .cb-search {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    margin-top: -12px;
+    margin-top: 16px;
     gap: 8px;
     padding: 13px;
   }
@@ -744,7 +706,7 @@
     margin-top: 5px;
   }
 }
-/* Approved homepage remains unchanged above; added global casino destinations below. */
+/* Additional global destination guides. */
 .cb-global-extension {
   padding: 25px 0 20px;
   border-top: 1px solid #e3e9ef;
@@ -937,17 +899,6 @@
   .cb-shell-header .cb-language span:first-child {
     display: none;
   }
-  .cb-hero {
-    min-height: 375px;
-    height: auto;
-    padding-bottom: 65px;
-  }
-  .cb-hero h1 strong {
-    font-size: clamp(32px, 8vw, 40px);
-  }
-  .cb-hero-caption {
-    bottom: 18px;
-  }
   .cb-search-item:first-child {
     grid-column: 1/-1;
   }
@@ -1021,4 +972,57 @@
   font-size: 9px;
   letter-spacing: 0.12em;
   opacity: 0.7;
+}
+
+/* Keep every edge of the supplied photograph visible on narrow screens.
+   Copy moves below the scene instead of obscuring or cropping the composition. */
+@media (max-width: 900px) {
+  .cb-hero-inner {
+    position: relative;
+    padding: 28px 22px 30px;
+    background: linear-gradient(160deg, #0d2b40, #031629 75%);
+  }
+  .cb-hero-shade {
+    display: none;
+  }
+  .cb-hero-eyebrow {
+    font-size: 9px;
+    margin-bottom: 14px;
+  }
+  .cb-hero h1 {
+    font-size: 22px;
+  }
+  .cb-hero h1 strong {
+    font-size: clamp(34px, 6.5vw, 48px);
+  }
+  .cb-hero-inner > p {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .cb-hero-caption {
+    display: none;
+  }
+  .cb-trust-strip {
+    padding: 20px;
+  }
+  .cb-trust-strip > span {
+    padding: 0 15px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 540px) {
+  .cb-trust-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .cb-trust-strip > span {
+    padding: 0;
+    border: 0;
+    font-size: 10px;
+  }
+  .cb-trust-strip svg {
+    width: 25px;
+    height: 25px;
+  }
 }

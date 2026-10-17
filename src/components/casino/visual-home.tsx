@@ -1,7 +1,7 @@
 /**
  * CasinoBooking approved visual homepage.
- * Visual components re-create the user-provided reference using cropped elements
- * of the SAME original approved concept; no replacement destination photography.
+ * Original visual-home layout with the user's new, uncropped sunset hero.
+ * The original thirteen approved WebP assets are retained unchanged.
  * The cards are editorial previews, NOT a verified inventory or partnership claim.
  * Assets required: public/design-reference/*.webp supplied in handoff ZIP.
  */
@@ -128,71 +128,74 @@ export function VisualHome() {
       <SiteHeader />
       <main>
         <section className="cb-hero">
-          <div
+          <img
             className="cb-hero-photo"
-            role="img"
-            aria-label={t(
-              "Illustrative Monte Carlo luxury casino destination",
-              "Ενδεικτική εικόνα πολυτελούς προορισμού καζίνο στο Μόντε Κάρλο",
+            src="/images/mediterranean-casino-sunset.jpg"
+            width={1280}
+            height={720}
+            fetchPriority="high"
+            alt={t(
+              "Mediterranean sunset travel concept with a coastal harbour, yachts, roulette and champagne",
+              "Ταξιδιωτική σύνθεση με μεσογειακό ηλιοβασίλεμα, παραθαλάσσιο λιμάνι, γιοτ, ρουλέτα και σαμπάνια",
             )}
           />
-          <div className="cb-hero-shade" />
+          <div className="cb-hero-shade" aria-hidden="true" />
           <div className="cb-hero-inner">
+            <div className="cb-hero-eyebrow">
+              {t(
+                "Exceptional places. Personal journeys.",
+                "Ξεχωριστοί τόποι. Ταξίδια στα μέτρα σας.",
+              )}
+            </div>
             <h1>
               <span>{t("Your Gateway to", "Η Πύλη σας προς")}</span>
               <strong>{t("World-Class Casinos", "Κορυφαία Καζίνο")}</strong>
             </h1>
             <p>
               {t(
-                "Discover remarkable casino destinations across Europe.",
-                "Ανακαλύψτε μοναδικούς προορισμούς καζίνο στην Ευρώπη.",
+                "Discover remarkable destinations. Let your next journey begin.",
+                "Ανακαλύψτε ξεχωριστούς προορισμούς. Το επόμενο ταξίδι σας ξεκινά εδώ.",
               )}
               <br />
               {t(
-                "Request hotels, flights and complete travel coordination — all in one place.",
-                "Ζητήστε ξενοδοχεία, πτήσεις και πλήρη ταξιδιωτική οργάνωση — όλα σε ένα μέρος.",
+                "Hotels, flights, cruises and personal concierge — one free enquiry.",
+                "Ξενοδοχεία, πτήσεις, κρουαζιέρες και concierge — με ένα δωρεάν αίτημα.",
               )}
             </p>
-            <div className="cb-trust-strip">
-              <span>
-                <ShieldCheck />
-                {t("Curated casino", "Επιλεγμένοι")}
-                <br />
-                {t("destinations", "προορισμοί")}
-              </span>
-              <span>
-                <Plane />
-                {t("Travel itinerary", "Ταξιδιωτικά")}
-                <br />
-                {t("enquiries", "αιτήματα")}
-              </span>
-              <span>
-                <Hotel />
-                {t("Concierge travel", "Ταξιδιωτική")}
-                <br />
-                {t("coordination", "οργάνωση")}
-              </span>
-              <span>
-                <LockKeyhole />
-                {t("Private account", "Προσωπικός")}
-                <br />
-                {t("area", "λογαριασμός")}
-              </span>
-            </div>
           </div>
           <div className="cb-hero-caption">
-            <MapPin size={13} />
-            <span>
-              {t("Monte-Carlo, Monaco", "Μόντε Κάρλο, Μονακό")}
-              <small>
-                {t(
-                  "Illustrative design photography",
-                  "Ενδεικτική εικόνα σχεδίου",
-                )}
-              </small>
-            </span>
+            {t(
+              "The Mediterranean, imagined",
+              "Η Μεσόγειος, όπως την ονειρεύεστε",
+            )}
           </div>
         </section>
+        <div className="cb-trust-strip">
+          <span>
+            <ShieldCheck />
+            {t("Curated casino", "Επιλεγμένοι")}
+            <br />
+            {t("destinations", "προορισμοί")}
+          </span>
+          <span>
+            <Plane />
+            {t("Travel itinerary", "Ταξιδιωτικά")}
+            <br />
+            {t("enquiries", "αιτήματα")}
+          </span>
+          <span>
+            <Hotel />
+            {t("Concierge travel", "Ταξιδιωτική")}
+            <br />
+            {t("coordination", "οργάνωση")}
+          </span>
+          <span>
+            <LockKeyhole />
+            {t("Private account", "Προσωπικός")}
+            <br />
+            {t("area", "λογαριασμός")}
+          </span>
+        </div>
         <div className="cb-content">
           <form className="cb-search" onSubmit={search}>
             <div className="cb-search-item">

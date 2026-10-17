@@ -536,7 +536,7 @@
 .cb-extra-finale {
   background:
     linear-gradient(95deg, #001022ee, #05263ecf),
-    url("/design-reference/hero-reference.webp") center/cover;
+    url("/images/mediterranean-casino-sunset.jpg") center/cover;
   padding: 31px max(3%, calc((100% - 1430px) / 2));
   color: white;
   display: flex;
