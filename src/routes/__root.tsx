@@ -104,7 +104,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "theme-color", content: "#101c2e" },
+        { name: "theme-color", content: "#041626" },
+        {
+          name: "robots",
+          content:
+            import.meta.env["VITE_PUBLIC_INDEXING"] === "true"
+              ? "index, follow"
+              : "noindex, nofollow",
+        },
       ],
       links: [
         {
@@ -112,7 +119,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           href: appCss,
         },
         { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-        { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
+
         { rel: "manifest", href: "/manifest.webmanifest" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         {

@@ -4,6 +4,7 @@ import { useCasino } from "@/components/casino/context";
 import {
   approvedCountries,
   countryVenues,
+  isRequestableVenue,
 } from "@/lib/approved-casino-directory";
 import { casinoHead } from "@/lib/casino-seo";
 import "./destinations-directory.css";
@@ -77,7 +78,10 @@ function CountryDetail() {
             loading="lazy"
             alt={
               t(country.name[0], country.name[1]) +
-              " — editorial destination illustration"
+              t(
+                " — editorial destination illustration",
+                " — ενδεικτική εικόνα προορισμού",
+              )
             }
             onError={(e) => {
               e.currentTarget.hidden = true;
@@ -90,11 +94,24 @@ function CountryDetail() {
             "Ενημερωτικός κατάλογος: ελέγξτε λειτουργία, άδεια, νόμιμη ηλικία και απαιτήσεις visa πριν από το ταξίδι. Το CasinoBooking δεν διαθέτει υπηρεσίες τυχερών παιχνιδιών.",
           )}
         </p>
+        {slug === "usa" && (
+          <Link to="/global-casinos" className="approved-back">
+            {t(
+              "Explore US regions and hotel sources →",
+              "Δείτε περιοχές ΗΠΑ και πηγές ξενοδοχείων →",
+            )}
+          </Link>
+        )}
         <h2 className="approved-detail-title">
-          {t(
-            "Selected casinos and gaming venues",
-            "Επιλεγμένα καζίνο και χώροι gaming",
-          )}{" "}
+          {future
+            ? t(
+                "Planned project · not open",
+                "Μελλοντικό έργο · δεν λειτουργεί",
+              )
+            : t(
+                "Selected casinos and gaming venues",
+                "Επιλεγμένα καζίνο και χώροι παιχνιδιών",
+              )}{" "}
           ({venues.length})
         </h2>
         <ul className="approved-venues approved-detail-venues">
@@ -115,11 +132,27 @@ function CountryDetail() {
                 >
                   {v.status === "planned"
                     ? t("Planned · not open", "Μελλοντικό · δεν λειτουργεί")
-                    : t(
-                        "Operator listed — recheck before travel",
-                        "Καταχώριση διαχειριστή — επανέλεγχος πριν το ταξίδι",
-                      )}
+                    : restricted
+                      ? t(
+                          "Information only · no travel enquiries",
+                          "Μόνο πληροφορίες · χωρίς ταξιδιωτικά αιτήματα",
+                        )
+                      : t(
+                          "Operator listed — recheck before travel",
+                          "Καταχώριση διαχειριστή — επανέλεγχος πριν το ταξίδι",
+                        )}
                 </span>
+                {v.gaming === "electronic-gaming" && (
+                  <p>
+                    {t(
+                      "Electronic gaming venue",
+                      "Χώρος ηλεκτρονικών παιχνιδιών",
+                    )}
+                  </p>
+                )}
+                <small className="approved-checked">
+                  {t("Source checked", "Έλεγχος πηγής")}: {v.sourceChecked}
+                </small>
               </div>
               <div className="approved-actions">
                 <a
@@ -130,7 +163,7 @@ function CountryDetail() {
                   {t("Official website", "Επίσημη ιστοσελίδα")}{" "}
                   <ExternalLink size={14} />
                 </a>
-                {!future && !restricted && (
+                {isRequestableVenue(v) && (
                   <Link to="/request" search={{ interest: v.name }}>
                     {t("Free travel enquiry", "Δωρεάν ταξιδιωτικό αίτημα")}{" "}
                     <ArrowRight size={15} />

@@ -1,34 +1,37 @@
-# CasinoBooking.com — Free European Casino Travel Enquiry Platform
+# CasinoBooking.com
 
-This is the **existing** Lovable CasinoBooking.com React + TanStack Start + TypeScript + Supabase application, restored on GitHub as a **draft feature branch**, not a finished production deployment.
+The existing React 19 / TanStack Start / TypeScript / Supabase application on `feature/restore-lovable-casinobooking`, reviewed in [PR #1](https://github.com/giorgiopx/CASINO-BOOKING/pull/1). No production merge or deployment is authorized by this preview work.
 
-**Latest business decision:** NO subscriptions, VIP payments, online checkout, Stripe, cryptocurrency payments, online gambling or customer charges. Browsing and travel-coordination requests are free.
+## Current implementation
 
-## Approved design
+- Shared responsive navy, champagne gold and ivory interface based on the existing `visual-home` and `visual-more` design. All 13 approved WebP files are preserved byte-for-byte and checked with SHA256.
+- English and Greek public interface, persistent language preference, working navigation and validated search-to-enquiry defaults.
+- 15 countries, 51 operator-listed venue candidates, plus one separately marked planned UAE project. Russia is informational; planned and restricted venues are excluded from enquiry choices. Official source links and research dates are retained; listings are not live inventory.
+- Free enquiries for concierge, hotels, flights, transfers, cruises and packages. No Stripe, cryptocurrency, paid memberships, checkout or subscriptions.
+- Existing Supabase profiles, requests, auth, RLS and CRM code preserved. No database migration or customer-data changes were made in this update.
 
-The user-approved midnight-navy + champagne-gold screenshot is immutable as the design reference. The React code in `src/components/casino/visual-home.tsx` and its CSS are committed. **CRITICAL**: exact approved image crops must still be copied from `CasinoBooking_Phase3_Final_Handoff_2026-10-14.zip` to `public/design-reference/*.webp` before the visual page works. Image crops are illustrative editorial mockups, NOT verified casino-property photographs. Public venue listings must use verifiable official sources and image rights.
+## Preview limitations
 
-## User and CRM features (code implemented; end-to-end verification pending)
+A preview without the existing Supabase public URL and publishable key remains fully browsable and explicitly disables account/submission actions. It does not simulate successful requests. The current connection cannot access that project's public deployment configuration. Actual signup, saved requests, customer isolation and admin CRM require separate authenticated staging verification. Email/WhatsApp automation remains deferred.
 
-- Supabase Auth; server-generated customer refs and enquiry refs.
-- RLS-protected customer profiles, individual/corporate details and status dashboards.
-- Multi-service enquiry form: casino, flights, hotel, transfers, cruise and packages with dates, traveler count and travel preferences.
-- Admin CRM with customer files, status tracking, segments of travel itinerary, private notes and internal tasks.
-- The old public demo CRM route /portal redirects to authenticated /dashboard.
-- Supabase migration `supabase/migrations/20261014_travel_crm.sql` has been applied on Lovable Cloud. Do not rerun it blindly in another environment or loosen access grants.
-- Professional email and WhatsApp Business automation are **intentionally deferred** until last stage and owner provides business accounts/number. Do not claim messages were delivered or bookings confirmed.
+The original `Luxury Casino Travel Homepage.png` is not present in this checkout. The implementation preserves the existing approved components and exact 13 crops; pixel-identical comparison to that full reference has not been performed. Supplementary homepage region/cruise panels use deliberate graphics instead of broken external image links. Supplemental directory images have an explicit unavailable fallback.
 
-## Source and testing
+## Run and verify
 
-Repository: https://github.com/giorgiopx/CASINO-BOOKING
-Review branch: `feature/restore-lovable-casinobooking`
-Draft PR: https://github.com/giorgiopx/CASINO-BOOKING/pull/1
-Lovable editor: https://lovable.dev/projects/6a0edc79-9b33-4814-81bd-abcd323cb86e
+```sh
+bun install --frozen-lockfile
+bun run dev
+bun run build
+bun run typecheck
+bun run lint
+bun run test
+bun run test:assets
+```
 
-CI currently runs Bun install, TypeScript check, build, existing single unit test, prettier and lint. **Successful CI is not proof of real account/RLS/browser E2E tests or readiness for live customer data**.
+For Vercel output: `NITRO_PRESET=vercel bun run build`. The existing Lovable config also detects Vercel automatically.
 
-## Before launch
+For real public browser checks, run the local app on port 4173, install Chromium with `bunx playwright install chromium`, then run `bun run test:browser`. An installed system Chromium can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium`. Screenshots and a structured report are saved under `artifacts/browser-smoke/`. The suite blocks write requests and does **not** certify authenticated Supabase or CRM behavior.
 
-Copy photo assets, test 2 independent accounts + admin role, confirm RLS, request submission and CRUD in browser; verify compliance/privacy/official casino sources/age requirements, choose hosting and env secrets, backups and proper domain/DNS, then deploy ONLY after user approves. This system coordinates **enquiries**, not automated supplier booking inventory/flight ticket issuance.
+Use `.env.example` for public Supabase settings only. Never commit `.env`, service-role keys or customer information. Search indexing defaults to disabled until release review; set `VITE_PUBLIC_INDEXING=true` only for an approved production release.
 
-Installation: `bun install`; local dev `bun run dev`; checks `bunx tsc --noEmit && bun run build && bun run test && bunx prettier --write . && bunx eslint . --fix && bun run lint`. Never commit a real `.env` file or service-role credentials.
+See [the latest verification record](docs/VERIFICATION_2026-10-17.md) and [Issue #2](https://github.com/giorgiopx/CASINO-BOOKING/issues/2) for remaining release gates.

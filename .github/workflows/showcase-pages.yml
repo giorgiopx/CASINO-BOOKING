@@ -1,14 +1,5 @@
 name: Prepare CasinoBooking Public Showcase
 on:
-  push:
-    branches:
-      - feature/restore-lovable-casinobooking
-    paths:
-      - "showcase/**"
-      - "public/design-reference/**"
-      - "src/lib/approved-casino-directory.ts"
-      - "src/lib/global-casino-catalog.ts"
-      - ".github/workflows/showcase-pages.yml"
   workflow_dispatch:
 permissions:
   contents: write

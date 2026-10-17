@@ -10,18 +10,15 @@ import {
   Hotel,
   MapPin,
   Plane,
-  Search,
   ShieldCheck,
   Ship,
-  Sparkles,
-  UserRound,
   Users,
+  UserRound,
   CarFront,
-  Globe2,
-  Mail,
   LockKeyhole,
 } from "lucide-react";
 import { useCasino } from "./context";
+import { SiteFooter } from "./shell";
 import {
   approvedCountries,
   approvedTotals,
@@ -65,10 +62,6 @@ const journeys = [
     page: "https://commons.wikimedia.org/wiki/File:Sunset_on_a_Cruise_Ship_(3725700094).jpg",
   },
 ];
-const imageFromCommons = (file: string) =>
-  "https://commons.wikimedia.org/wiki/Special:FilePath/" +
-  encodeURIComponent(file);
-
 const questions: Array<{ q: [string, string]; a: [string, string] }> = [
   {
     q: [
@@ -86,8 +79,8 @@ const questions: Array<{ q: [string, string]; a: [string, string] }> = [
       "Ποιοι προορισμοί περιλαμβάνονται;",
     ],
     a: [
-      "Our directory covers 15 countries with 51 operator-listed venue candidates and one separately marked future UAE project. Operating status and legal eligibility require checking before travel.",
-      "Ο κατάλογος περιλαμβάνει 15 χώρες με 51 καταχωρισμένους υποψήφιους χώρους και ένα χωριστά χαρακτηρισμένο μελλοντικό έργο στα ΗΑΕ. Η λειτουργία και οι νόμιμες προϋποθέσεις ελέγχονται πριν από το ταξίδι.",
+      "Browse European and international destinations with official operator sources. Planned projects are marked separately. Confirm operating status and entry requirements before travel.",
+      "Εξερευνήστε ευρωπαϊκούς και διεθνείς προορισμούς με επίσημες πηγές διαχειριστών. Τα μελλοντικά έργα επισημαίνονται χωριστά. Επιβεβαιώστε λειτουργία και όρους εισόδου πριν ταξιδέψετε.",
     ],
   },
   {
@@ -127,7 +120,7 @@ const questions: Array<{ q: [string, string]; a: [string, string] }> = [
 ];
 
 export function VisualMore() {
-  const { t, lang } = useCasino();
+  const { t } = useCasino();
   return (
     <div className="cb-extra">
       <section
@@ -214,7 +207,13 @@ export function VisualMore() {
                   <img
                     loading="lazy"
                     src={"/design-reference/" + slug + ".webp"}
-                    alt={t(c.name[0], c.name[1]) + " travel destination"}
+                    alt={
+                      t(c.name[0], c.name[1]) +
+                      t(
+                        " — illustrative travel destination",
+                        " — ενδεικτική εικόνα προορισμού",
+                      )
+                    }
                   />
                   {i === 0 && (
                     <span className="cb-extra-feature-badge">
@@ -258,11 +257,7 @@ export function VisualMore() {
       </section>
 
       <section className="cb-extra-cruises" id="cruises">
-        <div
-          className="cb-extra-cruise-bg"
-          role="img"
-          aria-label={t("Cruise vessel at sea", "Κρουαζιερόπλοιο στη θάλασσα")}
-        />
+        <div className="cb-extra-cruise-bg" aria-hidden="true" />
         <div className="cb-extra-cruise-left">
           <p className="cb-extra-kicker">
             {t("CRUISE INSPIRATION", "ΙΔΕΕΣ ΓΙΑ ΚΡΟΥΑΖΙΕΡΕΣ")}
@@ -282,7 +277,7 @@ export function VisualMore() {
           </p>
           <Link
             to="/request"
-            search={{ type: "introduction" }}
+            search={{ type: "cruise" }}
             className="cb-extra-gold-cta"
           >
             {t("Enquire About Cruises", "Αίτημα για κρουαζιέρα")}{" "}
@@ -292,30 +287,16 @@ export function VisualMore() {
         <div className="cb-extra-cruise-cards">
           {journeys.map((j) => (
             <article key={j.en} className="cb-extra-cruise-card">
-              <img
-                loading="lazy"
-                src={imageFromCommons(j.file)}
-                alt={t(j.en, j.el)}
-              />
+              <div className="cb-cruise-art" aria-hidden="true">
+                <Ship size={42} strokeWidth={1} />
+              </div>
               <h3>{t(j.en, j.el)}</h3>
               <p>{t(j.detail[0], j.detail[1])}</p>
-              <Link to="/request">
+              <Link to="/request" search={{ type: "cruise" }}>
                 {t("Send Enquiry", "Αποστολή αιτήματος")}{" "}
                 <ArrowRight size={14} />
               </Link>
             </article>
-          ))}
-        </div>
-        <div className="cb-extra-attribution">
-          {journeys.map((j) => (
-            <a
-              key={j.en}
-              href={j.page}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {j.credit}
-            </a>
           ))}
         </div>
       </section>
@@ -343,15 +324,20 @@ export function VisualMore() {
         </div>
         <div className="cb-extra-service-tiles">
           {[
-            { icon: Hotel, en: "Hotels", el: "Ξενοδοχεία" },
-            { icon: Plane, en: "Flights", el: "Πτήσεις" },
-            { icon: CarFront, en: "Transfers", el: "Μεταφορές" },
-            { icon: Ship, en: "Cruises", el: "Κρουαζιέρες" },
-            { icon: Users, en: "Groups", el: "Ομάδες" },
+            { icon: Hotel, type: "hotel", en: "Hotels", el: "Ξενοδοχεία" },
+            { icon: Plane, type: "flight", en: "Flights", el: "Πτήσεις" },
+            {
+              icon: CarFront,
+              type: "transfer",
+              en: "Transfers",
+              el: "Μεταφορές",
+            },
+            { icon: Ship, type: "cruise", en: "Cruises", el: "Κρουαζιέρες" },
+            { icon: Users, type: "bundle", en: "Groups", el: "Ομάδες" },
           ].map((s) => {
             const Icon = s.icon;
             return (
-              <Link to="/request" key={s.en}>
+              <Link to="/request" search={{ type: s.type }} key={s.en}>
                 <Icon aria-hidden="true" />
                 <strong>{t(s.en, s.el)}</strong>
                 <small>{t("Request assistance", "Ζητήστε βοήθεια")}</small>
@@ -556,7 +542,7 @@ export function VisualMore() {
             </header>
             <div className="cb-extra-dashboard-columns">
               <aside>
-                <b>Admin</b>
+                <b>{t("Admin", "Διαχείριση")}</b>
                 <span>{t("Customers", "Πελάτες")}</span>
                 <span>{t("Enquiries", "Αιτήματα")}</span>
                 <span>{t("Settings", "Ρυθμίσεις")}</span>
@@ -581,7 +567,7 @@ export function VisualMore() {
 
       <section className="cb-extra-section cb-extra-faq" id="faq">
         <div>
-          <p className="cb-extra-kicker">FAQ</p>
+          <p className="cb-extra-kicker">{t("FAQ", "ΕΡΩΤΗΣΕΙΣ")}</p>
           <h2>{t("Frequently Asked Questions", "Συχνές Ερωτήσεις")}</h2>
           <p>
             {t(
@@ -623,56 +609,7 @@ export function VisualMore() {
           <ArrowRight size={17} />
         </Link>
       </section>
-      <footer className="cb-extra-footer">
-        <div className="cb-extra-footer-top">
-          <div className="cb-extra-footer-brand">
-            <Link to="/">♠ CasinoBooking.com</Link>
-            <small>CASINOS · RESORTS · CRUISES · TRAVEL</small>
-            <p>
-              {t(
-                "Independent destination research and free travel enquiries for adults. No confirmed partner relationships or live travel inventory are implied.",
-                "Ανεξάρτητη ενημέρωση προορισμών και δωρεάν ταξιδιωτικά αιτήματα για ενήλικες. Δεν υπονοούνται επιβεβαιωμένες συνεργασίες ή ζωντανή διαθεσιμότητα.",
-              )}
-            </p>
-          </div>
-          <div>
-            <h3>{t("Explore", "Εξερεύνηση")}</h3>
-            <Link to="/destinations">
-              {t("All destinations", "Όλοι οι προορισμοί")}
-            </Link>
-            <Link to="/explore">
-              {t("Casino directory", "Κατάλογος καζίνο")}
-            </Link>
-            <Link to="/global-casinos">
-              {t("International casinos", "Διεθνή καζίνο")}
-            </Link>
-          </div>
-          <div>
-            <h3>{t("Your Journey", "Το ταξίδι σας")}</h3>
-            <Link to="/request">
-              {t("Free travel enquiry", "Δωρεάν αίτημα")}
-            </Link>
-            <Link to="/auth">{t("Login / Register", "Σύνδεση / Εγγραφή")}</Link>
-            <Link to="/dashboard">{t("My account", "Ο λογαριασμός μου")}</Link>
-          </div>
-          <div>
-            <h3>{t("Information", "Πληροφορίες")}</h3>
-            <Link to="/about">{t("About", "Σχετικά")}</Link>
-            <Link to="/contact">{t("Contact", "Επικοινωνία")}</Link>
-            <Link to="/privacy">{t("Privacy", "Απόρρητο")}</Link>
-            <Link to="/terms">{t("Terms", "Όροι")}</Link>
-          </div>
-        </div>
-        <div className="cb-extra-footer-bottom">
-          <span>© {new Date().getFullYear()} CasinoBooking.com</span>
-          <span>
-            {t(
-              "Adults only · Travel enquiries · No online payments",
-              "Μόνο ενήλικες · Ταξιδιωτικά αιτήματα · Χωρίς online πληρωμές",
-            )}
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

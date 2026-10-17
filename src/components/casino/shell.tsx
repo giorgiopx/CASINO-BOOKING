@@ -1,214 +1,224 @@
-import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Crown, Menu, X, Globe, ArrowUpRight, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { useCasino } from "./context";
+import { useAuth } from "./auth";
+import "./visual-home.css";
+import "./visual-more.css";
+
 export function Brand() {
+  const { t } = useCasino();
   return (
-    <Link to="/" className="brand">
-      <Crown size={28} strokeWidth={1.2} />
+    <Link to="/" className="cb-logo" aria-label="CasinoBooking.com">
+      <span className="cb-spade" aria-hidden="true">
+        ♠
+      </span>
       <span>
-        CasinoBooking<span className="text-gold">.com</span>
+        <strong>CasinoBooking.com</strong>
+        <small>
+          {t(
+            "CASINOS · RESORTS · CRUISES · TRAVEL",
+            "ΚΑΖΙΝΟ · ΘΕΡΕΤΡΑ · ΚΡΟΥΑΖΙΕΡΕΣ · ΤΑΞΙΔΙΑ",
+          )}
+        </small>
       </span>
     </Link>
   );
 }
+
 export function SiteHeader() {
   const { t, lang, setLang } = useCasino();
+  const { session } = useAuth();
   const [open, setOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const pathname = useLocation({ select: (location) => location.pathname });
   useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
-  const links = [
-    ["/explore", t("Explore casinos", "Καζίνο")],
-    ["/destinations", t("Destinations", "Προορισμοί")],
-    ["/services", t("Travel services", "Υπηρεσίες")],
-    ["/how-it-works", t("How it works", "Πώς λειτουργεί")],
+    setOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        toggle.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", close);
+    return () => document.removeEventListener("keydown", close);
+  }, [open]);
+  const nav = [
+    { en: "Home", el: "Αρχική", href: "/" },
+    { en: "Casinos", el: "Καζίνο", href: "/explore" },
+    { en: "Destinations", el: "Προορισμοί", href: "/destinations" },
+    {
+      en: "Casino Cruises",
+      el: "Κρουαζιέρες",
+      href: "/services",
+      hash: "cruises",
+    },
+    { en: "Travel Concierge", el: "Οργάνωση Ταξιδιού", href: "/services" },
+    { en: "Free Concierge", el: "Δωρεάν Concierge", href: "/request" },
+    { en: "About Us", el: "Σχετικά", href: "/about" },
+    { en: "Contact", el: "Επικοινωνία", href: "/contact" },
   ] as const;
   return (
-    <header className="site-header">
-      <div className="container-site header-inner">
-        <Brand />
-        <nav
-          className="main-nav"
-          aria-label={t("Main navigation", "Κύρια πλοήγηση")}
+    <header className="cb-design cb-visual-topbar cb-shell-header">
+      <Brand />
+      <nav
+        id="site-navigation"
+        className={open ? "cb-nav cb-nav-open" : "cb-nav"}
+        aria-label={t("Main navigation", "Κύρια πλοήγηση")}
+      >
+        {nav.map((n) => (
+          <Link
+            key={n.en}
+            to={n.href}
+            hash={"hash" in n ? n.hash : ""}
+            activeOptions={{ exact: true }}
+            onClick={() => setOpen(false)}
+          >
+            {t(n.en, n.el)}
+          </Link>
+        ))}
+        <Link
+          className="cb-mobile-account"
+          to={session ? "/dashboard" : "/auth"}
+          onClick={() => setOpen(false)}
         >
-          {links.map(([to, title]) => (
-            <Link key={to} to={to}>
-              {title}
-            </Link>
-          ))}
-        </nav>
-        <div className="header-actions">
-          <div className="language">
-            <Globe size={13} />
-            <Button
-              variant="ghost"
-              aria-pressed={lang === "en"}
-              onClick={() => setLang("en")}
-              className={lang === "en" ? "text-gold" : ""}
-            >
-              EN
-            </Button>
-            <span className="text-dark-muted">/</span>
-            <Button
-              variant="ghost"
-              aria-pressed={lang === "el"}
-              onClick={() => setLang("el")}
-              className={lang === "el" ? "text-gold" : ""}
-            >
-              ΕΛ
-            </Button>
-          </div>
-          <Link to="/dashboard" className="text-xs portal-link">
+          {t(
+            session ? "My account" : "Login / Register",
+            session ? "Ο λογαριασμός μου" : "Σύνδεση / Εγγραφή",
+          )}
+        </Link>
+      </nav>
+      <div className="cb-top-actions">
+        <button
+          type="button"
+          className="cb-language"
+          onClick={() => setLang(lang === "el" ? "en" : "el")}
+          aria-label={t("Switch to Greek", "Αλλαγή σε αγγλικά")}
+        >
+          <span aria-hidden="true">{lang === "el" ? "🇬🇷" : "🇬🇧"}</span>{" "}
+          {lang.toUpperCase()} <span aria-hidden="true">⌄</span>
+        </button>
+        {session ? (
+          <Link className="cb-register" to="/dashboard">
             {t("My account", "Ο λογαριασμός μου")}
           </Link>
-          <Link to="/portal" className="text-xs portal-link">
-            {t("Portal", "Πύλη")}
-          </Link>
-          <Button asChild className="request-header" size="sm">
-            <Link to="/request">
-              {t("Plan your trip", "Σχεδιάστε ταξίδι")}
-              <ArrowUpRight />
+        ) : (
+          <>
+            <Link className="cb-login" to="/auth">
+              {t("Login", "Σύνδεση")}
             </Link>
-          </Button>
-          <Button
-            className="mobile-toggle"
-            variant="ghost"
-            size="icon"
-            aria-label={t("Toggle menu", "Μενού")}
-            aria-expanded={open}
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <X /> : <Menu />}
-          </Button>
-        </div>
-        {open && (
-          <nav className="mobile-menu">
-            {links.map(([to, title]) => (
-              <Link key={to} to={to} onClick={() => setOpen(false)}>
-                {title}
-              </Link>
-            ))}
-            <Link to="/request" onClick={() => setOpen(false)}>
-              {t("Plan your trip", "Σχεδιάστε ταξίδι")}
+            <Link
+              className="cb-register"
+              to="/auth"
+              search={{ mode: "signup" }}
+            >
+              {t("Register", "Εγγραφή")}
             </Link>
-            <Link to="/portal" onClick={() => setOpen(false)}>
-              {t("Demo portal", "Πύλη επίδειξης")}
-            </Link>
-            <Link to="/about" onClick={() => setOpen(false)}>
-              {t("About us", "Σχετικά με εμάς")}
-            </Link>
-            <Link to="/contact" onClick={() => setOpen(false)}>
-              {t("Contact", "Επικοινωνία")}
-            </Link>
-          </nav>
+          </>
         )}
+        <button
+          ref={toggle}
+          type="button"
+          className="cb-menu-toggle"
+          aria-controls="site-navigation"
+          aria-expanded={open}
+          aria-label={t(
+            open ? "Close menu" : "Open menu",
+            open ? "Κλείσιμο μενού" : "Άνοιγμα μενού",
+          )}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X /> : <Menu />}
+        </button>
       </div>
     </header>
   );
 }
+
 export function Disclaimer() {
   const { t } = useCasino();
   return (
     <>
       {t(
-        "CasinoBooking.com is an independent referral and travel coordination concept. No casino partnerships or commissions are confirmed until signed agreements. External bookings are made with third-party providers. We do not handle gambling transactions or casino deposits. Adults only (18+ or the higher local minimum); local laws and entry restrictions apply. Verify local legal status before travel, especially for Northern Cyprus and changing regulations.",
-        "Το CasinoBooking.com είναι ανεξάρτητη ιδέα παραπομπών και ταξιδιωτικού συντονισμού. Συνεργασίες και προμήθειες δεν επιβεβαιώνονται χωρίς υπογεγραμμένες συμφωνίες. Οι κρατήσεις γίνονται με τρίτους παρόχους. Δεν διαχειριζόμαστε συναλλαγές τζόγου ή καταθέσεις καζίνο. Μόνο ενήλικες (18+ ή το υψηλότερο τοπικό όριο)· ισχύουν τοπικοί νόμοι και περιορισμοί εισόδου. Ελέγξτε το νομικό καθεστώς πριν ταξιδέψετε, ειδικά για τη Βόρεια Κύπρο και μεταβαλλόμενους κανονισμούς.",
+        "CasinoBooking.com provides independent destination information and free travel enquiries. Supplier arrangements are confirmed separately; no live prices, availability or casino partnerships are implied. We do not process payments or gambling transactions. Adults only (18+ or the higher local minimum); local laws and entry requirements apply.",
+        "Το CasinoBooking.com παρέχει ανεξάρτητη ενημέρωση προορισμών και δωρεάν ταξιδιωτικά αιτήματα. Οι διευθετήσεις με παρόχους επιβεβαιώνονται χωριστά· δεν υπονοούνται ζωντανές τιμές, διαθεσιμότητα ή συνεργασίες καζίνο. Δεν επεξεργαζόμαστε πληρωμές ή συναλλαγές τζόγου. Μόνο ενήλικες (18+ ή το υψηλότερο τοπικό όριο)· ισχύουν τοπικοί νόμοι και όροι εισόδου.",
       )}
     </>
   );
 }
+
 export function SiteFooter() {
   const { t } = useCasino();
   return (
-    <footer className="site-footer">
-      <div className="container-site">
-        <div className="footer-grid">
-          <div>
-            <Brand />
-            <p>
-              {t(
-                "Considered journeys. Personal coordination. A different way to discover your next destination.",
-                "Προσεγμένα ταξίδια. Προσωπικός συντονισμός. Ένας διαφορετικός τρόπος να ανακαλύψετε τον επόμενο προορισμό σας.",
-              )}
-            </p>
-          </div>
-          <div>
-            <h3>{t("Explore", "Ανακαλύψτε")}</h3>
-            <div className="footer-links">
-              <Link to="/explore">
-                {t("Casino directory", "Κατάλογος καζίνο")}
-              </Link>
-              <Link to="/destinations">{t("Destinations", "Προορισμοί")}</Link>
-              <Link to="/services">
-                {t("Travel services", "Ταξιδιωτικές υπηρεσίες")}
-              </Link>
-              <Link to="/how-it-works">
-                {t("How it works", "Πώς λειτουργεί")}
-              </Link>
-            </div>
-          </div>
-          <div>
-            <h3>{t("CasinoBooking", "CasinoBooking")}</h3>
-            <div className="footer-links">
-              <Link to="/about">{t("Our approach", "Η προσέγγισή μας")}</Link>
-              <Link to="/contact">{t("Contact us", "Επικοινωνία")}</Link>
-              <Link to="/portal">{t("Demo portal", "Πύλη επίδειξης")}</Link>
-              <Link to="/about">
-                {t("Mobile app roadmap", "Σχέδιο εφαρμογής κινητού")}
-              </Link>
-            </div>
-          </div>
-          <div>
-            <h3>{t("Your peace of mind", "Η ηρεμία σας")}</h3>
-            <div className="footer-links">
-              <Link to="/privacy">
-                {t("Privacy · legal draft", "Απόρρητο · νομικό προσχέδιο")}
-              </Link>
-              <Link to="/terms">
-                {t("Terms · legal draft", "Όροι · νομικό προσχέδιο")}
-              </Link>
-              <a
-                href="https://www.gamblingtherapy.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t(
-                  "Responsible gambling support",
-                  "Υποστήριξη υπεύθυνου παιχνιδιού",
-                )}{" "}
-                ↗
-              </a>
-              <span className="flex items-center gap-2">
-                <ShieldCheck size={14} />
-                {t("Adults only · 18+", "Μόνο ενήλικες · 18+")}
-              </span>
-            </div>
-          </div>
+    <footer className="cb-design cb-extra cb-extra-footer cb-shell-footer">
+      <div className="cb-extra-footer-top">
+        <div className="cb-extra-footer-brand">
+          <Link to="/">♠ CasinoBooking.com</Link>
+          <small>
+            {t(
+              "CASINOS · RESORTS · CRUISES · TRAVEL",
+              "ΚΑΖΙΝΟ · ΘΕΡΕΤΡΑ · ΚΡΟΥΑΖΙΕΡΕΣ · ΤΑΞΙΔΙΑ",
+            )}
+          </small>
+          <p>
+            {t(
+              "Independent destination research and free travel enquiries for adults. No confirmed partner relationships or live travel inventory are implied.",
+              "Ανεξάρτητη ενημέρωση προορισμών και δωρεάν ταξιδιωτικά αιτήματα για ενήλικες. Δεν υπονοούνται επιβεβαιωμένες συνεργασίες ή ζωντανή διαθεσιμότητα.",
+            )}
+          </p>
         </div>
-        <p className="legal-footer">
-          <Disclaimer />{" "}
+        <div>
+          <h3>{t("Explore", "Εξερεύνηση")}</h3>
+          <Link to="/destinations">
+            {t("All destinations", "Όλοι οι προορισμοί")}
+          </Link>
+          <Link to="/explore">{t("Casino directory", "Κατάλογος καζίνο")}</Link>
+          <Link to="/global-casinos">
+            {t("International casinos", "Διεθνή καζίνο")}
+          </Link>
+        </div>
+        <div>
+          <h3>{t("Your Journey", "Το ταξίδι σας")}</h3>
+          <Link to="/request">{t("Free travel enquiry", "Δωρεάν αίτημα")}</Link>
+          <Link to="/auth">{t("Login / Register", "Σύνδεση / Εγγραφή")}</Link>
+          <Link to="/dashboard">{t("My account", "Ο λογαριασμός μου")}</Link>
+        </div>
+        <div>
+          <h3>{t("Information", "Πληροφορίες")}</h3>
+          <Link to="/about">{t("About", "Σχετικά")}</Link>
+          <Link to="/contact">{t("Contact", "Επικοινωνία")}</Link>
+          <Link to="/privacy">{t("Privacy", "Απόρρητο")}</Link>
+          <Link to="/terms">{t("Terms", "Όροι")}</Link>
+        </div>
+      </div>
+      <p className="cb-footer-disclaimer">
+        <Disclaimer />{" "}
+        {t(
+          "Gambling involves risk. Set limits and seek independent support if needed.",
+          "Ο τζόγος ενέχει κίνδυνο. Θέστε όρια και αναζητήστε ανεξάρτητη υποστήριξη εάν χρειάζεται.",
+        )}{" "}
+        <a
+          href="https://www.gamblingtherapy.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {t(
-            "Gambling involves risk. Set limits, never chase losses, and seek support if needed.",
-            "Ο τζόγος ενέχει κίνδυνο. Θέστε όρια, μην κυνηγάτε απώλειες και αναζητήστε υποστήριξη εάν χρειάζεται.",
+            "Responsible gambling support ↗",
+            "Υποστήριξη υπεύθυνου παιχνιδιού ↗",
           )}
-        </p>
-        <div className="footer-bottom">
-          <span>
-            © {new Date().getFullYear()} CasinoBooking.com ·{" "}
-            {t(
-              "Frontend prototype · no live bookings",
-              "Πρωτότυπο · χωρίς ζωντανές κρατήσεις",
-            )}
-          </span>
-          <span>
-            {t(
-              "English / Ελληνικά · Designed for your journey",
-              "English / Ελληνικά · Σχεδιασμένο για το ταξίδι σας",
-            )}
-          </span>
-        </div>
+        </a>
+      </p>
+      <div className="cb-extra-footer-bottom">
+        <span>© {new Date().getFullYear()} CasinoBooking.com</span>
+        <span>
+          {t(
+            "Adults only · Travel enquiries · No online payments",
+            "Μόνο ενήλικες · Ταξιδιωτικά αιτήματα · Χωρίς online πληρωμές",
+          )}
+        </span>
       </div>
     </footer>
   );

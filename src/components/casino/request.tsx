@@ -1,29 +1,27 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { CheckCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
-import { casinos, countries, requestTypes } from "@/lib/casino-data";
-import { operatingGlobalVenues } from "@/lib/global-casino-catalog";
-import { approvedOperatingCandidates } from "@/lib/approved-casino-directory";
+import { requestTypes } from "@/lib/casino-data";
+import { approvedRequestDestinations } from "@/lib/approved-casino-directory";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./auth";
 import { useCasino } from "./context";
-import { enquirySchema } from "@/lib/casino-request-schema";
+import {
+  enquirySchema,
+  localToday,
+  resolveRequestDefaults,
+  selectedServicesSchema,
+  type RequestSearch,
+} from "@/lib/casino-request-schema";
 import { Intro } from "./public";
-export function RequestPage({
-  defaults = {},
-}: {
-  defaults?: {
-    interest?: string | undefined;
-    country?: string | undefined;
-    start?: string | undefined;
-    party?: string | undefined;
-    type?: string | undefined;
-  };
-}) {
+export function RequestPage({ defaults = {} }: { defaults?: RequestSearch }) {
   const { t, p } = useCasino();
-  const { session, ready } = useAuth();
+  const { session, ready, available } = useAuth();
+  const initial = resolveRequestDefaults(defaults);
+  const [departure, setDeparture] = useState(initial.start);
+  const submitting = useRef(false);
   const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [ref, setRef] = useState("");
@@ -31,21 +29,14 @@ export function RequestPage({
   const [error, setError] = useState("");
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submitting.current) return;
+    setError("");
     const f = new FormData(e.currentTarget);
     const v = (key: string) => String(f.get(key) || "").trim();
-    const serviceAllowed = [
-      "casino",
-      "flight",
-      "hotel",
-      "transfer",
-      "cruise",
-      "package",
-    ];
-    const services = f
-      .getAll("services")
-      .map(String)
-      .filter((x) => serviceAllowed.includes(x));
-    if (services.length === 0) {
+    const selectedServices = selectedServicesSchema.safeParse(
+      f.getAll("services"),
+    );
+    if (!selectedServices.success) {
       setError(
         t(
           "Select at least one travel service.",
@@ -54,6 +45,7 @@ export function RequestPage({
       );
       return;
     }
+    const services = selectedServices.data;
     const tripPreferences = {
       flightOrigin: v("flightOrigin").slice(0, 120),
       flightDestination: v("flightDestination").slice(0, 120),
@@ -67,31 +59,29 @@ export function RequestPage({
       vehicleType: v("vehicleType"),
       specialRequirements: v("specialRequirements").slice(0, 1200),
     };
-    if (v("end") < v("start")) {
-      setError(
-        t(
-          "Return date must be on or after departure.",
-          "Η επιστροφή πρέπει να είναι μετά ή ίδια με την αναχώρηση.",
-        ),
-      );
-      return;
-    }
-    if (!/^\+[\d\s()-]{7,22}$/.test(v("phone"))) {
-      setError(
-        t(
-          "Enter a phone number starting with + and the country code.",
-          "Εισάγετε τηλέφωνο με + και κωδικό χώρας.",
-        ),
-      );
-      return;
-    }
     const parsed = enquirySchema.safeParse(Object.fromEntries(f));
     if (!parsed.success) {
+      const issue = parsed.error.issues[0];
       setError(
-        t(
-          "Please check all required fields and use valid sample details.",
-          "Ελέγξτε όλα τα υποχρεωτικά πεδία και χρησιμοποιήστε έγκυρα ενδεικτικά στοιχεία.",
-        ),
+        issue?.message === "pastDate"
+          ? t(
+              "Departure cannot be in the past.",
+              "Η αναχώρηση δεν μπορεί να είναι στο παρελθόν.",
+            )
+          : issue?.message === "dateOrder"
+            ? t(
+                "Return date must be on or after departure.",
+                "Η επιστροφή πρέπει να είναι μετά ή ίδια με την αναχώρηση.",
+              )
+            : issue?.path[0] === "phone"
+              ? t(
+                  "Enter a valid phone number starting with + and the country code.",
+                  "Εισάγετε έγκυρο τηλέφωνο με + και κωδικό χώρας.",
+                )
+              : t(
+                  "Please check the required fields, travel dates and consent.",
+                  "Ελέγξτε τα υποχρεωτικά πεδία, τις ημερομηνίες και τη συγκατάθεση.",
+                ),
       );
       return;
     }
@@ -105,57 +95,70 @@ export function RequestPage({
       return;
     }
     const d = parsed.data;
+    submitting.current = true;
     setBusy(true);
-    const { data, error: dbError } = await supabase
-      .from("enquiries")
-      .insert({
-        user_id: session.user.id,
-        ref: "pending",
-        name: d.name,
-        surname: d.surname,
-        email: d.email,
-        phone: d.phone,
-        residence: d.residence,
-        customer_type: d.customerType,
-        destination: d.destination,
-        casino_name: v("casinoName").slice(0, 160) || null,
-        company_name:
-          d.customerType === "business"
-            ? v("companyName").slice(0, 160) || null
-            : null,
-        services,
-        trip_preferences: tripPreferences,
-        start_date: d.start,
-        end_date: d.end,
-        party: Number(d.party),
-        request_type: d.type,
-        message: d.message,
-        preference: d.preference,
-      })
-      .select("ref")
-      .single();
-    if (dbError || !data) {
-      setBusy(false);
+    try {
+      const { data, error: dbError } = await supabase
+        .from("enquiries")
+        .insert({
+          user_id: session.user.id,
+          ref: "pending",
+          name: d.name,
+          surname: d.surname,
+          email: d.email,
+          phone: d.phone,
+          residence: d.residence,
+          customer_type: d.customerType,
+          destination: d.destination,
+          casino_name: v("casinoName").slice(0, 160) || null,
+          company_name:
+            d.customerType === "business"
+              ? v("companyName").slice(0, 160) || null
+              : null,
+          services,
+          trip_preferences: tripPreferences,
+          start_date: d.start,
+          end_date: d.end,
+          party: Number(d.party),
+          request_type: d.type,
+          message: d.message,
+          preference: d.preference,
+        })
+        .select("ref")
+        .single();
+      if (dbError || !data?.ref || data.ref === "pending") {
+        throw new Error("No confirmed enquiry reference returned");
+      }
+      // The returned reference confirms the save even if later profile refreshes fail.
+      setRef(data.ref);
+      setCustomerRef("");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      void queryClient
+        .invalidateQueries({ queryKey: ["enquiries"] })
+        .catch(() => {});
+      try {
+        const { data: prof } = await supabase
+          .from("profiles")
+          .select("customer_ref")
+          .eq("id", session.user.id)
+          .maybeSingle();
+        setCustomerRef(prof?.customer_ref ?? "");
+      } catch {
+        // A profile lookup must not turn a saved enquiry into a retry/duplicate.
+      }
+    } catch {
       setError(
         t(
-          "Your enquiry could not be saved. Please try again.",
-          "Το αίτημα δεν αποθηκεύτηκε. Δοκιμάστε ξανά.",
+          "We could not confirm that your enquiry was saved. Check your dashboard before trying again.",
+          "Δεν επιβεβαιώθηκε η αποθήκευση του αιτήματος. Ελέγξτε τον πίνακά σας πριν δοκιμάσετε ξανά.",
         ),
       );
-      return;
+    } finally {
+      submitting.current = false;
+      setBusy(false);
     }
-    const { data: prof } = await supabase
-      .from("profiles")
-      .select("customer_ref")
-      .eq("id", session.user.id)
-      .maybeSingle();
-    setBusy(false);
-    queryClient.invalidateQueries({ queryKey: ["enquiries"] });
-    setRef(data.ref);
-    setCustomerRef(prof?.customer_ref ?? "");
-    setError("");
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
+
   return (
     <main>
       <Intro
@@ -183,10 +186,12 @@ export function RequestPage({
                 {t("Your request reference", "Ο αριθμός αναφοράς σας")}
               </p>
               <strong className="success-ref">{ref}</strong>
-              <p className="mt-4">
-                {t("Customer reference", "Αναφορά πελάτη")}:{" "}
-                <strong>{customerRef}</strong>
-              </p>
+              {customerRef && (
+                <p className="mt-4">
+                  {t("Customer reference", "Αναφορά πελάτη")}:{" "}
+                  <strong>{customerRef}</strong>
+                </p>
+              )}
               <p className="section-subtitle">
                 {t(
                   "Saved to your account. This is not a confirmed booking. No email or WhatsApp message is sent — follow the status in your dashboard.",
@@ -207,8 +212,16 @@ export function RequestPage({
             </div>
           ) : (
             <div className="request-layout">
-              <form onSubmit={submit}>
-                {ready && !session && (
+              <form onSubmit={submit} aria-busy={busy}>
+                {ready && !available && (
+                  <div className="notice mt-0" role="status">
+                    {t(
+                      "Account services are temporarily unavailable. You can browse destinations and return later to save your enquiry.",
+                      "Οι υπηρεσίες λογαριασμού είναι προσωρινά μη διαθέσιμες. Μπορείτε να περιηγηθείτε στους προορισμούς και να επιστρέψετε για αποθήκευση του αιτήματος.",
+                    )}
+                  </div>
+                )}
+                {ready && available && !session && (
                   <div className="notice mt-0" role="status">
                     {t(
                       "Sign in or create a free account to submit and track your enquiry.",
@@ -313,62 +326,28 @@ export function RequestPage({
                     <select
                       name="destination"
                       required
-                      defaultValue={
-                        defaults.interest ||
-                        (Number(defaults.country) > 0
-                          ? countries[Number(defaults.country)]?.[0]
-                          : "")
-                      }
+                      defaultValue={initial.destination}
                     >
                       <option value="">
                         {t("Select an interest", "Επιλέξτε ενδιαφέρον")}
                       </option>
-                      {casinos
-                        .filter((c) => !c.planned)
-                        .map((c) => (
-                          <option key={c.id} value={c.name}>
-                            {c.name}
-                            {c.planned
-                              ? t(
-                                  " · planned, not open",
-                                  " · υπό ανάπτυξη, μη ανοικτό",
-                                )
-                              : ""}
-                          </option>
-                        ))}
-                      <optgroup
-                        label={t(
-                          "United States — verified venue candidates",
-                          "ΗΠΑ — τεκμηριωμένοι χώροι",
-                        )}
-                      >
-                        {operatingGlobalVenues.map((venue) => (
-                          <option key={venue.id} value={venue.name}>
-                            {venue.name} — {venue.locality}, {venue.state}
-                          </option>
-                        ))}
-                      </optgroup>
-                      <optgroup
-                        label={t(
-                          "Europe — approved operator-listed venues",
-                          "Ευρώπη — καταχωρισμένα καζίνο",
-                        )}
-                      >
-                        {approvedOperatingCandidates
-                          .filter(
-                            (venue) =>
-                              !["usa", "russia"].includes(venue.countrySlug),
-                          )
-                          .map((venue) => (
-                            <option key={venue.id} value={venue.name}>
-                              {venue.name} — {venue.locality[0]}
-                            </option>
-                          ))}
-                      </optgroup>
-                      {countries.slice(1).map((c) => (
-                        <option key={c[0]} value={c[0]}>
-                          {p(c)}
-                        </option>
+                      {(["country", "venue"] as const).map((kind) => (
+                        <optgroup
+                          key={kind}
+                          label={
+                            kind === "country"
+                              ? t("Countries", "Χώρες")
+                              : t("Casinos", "Καζίνο")
+                          }
+                        >
+                          {approvedRequestDestinations
+                            .filter((item) => item.kind === kind)
+                            .map((item) => (
+                              <option key={item.value} value={item.value}>
+                                {p(item.label)}
+                              </option>
+                            ))}
+                        </optgroup>
                       ))}
                       <option value="undecided">
                         {t("Help me choose", "Βοηθήστε με να επιλέξω")}
@@ -398,12 +377,12 @@ export function RequestPage({
                       }}
                     >
                       {[
-                        ["casino", "Casino assistance", "Εξυπηρέτηση καζίνο"],
+                        ["casino", "Concierge", "Concierge"],
                         ["flight", "Flights", "Αεροπορικά"],
                         ["hotel", "Hotel stay", "Διαμονή"],
                         ["transfer", "Transfers", "Μεταφορές"],
                         ["cruise", "Cruises", "Κρουαζιέρες"],
-                        ["package", "Complete package", "Πλήρες πακέτο"],
+                        ["package", "Travel packages", "Ταξιδιωτικά πακέτα"],
                       ].map(([key, en, el]) => (
                         <label
                           key={key}
@@ -417,7 +396,7 @@ export function RequestPage({
                             type="checkbox"
                             name="services"
                             value={key}
-                            defaultChecked={key === "casino"}
+                            defaultChecked={key === initial.service}
                           />
                           {t(en, el)}
                         </label>
@@ -535,12 +514,20 @@ export function RequestPage({
                       name="start"
                       type="date"
                       required
-                      defaultValue={defaults.start}
+                      value={departure}
+                      min={localToday()}
+                      onChange={(event) => setDeparture(event.target.value)}
                     />
                   </label>
                   <label>
                     {t("Return date", "Ημερομηνία επιστροφής")} *
-                    <input name="end" type="date" required />
+                    <input
+                      name="end"
+                      type="date"
+                      required
+                      min={departure || localToday()}
+                      defaultValue={initial.end}
+                    />
                   </label>
                   <label>
                     {t("Party size (adults)", "Μέγεθος ομάδας (ενήλικες)")} *
@@ -550,15 +537,12 @@ export function RequestPage({
                       min="1"
                       max="200"
                       required
-                      defaultValue={defaults.party || "2"}
+                      defaultValue={initial.party}
                     />
                   </label>
                   <label>
                     {t("Request type", "Τύπος αιτήματος")} *
-                    <select
-                      name="type"
-                      defaultValue={defaults.type || "introduction"}
-                    >
+                    <select name="type" defaultValue={initial.requestType}>
                       {Object.entries(requestTypes).map(([k, v]) => (
                         <option key={k} value={k}>
                           {p(v)}
@@ -621,12 +605,14 @@ export function RequestPage({
                       variant="secondary"
                       size="lg"
                       type="submit"
-                      disabled={busy || !session}
+                      disabled={busy || !ready || !available || !session}
                     >
-                      {t(
-                        "Submit travel enquiry",
-                        "Υποβολή ταξιδιωτικού αιτήματος",
-                      )}
+                      {busy
+                        ? t("Saving enquiry…", "Αποθήκευση αιτήματος…")
+                        : t(
+                            "Submit travel enquiry",
+                            "Υποβολή ταξιδιωτικού αιτήματος",
+                          )}
                       <ArrowRight />
                     </Button>
                   </div>

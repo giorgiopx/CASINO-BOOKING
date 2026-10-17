@@ -5,7 +5,7 @@
  * The cards are editorial previews, NOT a verified inventory or partnership claim.
  * Assets required: public/design-reference/*.webp supplied in handoff ZIP.
  */
-import { useMemo, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useCasino } from "./context";
 import {
@@ -18,20 +18,18 @@ import {
   Building2,
   Ship,
   ShieldCheck,
-  Headset,
   ArrowRight,
-  Menu,
-  X,
   Globe2,
   Hotel,
   Dices,
-  Crown,
   LockKeyhole,
 } from "lucide-react";
-import { globalDestinations, photoUrl } from "@/lib/global-casino-catalog";
+import { globalDestinations } from "@/lib/global-casino-catalog";
 import { approvedCountries } from "@/lib/approved-casino-directory";
 import "./visual-home.css";
 import { VisualMore } from "./visual-more";
+import { SiteHeader } from "./shell";
+import { localToday } from "@/lib/casino-request-schema";
 
 type Country = { name: string; el: string; flag: string; asset: string };
 const destinations: Country[] = [
@@ -52,33 +50,28 @@ const destinations: Country[] = [
 const photo = (key: string) => `/design-reference/${key}.webp`;
 
 export function VisualHome() {
-  const { lang, setLang, t } = useCasino();
+  const { lang, t } = useCasino();
   const navigate = useNavigate();
   const [selected, setSelected] = useState("");
   const [arrival, setArrival] = useState("");
   const [departure, setDeparture] = useState("");
   const [travellers, setTravellers] = useState("2");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [filter, setFilter] = useState("All Destinations");
-  const shown = useMemo(() => destinations, []);
+  const today = localToday();
+  const shown = destinations;
   function search(e: FormEvent) {
     e.preventDefault();
     // This is a concierge ENQUIRY, not a real-time booking or live availability search.
     void navigate({
       to: "/request",
-      search: { interest: selected, start: arrival, party: travellers },
+      search: {
+        interest: selected,
+        start: arrival,
+        end: departure,
+        party: travellers,
+        type: "bundle",
+      },
     });
   }
-  const nav = [
-    { en: "Home", el: "Αρχική", href: "/" },
-    { en: "Casinos", el: "Καζίνο", href: "/explore" },
-    { en: "Destinations", el: "Προορισμοί", href: "/destinations" },
-    { en: "Casino Cruises", el: "Κρουαζιέρες", href: "/services" },
-    { en: "Travel Concierge", el: "Οργάνωση Ταξιδιού", href: "/services" },
-    { en: "Free Concierge", el: "Δωρεάν Concierge", href: "/request" },
-    { en: "About Us", el: "Σχετικά", href: "/about" },
-    { en: "Contact", el: "Επικοινωνία", href: "/contact" },
-  ];
   const categories = [
     {
       id: "All Destinations",
@@ -97,7 +90,7 @@ export function VisualHome() {
     {
       id: "Casino Resorts",
       en: "Casino Resorts",
-      el: "Casino Resorts",
+      el: "Θέρετρα καζίνο",
       icon: Hotel,
       href: "/explore",
     },
@@ -106,7 +99,7 @@ export function VisualHome() {
       en: "Casino Cruises",
       el: "Κρουαζιέρες",
       icon: Ship,
-      href: "/services",
+      href: "/request",
     },
     {
       id: "Flights",
@@ -129,61 +122,19 @@ export function VisualHome() {
       icon: CarFront,
       href: "/request",
     },
-  ];
+  ] as const;
   return (
     <div className="cb-design">
-      <div className="cb-visual-topbar">
-        <Link to="/" className="cb-logo" aria-label="CasinoBooking.com">
-          <span className="cb-spade">♠</span>
-          <span>
-            <strong>CasinoBooking.com</strong>
-            <small>CASINOS · RESORTS · CRUISES · TRAVEL</small>
-          </span>
-        </Link>
-        <nav
-          className={menuOpen ? "cb-nav cb-nav-open" : "cb-nav"}
-          aria-label="Main navigation"
-        >
-          {nav.map((n) => (
-            <Link
-              key={n.en}
-              to={n.href as "/"}
-              onClick={() => setMenuOpen(false)}
-            >
-              {t(n.en, n.el)}
-            </Link>
-          ))}
-        </nav>
-        <div className="cb-top-actions">
-          <button
-            className="cb-language"
-            onClick={() => setLang(lang === "el" ? "en" : "el")}
-            aria-label={t("Change language", "Αλλαγή γλώσσας")}
-          >
-            <span>{lang === "el" ? "🇬🇷" : "🇬🇧"}</span> {lang.toUpperCase()}{" "}
-            <span aria-hidden="true">⌄</span>
-          </button>
-          <Link className="cb-login" to="/auth">
-            {t("Login", "Σύνδεση")}
-          </Link>
-          <Link className="cb-register" to="/auth">
-            {t("Register", "Εγγραφή")}
-          </Link>
-          <button
-            className="cb-menu-toggle"
-            aria-label="Toggle menu"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X /> : <Menu />}
-          </button>
-        </div>
-      </div>
+      <SiteHeader />
       <main>
         <section className="cb-hero">
           <div
             className="cb-hero-photo"
             role="img"
-            aria-label="Illustrative Monte Carlo luxury casino destination concept"
+            aria-label={t(
+              "Illustrative Monte Carlo luxury casino destination",
+              "Ενδεικτική εικόνα πολυτελούς προορισμού καζίνο στο Μόντε Κάρλο",
+            )}
           />
           <div className="cb-hero-shade" />
           <div className="cb-hero-inner">
@@ -232,7 +183,7 @@ export function VisualHome() {
           <div className="cb-hero-caption">
             <MapPin size={13} />
             <span>
-              Monte-Carlo, Monaco
+              {t("Monte-Carlo, Monaco", "Μόντε Κάρλο, Μονακό")}
               <small>
                 {t(
                   "Illustrative design photography",
@@ -265,24 +216,29 @@ export function VisualHome() {
             </div>
             <div className="cb-search-item">
               <CalendarDays />
-              <label>
-                {t("Check-in / Check-out", "Άφιξη / Αναχώρηση")}
+              <div className="cb-date-field">
+                <span>{t("Check-in / Check-out", "Άφιξη / Αναχώρηση")}</span>
                 <div className="cb-dates">
                   <input
-                    aria-label="Check-in"
+                    aria-label={t("Arrival date", "Ημερομηνία άφιξης")}
+                    min={today}
                     type="date"
                     value={arrival}
-                    onChange={(e) => setArrival(e.target.value)}
+                    onChange={(e) => {
+                      setArrival(e.target.value);
+                      if (departure && departure < e.target.value)
+                        setDeparture("");
+                    }}
                   />
                   <input
-                    aria-label="Check-out"
-                    min={arrival || undefined}
+                    aria-label={t("Departure date", "Ημερομηνία αναχώρησης")}
+                    min={arrival || today}
                     type="date"
                     value={departure}
                     onChange={(e) => setDeparture(e.target.value)}
                   />
                 </div>
-              </label>
+              </div>
             </div>
             <div className="cb-search-item">
               <Users />
@@ -311,12 +267,22 @@ export function VisualHome() {
               return (
                 <Link
                   className={
-                    filter === c.id
+                    c.id === "All Destinations"
                       ? "cb-category cb-category-active"
                       : "cb-category"
                   }
-                  to={c.href as "/"}
-                  onClick={() => setFilter(c.id)}
+                  to={c.href}
+                  search={
+                    c.id === "Flights"
+                      ? { type: "flight" }
+                      : c.id === "Hotels"
+                        ? { type: "hotel" }
+                        : c.id === "Transfers"
+                          ? { type: "transfer" }
+                          : c.id === "Casino Cruises"
+                            ? { type: "cruise" }
+                            : {}
+                  }
                   key={c.id}
                 >
                   <span>
@@ -329,7 +295,10 @@ export function VisualHome() {
           </div>
           <section
             className="cb-countries"
-            aria-label="Popular casino destinations"
+            aria-label={t(
+              "Popular casino destinations",
+              "Δημοφιλείς προορισμοί καζίνο",
+            )}
           >
             <div className="cb-section-heading">
               <div>
@@ -357,7 +326,7 @@ export function VisualHome() {
                   <img
                     loading="lazy"
                     src={photo(c.asset)}
-                    alt={`${lang === "el" ? c.el : c.name} — approved illustrative visual reference`}
+                    alt={`${t(c.name, c.el)} — ${t("illustrative destination photograph", "ενδεικτική φωτογραφία προορισμού")}`}
                   />
                   <div className="cb-country-overlay">
                     <strong>
@@ -368,7 +337,14 @@ export function VisualHome() {
                       <small>
                         {t("Casino travel enquiries", "Αιτήματα ταξιδιού")}
                       </small>
-                      <Link to="/request" search={{ interest: c.name }}>
+                      <Link
+                        to="/destination/$slug"
+                        params={{ slug: c.asset }}
+                        aria-label={t(
+                          `Explore ${c.name}`,
+                          `Εξερευνήστε: ${c.el}`,
+                        )}
+                      >
                         {t("Explore", "Εξερεύνηση")} <ArrowRight size={12} />
                       </Link>
                     </div>
@@ -385,7 +361,10 @@ export function VisualHome() {
           </section>
           <section
             className="cb-global-extension"
-            aria-label="International casino destination countries"
+            aria-label={t(
+              "International casino destinations",
+              "Διεθνείς προορισμοί καζίνο",
+            )}
           >
             <div className="cb-section-heading">
               <div>
@@ -417,16 +396,10 @@ export function VisualHome() {
                     className="cb-global-photo-card"
                     key={c.slug}
                   >
-                    <img
-                      loading="lazy"
-                      src={c.image}
-                      alt={
-                        t(c.name[0], c.name[1]) + " — editorial region photo"
-                      }
-                      onError={(e) => {
-                        e.currentTarget.hidden = true;
-                      }}
-                    />
+                    <div className="cb-region-art" aria-hidden="true">
+                      <Globe2 />
+                      <span>{t("DESTINATION GUIDE", "ΟΔΗΓΟΣ ΠΡΟΟΡΙΣΜΟΥ")}</span>
+                    </div>
                     <span>
                       <strong>
                         {c.flag} {t(c.name[0], c.name[1])}
@@ -445,14 +418,17 @@ export function VisualHome() {
             </div>
             <p className="cb-disclosure">
               {t(
-                "Russia is information-only pending sanctions and travel-compliance review. Wynn Al Marjan Island is planned for 2027, not open. Photos are editorial destination illustrations.",
-                "Η Ρωσία εμφανίζεται μόνο ενημερωτικά μέχρι τον έλεγχο ταξιδιωτικών περιορισμών και κυρώσεων. Το Wynn Al Marjan Island προβλέπεται για το 2027, δεν λειτουργεί ακόμη. Οι φωτογραφίες είναι ενδεικτικές προορισμών.",
+                "Russia is information-only pending sanctions and travel-compliance review. Wynn Al Marjan Island is planned for 2027, not open. Consult official sources for current venue details.",
+                "Η Ρωσία εμφανίζεται μόνο ενημερωτικά μέχρι τον έλεγχο ταξιδιωτικών περιορισμών και κυρώσεων. Το Wynn Al Marjan Island προβλέπεται για το 2027, δεν λειτουργεί ακόμη. Συμβουλευτείτε τις επίσημες πηγές για τις τρέχουσες πληροφορίες.",
               )}
             </p>
           </section>
           <section
             className="cb-global-extension"
-            aria-label="American casino destinations"
+            aria-label={t(
+              "American casino destinations",
+              "Αμερικανικοί προορισμοί καζίνο",
+            )}
           >
             <div className="cb-section-heading">
               <div>
@@ -464,8 +440,8 @@ export function VisualHome() {
                 </h2>
                 <p>
                   {t(
-                    "Curated operating casino resorts across the United States, with official source links.",
-                    "Επιλεγμένα λειτουργούντα casino resorts στις ΗΠΑ, με επίσημες πηγές.",
+                    "Discover United States casino destinations and consult the official operator sources.",
+                    "Ανακαλύψτε προορισμούς καζίνο στις ΗΠΑ και συμβουλευτείτε τις επίσημες πηγές των διαχειριστών.",
                   )}
                 </p>
               </div>
@@ -487,25 +463,16 @@ export function VisualHome() {
                     className="cb-global-photo-card"
                     key={d.slug}
                   >
-                    {photoUrl(d) && (
-                      <img
-                        loading="lazy"
-                        src={photoUrl(d)!}
-                        alt={
-                          t(d.name[0], d.name[1]) +
-                          " — editorial destination photography"
-                        }
-                        onError={(e) =>
-                          (e.currentTarget.style.display = "none")
-                        }
-                      />
-                    )}
+                    <div className="cb-region-art" aria-hidden="true">
+                      <Building2 />
+                      <span>{t("UNITED STATES", "ΗΝΩΜΕΝΕΣ ΠΟΛΙΤΕΙΕΣ")}</span>
+                    </div>
                     <span>
                       <strong>{t(d.name[0], d.name[1])}</strong>
                       <small>
                         {t(
-                          "View verified casino venues",
-                          "Δείτε τα τεκμηριωμένα καζίνο",
+                          "View casino information",
+                          "Δείτε πληροφορίες καζίνο",
                         )}
                       </small>
                     </span>
@@ -514,8 +481,8 @@ export function VisualHome() {
             </div>
             <p className="cb-disclosure">
               {t(
-                "New destination photography is credited by creator and license in the international directory. No casino partnerships or live flight/hotel inventory are implied.",
-                "Οι δημιουργοί και οι άδειες των νέων φωτογραφιών αναφέρονται στον διεθνή κατάλογο. Δεν υπονοούνται συνεργασίες ή πραγματική διαθεσιμότητα πτήσεων και ξενοδοχείων.",
+                "Explore regional guides with official operator sources. No casino partnerships or live flight/hotel inventory are implied.",
+                "Εξερευνήστε τους οδηγούς περιοχών με επίσημες πηγές διαχειριστών. Δεν υπονοούνται συνεργασίες ή πραγματική διαθεσιμότητα πτήσεων και ξενοδοχείων.",
               )}
             </p>
           </section>

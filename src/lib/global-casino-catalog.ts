@@ -8,7 +8,9 @@ export type GlobalCasinoVenue = {
   id: string;
   name: string;
   locality: string;
+  localityEl: string;
   state: string;
+  stateEl: string;
   country: "US" | "AE";
   officialUrl: string;
   status: "operating" | "planned";
@@ -23,6 +25,7 @@ export type GlobalDestination = {
   subtitle: [string, string];
   country: "US" | "AE";
   state: string;
+  stateEl: string;
   photoFile: string | null;
   photoCreator: string | null;
   photoLicense: string | null;
@@ -35,7 +38,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "bellagio",
     name: "Bellagio Las Vegas",
     locality: "Las Vegas",
+    localityEl: "Λας Βέγκας",
     state: "Nevada",
+    stateEl: "Νεβάδα",
     country: "US",
     officialUrl: "https://bellagio.mgmresorts.com/en.html",
     status: "operating",
@@ -51,7 +56,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "wynn-las-vegas",
     name: "Wynn Las Vegas & Encore",
     locality: "Las Vegas",
+    localityEl: "Λας Βέγκας",
     state: "Nevada",
+    stateEl: "Νεβάδα",
     country: "US",
     officialUrl: "https://www.wynnlasvegas.com/casino",
     status: "operating",
@@ -67,7 +74,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "venetian",
     name: "The Venetian Resort & The Palazzo",
     locality: "Las Vegas",
+    localityEl: "Λας Βέγκας",
     state: "Nevada",
+    stateEl: "Νεβάδα",
     country: "US",
     officialUrl: "https://www.venetianlasvegas.com/resort/casino.html",
     status: "operating",
@@ -83,7 +92,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "hard-rock-hollywood",
     name: "Seminole Hard Rock Hotel & Casino Hollywood",
     locality: "Hollywood (near Miami)",
+    localityEl: "Χόλιγουντ (κοντά στο Μαϊάμι)",
     state: "Florida",
+    stateEl: "Φλόριντα",
     country: "US",
     officialUrl: "https://casino.hardrock.com/hollywood",
     status: "operating",
@@ -99,7 +110,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "hard-rock-tampa",
     name: "Seminole Hard Rock Hotel & Casino Tampa",
     locality: "Tampa",
+    localityEl: "Τάμπα",
     state: "Florida",
+    stateEl: "Φλόριντα",
     country: "US",
     officialUrl: "https://casino.hardrock.com/tampa",
     status: "operating",
@@ -115,7 +128,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "pechanga",
     name: "Pechanga Resort Casino",
     locality: "Temecula",
+    localityEl: "Τεμέκουλα",
     state: "California",
+    stateEl: "Καλιφόρνια",
     country: "US",
     officialUrl: "https://www.pechanga.com/",
     status: "operating",
@@ -131,7 +146,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "yaamava",
     name: "Yaamava' Resort & Casino at San Manuel",
     locality: "Highland",
+    localityEl: "Χάιλαντ",
     state: "California",
+    stateEl: "Καλιφόρνια",
     country: "US",
     officialUrl: "https://www.yaamava.com/",
     status: "operating",
@@ -147,7 +164,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "morongo",
     name: "Morongo Casino Resort & Spa",
     locality: "Cabazon",
+    localityEl: "Καμπαζόν",
     state: "California",
+    stateEl: "Καλιφόρνια",
     country: "US",
     officialUrl: "https://www.morongocasinoresort.com/",
     status: "operating",
@@ -163,7 +182,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "thunder-valley",
     name: "Thunder Valley Casino Resort",
     locality: "Lincoln (Sacramento region)",
+    localityEl: "Λίνκολν (περιοχή Σακραμέντο)",
     state: "California",
+    stateEl: "Καλιφόρνια",
     country: "US",
     officialUrl: "https://www.thundervalleyresort.com/",
     status: "operating",
@@ -179,7 +200,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "resorts-world-nyc",
     name: "Resorts World New York City",
     locality: "Queens, New York City",
+    localityEl: "Κουίνς, Νέα Υόρκη",
     state: "New York",
+    stateEl: "Νέα Υόρκη",
     country: "US",
     officialUrl: "https://rwnewyork.com/about/",
     status: "operating",
@@ -195,7 +218,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "empire-city",
     name: "Empire City Casino at Yonkers Raceway",
     locality: "Yonkers (NYC area)",
+    localityEl: "Γιόνκερς (περιοχή Νέας Υόρκης)",
     state: "New York",
+    stateEl: "Νέα Υόρκη",
     country: "US",
     officialUrl: "https://empirecitycasino.mgmresorts.com/en.html",
     status: "operating",
@@ -211,7 +236,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "borgata",
     name: "Borgata Hotel Casino & Spa",
     locality: "Atlantic City",
+    localityEl: "Ατλάντικ Σίτι",
     state: "New Jersey",
+    stateEl: "Νιου Τζέρσεϊ",
     country: "US",
     officialUrl: "https://borgata.mgmresorts.com/en.html",
     status: "operating",
@@ -227,7 +254,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "hard-rock-atlantic-city",
     name: "Hard Rock Hotel & Casino Atlantic City",
     locality: "Atlantic City",
+    localityEl: "Ατλάντικ Σίτι",
     state: "New Jersey",
+    stateEl: "Νιου Τζέρσεϊ",
     country: "US",
     officialUrl: "https://casino.hardrock.com/atlantic-city/hotel-and-casino",
     status: "operating",
@@ -243,7 +272,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "mohegan-sun",
     name: "Mohegan Sun",
     locality: "Uncasville",
+    localityEl: "Ανκασβιλ",
     state: "Connecticut",
+    stateEl: "Κονέκτικατ",
     country: "US",
     officialUrl: "https://mohegansun.com/",
     status: "operating",
@@ -259,7 +290,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "foxwoods",
     name: "Foxwoods Resort Casino",
     locality: "Mashantucket",
+    localityEl: "Μασαντάκετ",
     state: "Connecticut",
+    stateEl: "Κονέκτικατ",
     country: "US",
     officialUrl: "https://foxwoods.com/hotels",
     status: "operating",
@@ -275,7 +308,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "mgm-national-harbor",
     name: "MGM National Harbor",
     locality: "Oxon Hill (Washington DC area)",
+    localityEl: "Όξον Χιλ (περιοχή Ουάσινγκτον)",
     state: "Maryland",
+    stateEl: "Μέριλαντ",
     country: "US",
     officialUrl: "https://mgmnationalharbor.mgmresorts.com/en.html",
     status: "operating",
@@ -291,7 +326,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "beau-rivage",
     name: "Beau Rivage Resort & Casino",
     locality: "Biloxi",
+    localityEl: "Μπιλόξι",
     state: "Mississippi",
+    stateEl: "Μισισίπι",
     country: "US",
     officialUrl: "https://beaurivage.mgmresorts.com/",
     status: "operating",
@@ -307,7 +344,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "choctaw-durant",
     name: "Choctaw Casino & Resort – Durant",
     locality: "Durant",
+    localityEl: "Ντουράντ",
     state: "Oklahoma",
+    stateEl: "Οκλαχόμα",
     country: "US",
     officialUrl: "https://www.choctawcasinos.com/durant/",
     status: "operating",
@@ -323,7 +362,9 @@ export const globalVenues: GlobalCasinoVenue[] = [
     id: "wynn-al-marjan",
     name: "Wynn Al Marjan Island",
     locality: "Ras Al Khaimah",
+    localityEl: "Ρας Αλ Χάιμα",
     state: "Ras Al Khaimah",
+    stateEl: "Ρας Αλ Χάιμα",
     country: "AE",
     officialUrl: "https://www.newsroom.wynnresorts.com/en/wynnalmarjan/",
     status: "planned",
@@ -350,6 +391,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "Nevada",
+    stateEl: "Νεβάδα",
     photoFile: "Las Vegas Strip at night - panoramio.jpg",
     photoCreator: "David Balmer",
     photoLicense: "CC BY 3.0",
@@ -366,6 +408,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "Florida",
+    stateEl: "Φλόριντα",
     photoFile: "Miami skyline at night.jpg",
     photoCreator: "greyloch",
     photoLicense: "CC BY-SA 2.0",
@@ -382,6 +425,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "Florida",
+    stateEl: "Φλόριντα",
     photoFile: "Tampa night.jpg",
     photoCreator: "Dennis Ludlow - Sharkshock",
     photoLicense: "CC BY-SA 4.0",
@@ -397,6 +441,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "California",
+    stateEl: "Καλιφόρνια",
     photoFile: "PRC exterior.jpg",
     photoCreator: "Pechanga Resort & Casino",
     photoLicense: "Public domain",
@@ -412,6 +457,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "California",
+    stateEl: "Καλιφόρνια",
     photoFile: "Sacramento, California skyline 2026.jpg",
     photoCreator: "Quintin Soloviev",
     photoLicense: "CC BY 4.0",
@@ -428,6 +474,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "New York",
+    stateEl: "Νέα Υόρκη",
     photoFile: "Midtown Manhattan Skyline 2026 005.jpg",
     photoCreator: "Kidfly182",
     photoLicense: "CC BY 4.0",
@@ -444,6 +491,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "New Jersey",
+    stateEl: "Νιου Τζέρσεϊ",
     photoFile: "Atlantic City Boardwalk at Night.jpg",
     photoCreator: "Lisa Andres",
     photoLicense: "CC BY 2.0",
@@ -460,6 +508,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "Connecticut",
+    stateEl: "Κονέκτικατ",
     photoFile: "Foxwoods Resort Casino.jpg",
     photoCreator: "Stilfehler",
     photoLicense: "CC BY-SA 3.0",
@@ -476,6 +525,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "Maryland",
+    stateEl: "Μέριλαντ",
     photoFile: "Washington National Harbor.jpg",
     photoCreator: "Mariyum Noor",
     photoLicense: "CC BY-SA 4.0",
@@ -492,6 +542,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "Mississippi",
+    stateEl: "Μισισίπι",
     photoFile: "Casinos and beach in Biloxi, Mississippi.jpg",
     photoCreator: "Nicolas Henderson",
     photoLicense: "CC BY 2.0",
@@ -508,6 +559,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "US",
     state: "Oklahoma",
+    stateEl: "Οκλαχόμα",
     photoFile: "Choctaw Casino Durant 2023.jpg",
     photoCreator: "Fkbowen",
     photoLicense: "CC BY-SA 4.0",
@@ -524,6 +576,7 @@ export const globalDestinations: GlobalDestination[] = [
     ],
     country: "AE",
     state: "Ras Al Khaimah",
+    stateEl: "Ρας Αλ Χάιμα",
     photoFile: "Ras al khaimah mountains.jpg",
     photoCreator: "Rafia aql",
     photoLicense: "CC BY-SA 4.0",
@@ -658,3 +711,45 @@ export const globalCasinoHotels: GlobalCasinoHotel[] = [
     location: "on-site",
   },
 ];
+
+/** Search treats Greek accents and Latin accents consistently in both languages. */
+export const normalizeDirectorySearch = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase()
+    .replace(/ς/g, "σ")
+    .trim();
+
+export function searchGlobalDestinations(
+  query: string,
+  country: "US" | "AE" | "all" = "all",
+) {
+  const term = normalizeDirectorySearch(query);
+  return globalDestinations
+    .filter(
+      (destination) => country === "all" || destination.country === country,
+    )
+    .map((destination) => {
+      const areaMatches = normalizeDirectorySearch(
+        [
+          ...destination.name,
+          destination.state,
+          destination.stateEl,
+          destination.country === "US"
+            ? "USA United States ΗΠΑ Ηνωμένες Πολιτείες"
+            : "UAE United Arab Emirates ΗΑΕ Ηνωμένα Αραβικά Εμιράτα",
+        ].join(" "),
+      ).includes(term);
+      const venues = globalVenues.filter(
+        (venue) =>
+          destination.venueIds.includes(venue.id) &&
+          (areaMatches ||
+            normalizeDirectorySearch(
+              [venue.name, venue.locality, venue.localityEl].join(" "),
+            ).includes(term)),
+      );
+      return { destination, venues };
+    })
+    .filter(({ venues }) => venues.length > 0);
+}

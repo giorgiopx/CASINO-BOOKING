@@ -63,6 +63,46 @@
   background: #fff;
   color: #0e273f;
   font-size: 14px;
+  min-width: 0;
+}
+.global-find:focus-within {
+  outline: 3px solid #e5bd7b;
+  outline-offset: 4px;
+}
+.global-casino-page :is(a, button):focus-visible {
+  outline: 3px solid #b28542;
+  outline-offset: 4px;
+}
+.global-result-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-top: 22px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.global-result-summary p {
+  margin: 0;
+  flex: 1 1 300px;
+}
+.global-result-summary a,
+.global-result-summary button {
+  color: #16436a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.global-result-summary button {
+  background: transparent;
+  border: 0;
+  min-height: 44px;
+  cursor: pointer;
+}
+.global-checked {
+  display: block;
+  color: #68778a;
+  font-size: 11px;
+  margin: 8px 0;
 }
 .global-pills {
   display: flex;
@@ -78,6 +118,7 @@
   padding: 10px 17px;
   cursor: pointer;
   font-size: 12px;
+  min-height: 44px;
 }
 .global-pills button[aria-pressed="true"] {
   border-color: #dab06b;
@@ -112,6 +153,8 @@
   margin-top: 24px;
 }
 .global-card {
+  min-width: 0;
+  overflow-wrap: anywhere;
   border-radius: 13px;
   overflow: hidden;
   background: #fff;
@@ -223,6 +266,7 @@
   font-weight: 750;
   color: #1f537a;
   text-decoration: none;
+  min-height: 44px;
 }
 .global-venue-actions a[href^="/request"] {
   background: linear-gradient(115deg, #ffe4a8, #dca65e);
@@ -285,6 +329,9 @@
   }
   .global-card-photo {
     height: 235px;
+  }
+  .global-empty {
+    padding: 35px 10px;
   }
 }
 

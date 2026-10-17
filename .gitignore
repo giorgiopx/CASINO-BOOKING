@@ -36,3 +36,8 @@ dist-ssr
 !.env.example
 *.pem
 *.p12
+
+# Local verification and deployment outputs
+work/
+artifacts/
+.vercel/

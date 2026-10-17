@@ -5,7 +5,10 @@
  * customer travel eligibility must be rechecked before assisting a traveller.
  * Russia enquiries additionally require sanctions/travel-compliance review.
  */
-import { globalVenues } from "./global-casino-catalog";
+import {
+  globalVenues,
+  normalizeDirectorySearch,
+} from "./global-casino-catalog";
 export type ApprovedName = [string, string];
 export type CountryKind = "europe" | "international" | "planned";
 export type ApprovedCountry = {
@@ -488,7 +491,7 @@ export const approvedUnitedStatesVenues: ApprovedCasino[] = globalVenues
     id: v.id,
     countrySlug: "usa",
     name: v.name,
-    locality: [v.locality, v.locality],
+    locality: [v.locality, v.localityEl],
     officialUrl: v.officialUrl,
     status: "operator-listed",
     sourceChecked: v.sourceChecked,
@@ -500,7 +503,7 @@ export const approvedUaeFuture: ApprovedCasino[] = globalVenues
     id: v.id,
     countrySlug: "uae",
     name: v.name,
-    locality: [v.locality, v.locality],
+    locality: [v.locality, v.localityEl],
     officialUrl: v.officialUrl,
     status: "planned",
     sourceChecked: v.sourceChecked,
@@ -523,3 +526,79 @@ export const approvedTotals = {
   activeCandidates: approvedOperatingCandidates.length,
   planned: approvedCasinoDirectory.filter((v) => v.status === "planned").length,
 };
+
+/** Enquiry eligibility is shared by links, form options and server validation. */
+export const isRequestableVenue = (venue: ApprovedCasino) =>
+  venue.status === "operator-listed" && venue.countrySlug !== "russia";
+export const approvedRequestableVenues =
+  approvedCasinoDirectory.filter(isRequestableVenue);
+export const approvedRequestableCountries = approvedCountries.filter(
+  (country) =>
+    approvedRequestableVenues.some(
+      (venue) => venue.countrySlug === country.slug,
+    ),
+);
+export type ApprovedRequestDestination = {
+  value: string;
+  label: ApprovedName;
+  kind: "country" | "venue";
+};
+export const approvedRequestDestinations: ApprovedRequestDestination[] = [
+  ...approvedRequestableCountries.map(
+    (country): ApprovedRequestDestination => ({
+      value: country.name[0],
+      label: country.name,
+      kind: "country",
+    }),
+  ),
+  ...approvedRequestableVenues.map((venue): ApprovedRequestDestination => ({
+    value: venue.name,
+    label: [venue.name, venue.name],
+    kind: "venue",
+  })),
+];
+const requestDestinationValues = new Set(
+  approvedRequestDestinations.map(({ value }) => value),
+);
+export const isApprovedRequestDestination = (value: string) =>
+  requestDestinationValues.has(value);
+
+export type DirectoryFilter = "all" | CountryKind | "restricted";
+export function searchApprovedDirectory(
+  query: string,
+  group: DirectoryFilter = "all",
+) {
+  const term = normalizeDirectorySearch(query);
+  return approvedCountries
+    .filter(
+      (country) =>
+        group === "all" ||
+        (group === "restricted"
+          ? country.slug === "russia"
+          : country.kind === group),
+    )
+    .map((country) => {
+      const countryMatches = normalizeDirectorySearch(
+        [
+          ...country.name,
+          country.slug,
+          country.slug === "usa"
+            ? "US USA ΗΠΑ"
+            : country.slug === "uae"
+              ? "AE UAE ΗΑΕ"
+              : "",
+        ].join(" "),
+      ).includes(term);
+      return {
+        country,
+        venues: countryVenues(country.slug).filter(
+          (venue) =>
+            countryMatches ||
+            normalizeDirectorySearch(
+              venue.name + " " + venue.locality.join(" "),
+            ).includes(term),
+        ),
+      };
+    })
+    .filter(({ venues }) => venues.length > 0);
+}

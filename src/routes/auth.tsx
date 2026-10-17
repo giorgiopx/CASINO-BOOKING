@@ -1,13 +1,17 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useCasino } from "@/components/casino/context";
 import { Intro } from "@/components/casino/public";
 import { casinoHead } from "@/lib/casino-seo";
+import { useAuth } from "@/components/casino/auth";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: z.object({
+    mode: z.enum(["signin", "signup"]).optional().catch(undefined),
+  }),
   head: () =>
     casinoHead(
       "Sign in or create an account",
@@ -18,19 +22,23 @@ export const Route = createFileRoute("/auth")({
 
 const creds = z.object({
   email: z.string().trim().email().max(255),
-  password: z.string().min(8).max(72),
+  password: z.string().min(1).max(72),
   fullName: z.string().trim().max(160).optional(),
 });
 
 function AuthPage() {
   const { t } = useCasino();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const mode = Route.useSearch().mode ?? "signin";
+  const { available, ready } = useAuth();
+  const submitting = useRef(false);
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submitting.current || !ready || !available) return;
+    setMsg("");
     const f = Object.fromEntries(new FormData(e.currentTarget));
     if (
       mode === "signup" &&
@@ -45,52 +53,70 @@ function AuthPage() {
       return;
     }
     const parsed = creds.safeParse(f);
-    if (!parsed.success) {
+    if (
+      !parsed.success ||
+      (mode === "signup" && parsed.data.password.length < 8)
+    ) {
       setMsg(
         t(
-          "Enter a valid email and a password of at least 8 characters.",
-          "Εισάγετε έγκυρο email και κωδικό τουλάχιστον 8 χαρακτήρων.",
+          mode === "signup"
+            ? "Enter a valid email and a password of at least 8 characters."
+            : "Enter your email and password.",
+          mode === "signup"
+            ? "Εισάγετε έγκυρο email και κωδικό τουλάχιστον 8 χαρακτήρων."
+            : "Εισάγετε το email και τον κωδικό σας.",
         ),
       );
       return;
     }
+    submitting.current = true;
     setBusy(true);
     setMsg("");
-    const { email, password, fullName } = parsed.data;
-    if (mode === "signup") {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-          data: { full_name: fullName },
-        },
-      });
-      setBusy(false);
-      if (error) return setMsg(error.message);
-      if (!data.session) {
-        return setMsg(
-          t(
-            "Check your inbox to confirm your email, then sign in.",
-            "Ελέγξτε τα εισερχόμενά σας για επιβεβαίωση email και μετά συνδεθείτε.",
-          ),
-        );
+    try {
+      const { email, password, fullName } = parsed.data;
+      if (mode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: { full_name: fullName },
+          },
+        });
+        if (error) return setMsg(error.message);
+        if (!data.session) {
+          return setMsg(
+            t(
+              "Check your inbox to confirm your email, then sign in.",
+              "Ελέγξτε τα εισερχόμενά σας για επιβεβαίωση email και μετά συνδεθείτε.",
+            ),
+          );
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error)
+          return setMsg(
+            t(
+              "Sign-in failed. Check your details or confirm your email.",
+              "Η σύνδεση απέτυχε. Ελέγξτε τα στοιχεία ή επιβεβαιώστε το email σας.",
+            ),
+          );
       }
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      await navigate({ to: "/dashboard" });
+    } catch {
+      setMsg(
+        t(
+          "Account services could not be reached. Please try again.",
+          "Δεν ήταν δυνατή η σύνδεση στις υπηρεσίες λογαριασμού. Δοκιμάστε ξανά.",
+        ),
+      );
+    } finally {
+      submitting.current = false;
       setBusy(false);
-      if (error)
-        return setMsg(
-          t(
-            "Sign-in failed. Check your details or confirm your email.",
-            "Η σύνδεση απέτυχε. Ελέγξτε τα στοιχεία ή επιβεβαιώστε το email σας.",
-          ),
-        );
     }
-    navigate({ to: "/dashboard" });
   }
 
   return (
@@ -110,9 +136,18 @@ function AuthPage() {
         <div className="container" style={{ maxWidth: 480 }}>
           <form
             onSubmit={submit}
+            aria-busy={busy}
             className="form-grid"
             style={{ gridTemplateColumns: "1fr" }}
           >
+            {ready && !available && (
+              <p className="notice my-0" role="status">
+                {t(
+                  "Account services are temporarily unavailable. Please return later to sign in or create an account.",
+                  "Οι υπηρεσίες λογαριασμού είναι προσωρινά μη διαθέσιμες. Επιστρέψτε αργότερα για σύνδεση ή δημιουργία λογαριασμού.",
+                )}
+              </p>
+            )}
             {mode === "signup" && (
               <label>
                 {t("Full name", "Ονοματεπώνυμο")}
@@ -130,16 +165,18 @@ function AuthPage() {
               />
             </label>
             <label>
-              {t(
-                "Password (min. 8 characters)",
-                "Κωδικός (τουλ. 8 χαρακτήρες)",
-              )}{" "}
+              {mode === "signup"
+                ? t(
+                    "Password (min. 8 characters)",
+                    "Κωδικός (τουλ. 8 χαρακτήρες)",
+                  )
+                : t("Password", "Κωδικός")}{" "}
               *
               <input
                 name="password"
                 type="password"
                 required
-                minLength={8}
+                minLength={mode === "signup" ? 8 : 1}
                 maxLength={72}
                 autoComplete={
                   mode === "signup" ? "new-password" : "current-password"
@@ -180,17 +217,30 @@ function AuthPage() {
                 {msg}
               </p>
             )}
-            <Button variant="secondary" size="lg" type="submit" disabled={busy}>
-              {mode === "signin"
-                ? t("Sign in", "Σύνδεση")
-                : t("Create account", "Δημιουργία λογαριασμού")}
+            <Button
+              variant="secondary"
+              size="lg"
+              type="submit"
+              disabled={busy || !ready || !available}
+            >
+              {busy
+                ? t("Please wait…", "Παρακαλώ περιμένετε…")
+                : mode === "signin"
+                  ? t("Sign in", "Σύνδεση")
+                  : t("Create account", "Δημιουργία λογαριασμού")}
             </Button>
             <Button
               type="button"
               variant="outline"
+              disabled={busy}
               onClick={() => {
-                setMode(mode === "signin" ? "signup" : "signin");
                 setMsg("");
+                void navigate({
+                  to: "/auth",
+                  search: { mode: mode === "signin" ? "signup" : "signin" },
+                }).catch(() =>
+                  setMsg(t("Please try again.", "Δοκιμάστε ξανά.")),
+                );
               }}
             >
               {mode === "signin"

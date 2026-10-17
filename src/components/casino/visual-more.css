@@ -214,7 +214,7 @@
   inset: 0;
   background-image:
     linear-gradient(90deg, #001122f5 0%, #00152ecf 48%, #0313268a 100%),
-    url("https://commons.wikimedia.org/wiki/Special:FilePath/Cruise_ship_in_Mediterranean.jpg");
+    radial-gradient(ellipse at top right, #80643e, #001b32 70%);
   background-size: cover;
   background-position: center;
   opacity: 0.95;
@@ -295,8 +295,7 @@
 .cb-extra-concierge {
   background:
     linear-gradient(108deg, #001020f3, #002a4bd9),
-    url("https://commons.wikimedia.org/wiki/Special:FilePath/Monaco_monte-carlo.jpg")
-      center/cover;
+    url("/design-reference/monaco.webp") center/cover;
   color: white;
   padding: 49px max(3%, calc((100% - 1430px) / 2));
   display: grid;
@@ -715,4 +714,49 @@
   .cb-extra-cruise-cards {
     grid-template-columns: 1fr;
   }
+}
+
+.cb-extra-footer-brand,
+.cb-extra-footer-top > div,
+.cb-extra-portal-card > div,
+.cb-extra-faq > div {
+  min-width: 0;
+}
+.cb-extra-footer-brand > a {
+  overflow-wrap: anywhere;
+}
+.cb-extra-dashboard-illustration header {
+  flex-wrap: wrap;
+}
+.cb-extra-feature-body,
+.cb-extra-service-tiles strong {
+  overflow-wrap: anywhere;
+}
+.cb-extra-outline,
+.cb-extra-cruise-card a {
+  min-height: 40px;
+}
+.cb-extra-attribution {
+  opacity: 1;
+}
+@media (max-width: 640px) {
+  .cb-extra-trust > div {
+    border-right: 0;
+  }
+  .cb-extra-step {
+    padding-inline: 5px;
+  }
+  .cb-extra-feature-body h3 {
+    font-size: 17px;
+  }
+}
+
+.cb-cruise-art {
+  height: 100px;
+  display: grid;
+  place-items: center;
+  color: #eac080;
+  border-radius: 3px;
+  background: radial-gradient(ellipse at bottom, #30556c, #0c2337 70%);
+  border-bottom: 1px solid #eac08055;
 }

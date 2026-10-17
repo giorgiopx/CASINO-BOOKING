@@ -14,6 +14,7 @@ import {
   Compass,
   Lock,
   Smartphone,
+  Ship,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { casinos, countries, type Pair } from "@/lib/casino-data";
@@ -158,45 +159,67 @@ export function ServicesGrid() {
   const services = [
     {
       icon: Handshake,
-      title: ["Casino introductions", "Γνωριμίες με καζίνο"],
+      title: ["Casino travel", "Ταξίδια σε καζίνο"],
       text: [
-        "Thoughtful referral coordination, subject to eligibility and confirmed agreements.",
-        "Προσεκτικός συντονισμός παραπομπών, βάσει επιλεξιμότητας και επιβεβαιωμένων συμφωνιών.",
+        "Plan a destination visit with assistance on local entry requirements. Admission and supplier arrangements need separate confirmation.",
+        "Οργανώστε επίσκεψη σε προορισμό με ενημέρωση για τους τοπικούς όρους εισόδου. Η είσοδος και οι διευθετήσεις παρόχων επιβεβαιώνονται χωριστά.",
       ],
-      type: "introduction",
+      type: "casino",
     },
     {
       icon: Plane,
-      title: ["Flight assistance", "Βοήθεια πτήσεων"],
+      title: ["Flights", "Πτήσεις"],
       text: [
-        "Find your route. Future partner links will take you directly to external booking providers.",
-        "Βρείτε τη διαδρομή σας. Μελλοντικοί σύνδεσμοι συνεργατών θα οδηγούν σε τρίτους παρόχους κρατήσεων.",
+        "Share your departure airport, destination and preferred dates for flight assistance. No live fares or ticket issuance.",
+        "Δηλώστε αεροδρόμιο αναχώρησης, προορισμό και ημερομηνίες για βοήθεια με πτήσεις. Δεν παρέχονται ζωντανές τιμές ή έκδοση εισιτηρίων.",
       ],
       type: "flight",
     },
     {
-      icon: Car,
-      title: ["Airport transfers", "Μεταφορές αεροδρομίου"],
+      icon: Building2,
+      title: ["Hotels", "Ξενοδοχεία"],
       text: [
-        "From arrivals to your destination, request a considered transfer itinerary.",
-        "Από τις αφίξεις στον προορισμό σας, ζητήστε ένα προσεγμένο πρόγραμμα μεταφοράς.",
+        "Tell us your preferred location, room needs and budget for a stay coordinated around your journey.",
+        "Πείτε μας την περιοχή, τις ανάγκες δωματίων και τον προϋπολογισμό σας για διαμονή προσαρμοσμένη στο ταξίδι.",
+      ],
+      type: "hotel",
+    },
+    {
+      icon: Car,
+      title: ["Transfers", "Μεταφορές"],
+      text: [
+        "Request airport, port or local transfers with your arrival times, group size and accessibility preferences.",
+        "Ζητήστε μεταφορές αεροδρομίου, λιμανιού ή τοπικές διαδρομές με ώρες άφιξης, μέγεθος ομάδας και ανάγκες προσβασιμότητας.",
       ],
       type: "transfer",
     },
     {
-      icon: Users,
-      title: ["Group & business travel", "Ομαδικά & εταιρικά ταξίδια"],
+      icon: Ship,
+      title: ["Cruises", "Κρουαζιέρες"],
       text: [
-        "Bring everyone together with personal coordination for your group or company.",
-        "Φέρτε όλους κοντά με προσωπικό συντονισμό για την ομάδα ή την εταιρεία σας.",
+        "Explore routes, ports and travel dates. Cruise availability and onboard casino access depend on each operator and itinerary.",
+        "Εξερευνήστε διαδρομές, λιμάνια και ημερομηνίες. Η διαθεσιμότητα και η πρόσβαση σε καζίνο πλοίου εξαρτώνται από τον πάροχο και το δρομολόγιο.",
       ],
-      type: "group",
+      type: "cruise",
+    },
+    {
+      icon: Users,
+      title: ["Complete itineraries", "Ολοκληρωμένα ταξίδια"],
+      text: [
+        "Combine services in one free enquiry for individual, group or company travel, with your dates and preferences.",
+        "Συνδυάστε υπηρεσίες σε ένα δωρεάν αίτημα για ατομικά, ομαδικά ή εταιρικά ταξίδια, με ημερομηνίες και προτιμήσεις.",
+      ],
+      type: "bundle",
     },
   ];
   return (
-    <div className="service-grid">
+    <div className="service-grid cb-services-grid">
       {services.map((s) => (
-        <article className="service-item" key={s.type}>
+        <article
+          className="service-item"
+          id={s.type === "cruise" ? "cruises" : undefined}
+          key={s.type}
+        >
           <s.icon />
           <h3>{t(s.title[0], s.title[1])}</h3>
           <p>{t(s.text[0], s.text[1])}</p>
@@ -222,8 +245,8 @@ export function FAQ() {
         "Μπορώ να κάνω κράτηση μέσω CasinoBooking.com;",
       ],
       a: [
-        "Not in this prototype. We coordinate interest and travel requests; any future bookings will be completed directly with third-party providers.",
-        "Όχι σε αυτό το πρωτότυπο. Συντονίζουμε ενδιαφέρον και ταξιδιωτικά αιτήματα· μελλοντικές κρατήσεις θα γίνονται απευθείας με τρίτους παρόχους.",
+        "No. We coordinate free travel enquiries. Any supplier arrangement requires separate confirmation; the website does not provide live availability or issue tickets.",
+        "Όχι. Συντονίζουμε δωρεάν ταξιδιωτικά αιτήματα. Κάθε διευθέτηση με πάροχο επιβεβαιώνεται χωριστά· ο ιστότοπος δεν παρέχει ζωντανή διαθεσιμότητα ή έκδοση εισιτηρίων.",
       ],
     },
     {
@@ -242,8 +265,8 @@ export function FAQ() {
         "Τι συμβαίνει μετά την αποστολή αιτήματος;",
       ],
       a: [
-        "You receive a reference and your request appears in the demo portal for this browser session. No email, WhatsApp message or real booking is sent.",
-        "Λαμβάνετε αριθμό αναφοράς και το αίτημα εμφανίζεται στην πύλη επίδειξης για αυτή τη συνεδρία. Δεν αποστέλλεται email, μήνυμα WhatsApp ή πραγματική κράτηση.",
+        "After a successful submission, your enquiry is saved to your account with a unique reference. Follow its status in your dashboard. Email and WhatsApp notifications are not yet connected; submission does not confirm a booking.",
+        "Μετά από επιτυχή υποβολή, το αίτημα αποθηκεύεται στον λογαριασμό σας με μοναδικό κωδικό. Παρακολουθήστε την κατάστασή του στον πίνακά σας. Οι ειδοποιήσεις email και WhatsApp δεν έχουν συνδεθεί· η υποβολή δεν επιβεβαιώνει κράτηση.",
       ],
     },
     {
@@ -705,8 +728,8 @@ export function Services() {
           "Ταξίδια, με ολοκληρωμένο συντονισμό",
         ]}
         subtitle={[
-          "A personal approach to introductions, flights, transfers and group travel. No live prices or availability are implied.",
-          "Προσωπική προσέγγιση σε γνωριμίες, πτήσεις, μεταφορές και ομαδικά ταξίδια. Δεν υπονοούνται ζωντανές τιμές ή διαθεσιμότητα.",
+          "Free enquiries for casino travel, flights, hotels, transfers, cruises and complete itineraries. For individuals, groups and companies; arrangements are reviewed manually.",
+          "Δωρεάν αιτήματα για ταξίδια σε καζίνο, πτήσεις, ξενοδοχεία, μεταφορές, κρουαζιέρες και ολοκληρωμένα ταξίδια. Για ιδιώτες, ομάδες και εταιρείες· κάθε διευθέτηση εξετάζεται προσωπικά.",
         ]}
       />
       <section className="section service-band">
@@ -756,8 +779,8 @@ export function HowItWorks() {
               {
                 title: ["Review the details", "Εξετάστε τις λεπτομέρειες"],
                 text: [
-                  "In production, a coordinator would review eligibility, local rules and provider options. This prototype stores requests only for the current session.",
-                  "Στην παραγωγή, συντονιστής θα ελέγχει επιλεξιμότητα, τοπικούς κανόνες και παρόχους. Το πρωτότυπο κρατά αιτήματα μόνο στην τρέχουσα συνεδρία.",
+                  "Your enquiry is saved to your account for review of travel preferences, local requirements and possible provider options. Follow updates in your dashboard.",
+                  "Το αίτημα αποθηκεύεται στον λογαριασμό σας για εξέταση ταξιδιωτικών προτιμήσεων, τοπικών απαιτήσεων και πιθανών παρόχων. Παρακολουθήστε ενημερώσεις στον πίνακά σας.",
                 ],
               },
               {
@@ -796,8 +819,8 @@ export function About() {
           "Προσεγμένα ταξίδια. Ανεξάρτητη σκέψη.",
         ]}
         subtitle={[
-          "CasinoBooking.com is an independent referral and travel coordination concept, created to make destination discovery more personal and transparent.",
-          "Το CasinoBooking.com είναι ανεξάρτητη ιδέα παραπομπών και ταξιδιωτικού συντονισμού, για πιο προσωπική και διαφανή ανακάλυψη προορισμών.",
+          "CasinoBooking.com brings independent destination information and free travel enquiries together, with clear distinctions between travel inspiration and confirmed supplier arrangements.",
+          "Το CasinoBooking.com συνδυάζει ανεξάρτητη ενημέρωση προορισμών και δωρεάν ταξιδιωτικά αιτήματα, με σαφή διάκριση μεταξύ ταξιδιωτικής έμπνευσης και επιβεβαιωμένων διευθετήσεων παρόχων.",
         ]}
       />
       <section className="section">
@@ -812,15 +835,20 @@ export function About() {
           </h2>
           <p>
             {t(
-              "Today: a mobile-first, home-screen-ready web prototype. Next: production authentication, a privacy-reviewed database and verified provider agreements. Future: evaluate iOS and Android apps after validation. No App Store or Play Store app has been published.",
-              "Σήμερα: πρωτότυπο ιστοσελίδας για κινητά, έτοιμο για αρχική οθόνη. Επόμενα: πραγματική σύνδεση, βάση δεδομένων με έλεγχο απορρήτου και επαληθευμένες συμφωνίες παρόχων. Μέλλον: αξιολόγηση εφαρμογών iOS και Android. Δεν έχει δημοσιευθεί εφαρμογή σε App Store ή Play Store.",
+              "Use the website on a phone, tablet or desktop to browse destinations and manage enquiries. Dedicated mobile apps may be considered later. No App Store or Play Store app has been published.",
+              "Χρησιμοποιήστε τον ιστότοπο σε κινητό, tablet ή υπολογιστή για προορισμούς και διαχείριση αιτημάτων. Εφαρμογές κινητού ενδέχεται να εξεταστούν αργότερα. Δεν έχει δημοσιευθεί εφαρμογή σε App Store ή Play Store.",
             )}
           </p>
-          <h2>{t("Production setup", "Ρύθμιση παραγωγής")}</h2>
+          <h2>
+            {t(
+              "Your account and enquiries",
+              "Ο λογαριασμός και τα αιτήματά σας",
+            )}
+          </h2>
           <p>
             {t(
-              "Demo mode: requests and changes exist only in this browser session and are lost on refresh. Production needs Lovable Cloud, real authentication, separate role-based access, owner-only request access, retention/deletion processes, verified contact channels and legal review. The administrator preview is not access-protected. Do not enter real personal information.",
-              "Λειτουργία επίδειξης: αιτήματα και αλλαγές υπάρχουν μόνο σε αυτή τη συνεδρία και χάνονται με ανανέωση. Η παραγωγή χρειάζεται Lovable Cloud, πραγματική σύνδεση, διακριτούς ρόλους πρόσβασης, πρόσβαση αιτημάτων μόνο από ιδιοκτήτη, διαδικασίες διατήρησης/διαγραφής, επαληθευμένα κανάλια επικοινωνίας και νομικό έλεγχο. Η προεπισκόπηση διαχειριστή δεν προστατεύεται. Μην εισάγετε πραγματικά προσωπικά στοιχεία.",
+              "Sign in to submit and follow your travel enquiries using a unique customer reference. Enquiries are stored in your account and reviewed through restricted administration tools. Email and WhatsApp notifications are not yet connected. Supplier arrangements are confirmed separately.",
+              "Συνδεθείτε για υποβολή και παρακολούθηση ταξιδιωτικών αιτημάτων με μοναδικό κωδικό πελάτη. Τα αιτήματα αποθηκεύονται στον λογαριασμό σας και εξετάζονται μέσω εργαλείων περιορισμένης πρόσβασης. Οι ειδοποιήσεις email και WhatsApp δεν έχουν συνδεθεί. Οι διευθετήσεις παρόχων επιβεβαιώνονται χωριστά.",
             )}
           </p>
           <h2>{t("Photography credits", "Πηγές φωτογραφιών")}</h2>
@@ -871,14 +899,14 @@ export function Legal({ kind }: { kind: "privacy" | "terms" }) {
             <>
               <h2>
                 {t(
-                  "Prototype data handling",
-                  "Διαχείριση δεδομένων πρωτοτύπου",
+                  "Account and enquiry data",
+                  "Δεδομένα λογαριασμού και αιτημάτων",
                 )}
               </h2>
               <p>
                 {t(
-                  "The enquiry form uses name, contact details, residence, travel preferences and your message to demonstrate request coordination. Data is held in memory for this session, not sent to a production database or contact service. Do not submit real personal details, identity documents, payment data, gambling history or sensitive information.",
-                  "Η φόρμα χρησιμοποιεί όνομα, στοιχεία επικοινωνίας, κατοικία, ταξιδιωτικές προτιμήσεις και μήνυμα για επίδειξη συντονισμού. Τα δεδομένα κρατούνται στη μνήμη της συνεδρίας, όχι σε πραγματική βάση ή υπηρεσία επικοινωνίας. Μην υποβάλλετε πραγματικά προσωπικά στοιχεία, έγγραφα ταυτότητας, πληρωμές, ιστορικό τζόγου ή ευαίσθητες πληροφορίες.",
+                  "Account and enquiry details, including your name, contact details and travel preferences, are stored in the connected account database. Signed-in customers can access their own enquiries; authorized administrators use them for travel coordination. Email and WhatsApp notifications are not yet connected. Do not submit identity documents, payment data, gambling history or sensitive information.",
+                  "Τα στοιχεία λογαριασμού και αιτημάτων, όπως όνομα, επικοινωνία και ταξιδιωτικές προτιμήσεις, αποθηκεύονται στη συνδεδεμένη βάση λογαριασμών. Οι συνδεδεμένοι πελάτες βλέπουν τα δικά τους αιτήματα· εξουσιοδοτημένοι διαχειριστές τα χρησιμοποιούν για ταξιδιωτικό συντονισμό. Οι ειδοποιήσεις email και WhatsApp δεν έχουν συνδεθεί. Μην υποβάλλετε έγγραφα ταυτότητας, στοιχεία πληρωμών, ιστορικό τζόγου ή ευαίσθητες πληροφορίες.",
                 )}
               </p>
               <h2>{t("Before launch", "Πριν τη δημοσίευση")}</h2>

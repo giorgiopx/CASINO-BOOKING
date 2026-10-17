@@ -1,11 +1,18 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) throw redirect({ to: "/auth" });
+    if (!isSupabaseConfigured()) throw redirect({ to: "/auth" });
+    let authenticated = false;
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      authenticated = !error && !!data.user;
+    } catch {
+      // Expired sessions and unavailable auth both return to the sign-in page.
+    }
+    if (!authenticated) throw redirect({ to: "/auth" });
   },
   component: () => <Outlet />,
 });

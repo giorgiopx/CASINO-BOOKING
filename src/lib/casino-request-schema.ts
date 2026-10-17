@@ -1,10 +1,13 @@
 import { z } from "zod";
-import { casinos, countries } from "./casino-data";
-import { operatingGlobalVenues } from "./global-casino-catalog";
-import { approvedOperatingCandidates } from "./approved-casino-directory";
+import { countries } from "./casino-data";
+import { isApprovedRequestDestination } from "./approved-casino-directory";
 
 const requiredText = z.string().trim().min(1).max(80);
-const date = z
+export function localToday(now = new Date()) {
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
+export const travelDateSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
   .refine((value) => {
@@ -14,6 +17,93 @@ const date = z
       parsed.toISOString().slice(0, 10) === value
     );
   });
+const departureDate = travelDateSchema.refine(
+  (value) => value >= localToday(),
+  {
+    message: "pastDate",
+  },
+);
+const destinationSchema = z
+  .string()
+  .refine(
+    (value) => value === "undecided" || isApprovedRequestDestination(value),
+  );
+const partySchema = z
+  .string()
+  .regex(/^\d+$/)
+  .refine((value) => Number(value) >= 1 && Number(value) <= 200);
+export const requestTypeSchema = z.enum([
+  "introduction",
+  "flight",
+  "transfer",
+  "group",
+]);
+export const serviceSchema = z.enum([
+  "casino",
+  "flight",
+  "hotel",
+  "transfer",
+  "cruise",
+  "package",
+]);
+export const selectedServicesSchema = z.array(serviceSchema).min(1).max(6);
+
+export const requestSearchSchema = z.object({
+  interest: destinationSchema.optional().catch(undefined),
+  country: z.preprocess(
+    (value) => (typeof value === "number" ? String(value) : value),
+    z.enum(["0", "1", "2", "3", "4"]).optional().catch(undefined),
+  ),
+  start: departureDate.optional().catch(undefined),
+  end: departureDate.optional().catch(undefined),
+  party: z.preprocess(
+    (value) => (typeof value === "number" ? String(value) : value),
+    partySchema.optional().catch(undefined),
+  ),
+  type: z
+    .enum([
+      "introduction",
+      "group",
+      "casino",
+      "concierge",
+      "flight",
+      "hotel",
+      "transfer",
+      "cruise",
+      "package",
+      "packages",
+      "bundle",
+    ])
+    .optional()
+    .catch(undefined),
+});
+export type RequestSearch = z.infer<typeof requestSearchSchema>;
+
+export function resolveRequestDefaults(input: unknown) {
+  const search = requestSearchSchema.parse(input);
+  const legacyCountry = countries[Number(search.country)]?.[0];
+  const service = serviceSchema.safeParse(search.type);
+  const requestType = requestTypeSchema.safeParse(search.type);
+  return {
+    destination:
+      search.interest ??
+      (legacyCountry && isApprovedRequestDestination(legacyCountry)
+        ? legacyCountry
+        : ""),
+    start: search.start ?? "",
+    end:
+      search.end && (!search.start || search.end >= search.start)
+        ? search.end
+        : "",
+    party: search.party ?? "2",
+    requestType: requestType.success ? requestType.data : "introduction",
+    service: service.success
+      ? service.data
+      : ["bundle", "packages"].includes(search.type ?? "")
+        ? "package"
+        : "casino",
+  };
+}
 export const enquirySchema = z
   .object({
     name: requiredText,
@@ -31,25 +121,11 @@ export const enquirySchema = z
       ),
     residence: requiredText,
     customerType: z.enum(["individual", "business"]),
-    destination: z
-      .string()
-      .refine(
-        (value) =>
-          value === "undecided" ||
-          casinos.some((casino) => !casino.planned && casino.name === value) ||
-          countries.slice(1).some((country) => country[0] === value) ||
-          operatingGlobalVenues.some((venue) => venue.name === value) ||
-          approvedOperatingCandidates.some(
-            (venue) => venue.countrySlug !== "russia" && venue.name === value,
-          ),
-      ),
-    start: date,
-    end: date,
-    party: z
-      .string()
-      .regex(/^\d+$/)
-      .refine((value) => Number(value) >= 1 && Number(value) <= 200),
-    type: z.enum(["introduction", "flight", "transfer", "group"]),
+    destination: destinationSchema,
+    start: departureDate,
+    end: travelDateSchema,
+    party: partySchema,
+    type: requestTypeSchema,
     message: z.string().trim().max(2000),
     preference: z.enum(["email", "whatsapp"]),
     consent: z.literal("on"),

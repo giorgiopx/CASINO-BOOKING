@@ -9,8 +9,7 @@ import {
 } from "lucide-react";
 import { useCasino } from "@/components/casino/context";
 import {
-  globalDestinations,
-  globalVenues,
+  searchGlobalDestinations,
   globalCasinoHotels,
   photoUrl,
 } from "@/lib/global-casino-catalog";
@@ -30,17 +29,17 @@ function GlobalCasinos() {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"US" | "AE" | "all">("US");
   const destinations = useMemo(
-    () =>
-      globalDestinations.filter((d) => {
-        if (filter !== "all" && d.country !== filter) return false;
-        const venueNames = d.venueIds
-          .map((id) => globalVenues.find((v) => v.id === id)?.name ?? "")
-          .join(" ");
-        return (d.name.join(" ") + " " + d.state + " " + venueNames)
-          .toLowerCase()
-          .includes(q.trim().toLowerCase());
-      }),
+    () => searchGlobalDestinations(q, filter),
     [q, filter],
+  );
+  const resultCount = destinations.reduce(
+    (total, { venues }) => total + venues.length,
+    0,
+  );
+  const plannedCount = destinations.reduce(
+    (total, { venues }) =>
+      total + venues.filter((venue) => venue.status === "planned").length,
+    0,
   );
 
   return (
@@ -48,7 +47,8 @@ function GlobalCasinos() {
       <div className="global-hero">
         <div className="global-shell">
           <div className="global-eyebrow">
-            CASINOBOOKING.COM · INTERNATIONAL DESTINATIONS
+            CASINOBOOKING.COM ·{" "}
+            {t("INTERNATIONAL DESTINATIONS", "ΔΙΕΘΝΕΙΣ ΠΡΟΟΡΙΣΜΟΙ")}
           </div>
           <h1>
             {t(
@@ -65,6 +65,7 @@ function GlobalCasinos() {
           <div className="global-find">
             <Search size={19} />
             <input
+              type="search"
               aria-label={t(
                 "Search city, state or casino",
                 "Αναζήτηση πόλης, πολιτείας ή καζίνο",
@@ -84,8 +85,8 @@ function GlobalCasinos() {
               onClick={() => setFilter("US")}
             >
               {t(
-                "United States · Operating venues",
-                "ΗΠΑ · Λειτουργούντα καζίνο",
+                "United States · Operator-listed venues",
+                "ΗΠΑ · Καταχωρίσεις διαχειριστών",
               )}
             </button>
             <button
@@ -113,11 +114,30 @@ function GlobalCasinos() {
             "Δεν δηλώνουμε συνεργασίες ή πραγματική διαθεσιμότητα κρατήσεων. Ελέγξτε νόμιμη ηλικία και λειτουργία πριν ταξιδέψετε. Οι εικόνες απεικονίζουν τον προορισμό, όχι απαραίτητα το συγκεκριμένο καζίνο. Αναφέρονται οι δημιουργοί των φωτογραφιών.",
           )}
         </p>
+        <div className="global-result-summary">
+          <p role="status" aria-live="polite">
+            {destinations.length} {t("regions", "περιοχές")} ·{" "}
+            {resultCount - plannedCount}{" "}
+            {t("operator-listed venues", "καταχωρισμένοι χώροι")} ·{" "}
+            {plannedCount} {t("planned projects", "μελλοντικά έργα")}
+          </p>
+          {(q || filter !== "US") && (
+            <button
+              type="button"
+              onClick={() => {
+                setQ("");
+                setFilter("US");
+              }}
+            >
+              {t("Reset filters", "Επαναφορά φίλτρων")}
+            </button>
+          )}
+          <Link to="/destinations">
+            {t("All 15 countries →", "Και οι 15 χώρες →")}
+          </Link>
+        </div>
         <div className="global-grid">
-          {destinations.map((d) => {
-            const venues = d.venueIds
-              .map((id) => globalVenues.find((v) => v.id === id))
-              .filter((v): v is (typeof globalVenues)[number] => !!v);
+          {destinations.map(({ destination: d, venues }) => {
             const planned = d.country === "AE";
             const image = photoUrl(d);
             return (
@@ -128,7 +148,10 @@ function GlobalCasinos() {
                       loading="lazy"
                       alt={
                         t(d.name[0], d.name[1]) +
-                        " — destination image, not property image"
+                        t(
+                          " — destination image, not property image",
+                          " — εικόνα περιοχής, όχι του καταλύματος",
+                        )
                       }
                       src={image}
                       referrerPolicy="no-referrer"
@@ -148,7 +171,7 @@ function GlobalCasinos() {
                   >
                     {planned
                       ? t("Planned — not open", "Υπό ανάπτυξη — μη ανοικτό")
-                      : d.state}
+                      : t(d.state, d.stateEl)}
                   </span>
                   <div className="global-photo-title">
                     <h2>{lang === "el" ? d.name[1] : d.name[0]}</h2>
@@ -160,12 +183,27 @@ function GlobalCasinos() {
                     <div className="global-venue" key={v.id}>
                       <h3>{v.name}</h3>
                       <span>
-                        {v.locality} ·{" "}
+                        {t(v.locality, v.localityEl)} ·{" "}
                         {v.status === "operating"
-                          ? t("Operating venue", "Λειτουργών χώρος")
+                          ? t(
+                              "Operator-listed · verify status",
+                              "Καταχώριση διαχειριστή · έλεγχος λειτουργίας",
+                            )
                           : t("Future development", "Μελλοντικό έργο")}
                       </span>
                       <p>{lang === "el" ? v.notes[1] : v.notes[0]}</p>
+                      {v.gaming === "electronic-gaming" && (
+                        <p>
+                          {t(
+                            "Electronic gaming venue",
+                            "Χώρος ηλεκτρονικών παιχνιδιών",
+                          )}
+                        </p>
+                      )}
+                      <small className="global-checked">
+                        {t("Source checked", "Έλεγχος πηγής")}:{" "}
+                        {v.sourceChecked}
+                      </small>
                       {globalCasinoHotels
                         .filter((h) => h.venueId === v.id)
                         .map((h) => (
@@ -250,16 +288,13 @@ function GlobalCasinos() {
           })}
         </div>
         {destinations.length === 0 && (
-          <p className="global-empty">
+          <p className="global-empty" role="status">
             {t("No matching destinations found", "Δεν βρέθηκαν προορισμοί")}
           </p>
         )}
         <div className="global-footer">
           <Link to="/">
-            {t(
-              "← Back to European homepage",
-              "← Επιστροφή στην ευρωπαϊκή αρχική",
-            )}
+            {t("← Back to homepage", "← Επιστροφή στην αρχική")}
           </Link>
           <Link to="/request">
             {t(

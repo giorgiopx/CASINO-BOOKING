@@ -86,6 +86,43 @@
   padding: 8px 15px;
   border-radius: 3px;
   font-size: 13px;
+  cursor: pointer;
+  min-height: 44px;
+}
+.approved-result-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.approved-result-summary p {
+  margin: 0;
+  flex: 1 1 300px;
+}
+.approved-result-summary a,
+.approved-result-summary button {
+  color: #775725;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approved-result-summary button {
+  background: transparent;
+  border: 0;
+  min-height: 44px;
+  cursor: pointer;
+}
+.approved-checked {
+  display: block;
+  margin-top: 7px;
+  font-size: 11px;
+  color: #667688;
+}
+.approved-directory :is(a, button, input):focus-visible {
+  outline: 3px solid #b28542;
+  outline-offset: 4px;
 }
 .approved-filters button[aria-pressed="true"] {
   background: #1a3347;
@@ -118,6 +155,10 @@
   padding: 22px 25px;
   border-bottom: 1px solid #eae8e0;
   background: linear-gradient(95deg, #fdfcfa, #f7f4ee);
+}
+.approved-country-heading > div:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .approved-country-flag {
   font-size: 35px;
@@ -191,6 +232,10 @@
   align-self: center;
 }
 .approved-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
   color: #775725;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -293,6 +338,16 @@
   margin-bottom: 22px;
 }
 @media (max-width: 600px) {
+  .approved-country-heading {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .approved-country-heading > div:last-child {
+    flex: 1 1 160px;
+  }
+  .approved-country-heading h2 {
+    font-size: 24px;
+  }
   .approved-country-photo {
     width: 82px;
     flex-basis: 82px;

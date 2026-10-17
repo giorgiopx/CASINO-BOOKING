@@ -2,10 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useCasino } from "@/components/casino/context";
 import {
-  approvedCountries,
   approvedTotals,
-  countryVenues,
-  type CountryKind,
+  isRequestableVenue,
+  searchApprovedDirectory,
+  type DirectoryFilter,
 } from "@/lib/approved-casino-directory";
 import { casinoHead } from "@/lib/casino-seo";
 import "./destinations-directory.css";
@@ -19,36 +19,23 @@ export const Route = createFileRoute("/destinations")({
   component: ApprovedDestinations,
 });
 
-type Group = "all" | CountryKind;
-
 function ApprovedDestinations() {
   const { lang, t } = useCasino();
   const [search, setSearch] = useState("");
-  const [group, setGroup] = useState<Group>("all");
-  const results = useMemo(() => {
-    const term = search.trim().toLocaleLowerCase();
-    return approvedCountries
-      .filter((country) => group === "all" || country.kind === group)
-      .map((country) => {
-        const venues = countryVenues(country.slug);
-        const countryMatches = country.name
-          .join(" ")
-          .toLocaleLowerCase()
-          .includes(term);
-        return {
-          country,
-          venues:
-            term && !countryMatches
-              ? venues.filter((venue) =>
-                  (venue.name + " " + venue.locality.join(" "))
-                    .toLocaleLowerCase()
-                    .includes(term),
-                )
-              : venues,
-        };
-      })
-      .filter(({ venues }) => venues.length > 0);
-  }, [search, group]);
+  const [group, setGroup] = useState<DirectoryFilter>("all");
+  const results = useMemo(
+    () => searchApprovedDirectory(search, group),
+    [search, group],
+  );
+  const resultCount = results.reduce(
+    (total, { venues }) => total + venues.length,
+    0,
+  );
+  const plannedCount = results.reduce(
+    (total, { venues }) =>
+      total + venues.filter((venue) => venue.status === "planned").length,
+    0,
+  );
 
   return (
     <main className="approved-directory">
@@ -117,6 +104,7 @@ function ApprovedDestinations() {
                 ["europe", "Europe", "Ευρώπη"],
                 ["international", "International", "Διεθνή"],
                 ["planned", "Planned only", "Μόνο μελλοντικά"],
+                ["restricted", "Information only", "Μόνο πληροφορίες"],
               ] as const
             ).map(([value, en, el]) => (
               <button
@@ -132,10 +120,32 @@ function ApprovedDestinations() {
         </div>
         <p className="approved-caution">
           {t(
-            "Directory entries are research candidates, not confirmation that every venue is currently operating. Verify licensing, eligibility, legal age and opening status with the operator and local authority before any trip. Russian destinations require sanctions and travel-compliance review. Wynn Al Marjan (UAE) is planned and cannot be booked.",
-            "Οι καταχωρίσεις είναι υποψήφιοι προορισμοί έρευνας, όχι βεβαίωση ότι όλοι λειτουργούν σήμερα. Επιβεβαίωσε άδειες, προϋποθέσεις, νόμιμη ηλικία και λειτουργία με τον διαχειριστή και τις αρχές. Για τη Ρωσία απαιτείται έλεγχος κυρώσεων και ταξιδιωτικής συμμόρφωσης. Το Wynn Al Marjan (ΗΑΕ) είναι μελλοντικό έργο χωρίς κρατήσεις.",
+            "Directory entries are research candidates, not confirmation that every venue is currently operating. Verify licensing, eligibility, legal age and opening status with the operator and local authority before any trip. Russian entries are information only; travel enquiries are unavailable pending sanctions and travel-compliance review. Wynn Al Marjan (UAE) is planned and cannot be booked.",
+            "Οι καταχωρίσεις είναι υποψήφιοι προορισμοί έρευνας, όχι βεβαίωση ότι όλοι λειτουργούν σήμερα. Επιβεβαίωσε άδειες, προϋποθέσεις, νόμιμη ηλικία και λειτουργία με τον διαχειριστή και τις αρχές. Οι καταχωρίσεις της Ρωσίας είναι μόνο ενημερωτικές· δεν δεχόμαστε ταξιδιωτικά αιτήματα πριν τον έλεγχο κυρώσεων και ταξιδιωτικής συμμόρφωσης. Το Wynn Al Marjan (ΗΑΕ) είναι μελλοντικό έργο χωρίς κρατήσεις.",
           )}
         </p>
+        <div className="approved-result-summary">
+          <p role="status" aria-live="polite">
+            {results.length} {t("countries", "χώρες")} ·{" "}
+            {resultCount - plannedCount}{" "}
+            {t("operator-listed venues", "καταχωρισμένοι χώροι")} ·{" "}
+            {plannedCount} {t("planned projects", "μελλοντικά έργα")}
+          </p>
+          {(search || group !== "all") && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearch("");
+                setGroup("all");
+              }}
+            >
+              {t("Clear filters", "Καθαρισμός φίλτρων")}
+            </button>
+          )}
+          <Link to="/global-casinos">
+            {t("US regional guides →", "Περιφερειακοί οδηγοί ΗΠΑ →")}
+          </Link>
+        </div>
         {results.length === 0 && (
           <p role="status">
             {t(
@@ -157,7 +167,10 @@ function ApprovedDestinations() {
                     src={country.image}
                     alt={
                       t(country.name[0], country.name[1]) +
-                      " — editorial destination photograph"
+                      t(
+                        " — editorial destination photograph",
+                        " — ενδεικτική εικόνα προορισμού",
+                      )
                     }
                     loading="lazy"
                     onError={(e) => {
@@ -172,10 +185,15 @@ function ApprovedDestinations() {
                   <p className="approved-country-overline">
                     {country.kind === "planned"
                       ? t("Future development", "Μελλοντικό έργο")
-                      : t(
-                          "Independent destination index",
-                          "Ανεξάρτητος κατάλογος",
-                        )}
+                      : country.slug === "russia"
+                        ? t(
+                            "Information only · travel restricted",
+                            "Μόνο πληροφορίες · ταξιδιωτικοί περιορισμοί",
+                          )
+                        : t(
+                            "Independent destination index",
+                            "Ανεξάρτητος κατάλογος",
+                          )}
                   </p>
                   <h2>
                     <Link
@@ -186,7 +204,10 @@ function ApprovedDestinations() {
                     </Link>
                   </h2>
                   <small>
-                    {venues.length} {t("listed venues", "καταχωρίσεις")}
+                    {venues.length}{" "}
+                    {country.kind === "planned"
+                      ? t("planned project", "μελλοντικό έργο")
+                      : t("listed venues", "καταχωρίσεις")}
                   </small>
                 </div>
               </div>
@@ -208,11 +229,28 @@ function ApprovedDestinations() {
                               "Planned · not open",
                               "Μελλοντικό · δεν λειτουργεί",
                             )
-                          : t(
-                              "Operator-listed · verify status",
-                              "Καταχώριση διαχειριστή · έλεγξε λειτουργία",
-                            )}
+                          : country.slug === "russia"
+                            ? t(
+                                "Information only · no travel enquiries",
+                                "Μόνο πληροφορίες · χωρίς ταξιδιωτικά αιτήματα",
+                              )
+                            : t(
+                                "Operator-listed · verify status",
+                                "Καταχώριση διαχειριστή · έλεγξε λειτουργία",
+                              )}
                       </span>
+                      {venue.gaming === "electronic-gaming" && (
+                        <p>
+                          {t(
+                            "Electronic gaming venue",
+                            "Χώρος ηλεκτρονικών παιχνιδιών",
+                          )}
+                        </p>
+                      )}
+                      <small className="approved-checked">
+                        {t("Source checked", "Έλεγχος πηγής")}:{" "}
+                        {venue.sourceChecked}
+                      </small>
                     </div>
                     <div className="approved-actions">
                       <a
@@ -222,12 +260,11 @@ function ApprovedDestinations() {
                       >
                         {t("Official source ↗", "Επίσημη πηγή ↗")}
                       </a>
-                      {venue.status !== "planned" &&
-                        country.slug !== "russia" && (
-                          <Link to="/request" search={{ interest: venue.name }}>
-                            {t("Send enquiry →", "Αποστολή αιτήματος →")}
-                          </Link>
-                        )}
+                      {isRequestableVenue(venue) && (
+                        <Link to="/request" search={{ interest: venue.name }}>
+                          {t("Send enquiry →", "Αποστολή αιτήματος →")}
+                        </Link>
+                      )}
                     </div>
                   </li>
                 ))}

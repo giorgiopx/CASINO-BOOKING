@@ -4,8 +4,8 @@ import { casinoHead } from "@/lib/casino-seo";
 export const Route = createFileRoute("/")({
   head: () =>
     casinoHead(
-      "European Casino Destinations | CasinoBooking.com",
-      "Explore European casino destinations and request free assistance with flights, hotels and transfers. English and Greek. Travel enquiries only.",
+      "Casino Destinations & Free Travel Concierge",
+      "Explore 15 casino destinations and request free assistance with hotels, flights, transfers, cruises and travel packages. English and Greek. Travel enquiries only.",
     ),
   component: Page,
 });

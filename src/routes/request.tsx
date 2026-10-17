@@ -1,16 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
+import { requestSearchSchema } from "@/lib/casino-request-schema";
 import { RequestPage } from "@/components/casino/request";
 import { casinoHead } from "@/lib/casino-seo";
-const searchSchema = z.object({
-  interest: z.string().optional().catch(undefined),
-  type: z.string().optional().catch(undefined),
-  country: z.enum(["0", "1", "2", "3", "4"]).optional().catch(undefined),
-  start: z.string().optional().catch(undefined),
-  party: z.string().optional().catch(undefined),
-});
 export const Route = createFileRoute("/request")({
-  validateSearch: searchSchema,
+  validateSearch: requestSearchSchema,
   head: () =>
     casinoHead(
       "Plan your journey",
