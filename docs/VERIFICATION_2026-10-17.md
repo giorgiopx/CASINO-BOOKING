@@ -37,6 +37,27 @@ Scope: existing `giorgiopx/CASINO-BOOKING`, branch `feature/restore-lovable-casi
 
 The same existing repository is hosted in the separate Vercel preview container `casinobooking-preview`; it has no customer database settings or custom domain. The first deployment call omitted `target`, which Vercel unexpectedly classified as production for this new container. It was not a release to `casinobooking.com`. The temporary container’s production serving was subsequently paused. A protected HTTP fetch of its initial deployment returned **503 `DEPLOYMENT_PAUSED`**, confirming the block. Do not unpause it to create a preview.
 
-All subsequent review deployments explicitly use `target: "staging"`. The latest staging URL, tested Git SHA and CI links are recorded in PR #1. Preview metadata defaults to `noindex`; temporary review links expire. Local real-browser checks and authenticated hosted HTTP checks are separate evidence, not a claim of a hosted authenticated CRM test.
+The new photo update is application commit `c22e1fc36d2b70422bdcff34289ff7a773fa5683`. All four GitHub checks passed:
+
+- [Build and tests](https://github.com/giorgiopx/CASINO-BOOKING/actions/runs/39074992235)
+- [Formatting](https://github.com/giorgiopx/CASINO-BOOKING/actions/runs/39074992097)
+- [Verification](https://github.com/giorgiopx/CASINO-BOOKING/actions/runs/39074992330)
+- [Real Chromium, screenshots and report](https://github.com/giorgiopx/CASINO-BOOKING/actions/runs/39074992207)
+
+**New-photo hosting is currently blocked, not complete.** An explicit staging deployment into the paused preview container returned `BLOCKED`. A separate protected review container for the same repository, `casinobooking-review` (`prj_ZpQUqMA7CxSCxoq66KprHpd4j6fX`), was then prepared without custom domains, customer data or an automatic Git connection. Despite an explicit `target: "staging"`, Vercel classified its first build as production. That build (`dpl_HpC2cN1dZ3zauN4kekJrVvoGstwR`) was immediately canceled before READY; a follow-up read confirmed `CANCELED`.
+
+Automatic approval review rejected another attempt because the same API could ignore staging again. No retry or workaround followed that rejection. Explicit owner approval has been requested for a protected review deployment in this isolated container even if Vercel labels it production. This approval would not authorize a merge, the existing live domain, or access to customer data. The current Lovable preview reports older commit `d2e60fc270c5e269bb0e5d3a39b7ef3dacfc8455`, so it is not the new photo result.
+
+The earlier Vercel staging URL is also not evidence of this image update. PR #1 records the current review state. Preview metadata defaults to `noindex`; temporary review links expire. Local real-browser checks and authenticated hosted HTTP checks are separate evidence, not a claim of a hosted authenticated CRM test.
+
+## Checked visual result
+
+The following are real Chromium screenshots of the application at the tested photo commit, not mockups:
+
+- [Desktop, Greek, 1536px](preview/home-desktop-el.png)
+- [Tablet, Greek, 768px](preview/home-tablet-el.png)
+- [Mobile, Greek, 390px](preview/home-mobile-el.png)
+
+![Desktop homepage with the full supplied photo](preview/home-desktop-el.png)
 
 This is a verified frontend increment with explicit integration gates, not a claim of 100% end-to-end readiness.
