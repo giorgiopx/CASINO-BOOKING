@@ -71,7 +71,9 @@ try {
   ]);
   for (let attempt = 0; ; attempt++) {
     try {
-      docker(["exec", name, "pg_isready", "-U", "postgres"]);
+      // initdb briefly starts a socket-only temporary server. Wait for the
+      // final TCP listener inside this network-isolated container instead.
+      docker(["exec", name, "pg_isready", "-h", "127.0.0.1", "-U", "postgres"]);
       break;
     } catch (error) {
       if (attempt >= 40) throw error;
