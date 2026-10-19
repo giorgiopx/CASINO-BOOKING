@@ -2,8 +2,9 @@
  * Curated United States casino-resort catalogue, operator-source research on 2026-10-14.
  * This data is independent discovery, NOT proof of partnership or bookable inventory.
  * The single UAE entry is future/planned: never include in active travel offers.
- * City photos use Wikimedia Commons source pages and license/author attribution.
+ * Destination art is locally generated editorial illustration, not venue photography.
  */
+import { renderedImage } from "./visual-assets";
 export type GlobalCasinoVenue = {
   id: string;
   name: string;
@@ -378,9 +379,6 @@ export const globalVenues: GlobalCasinoVenue[] = [
   },
 ];
 
-const commons = (file: string) =>
-  "https://commons.wikimedia.org/wiki/Special:FilePath/" +
-  encodeURIComponent(file);
 export const globalDestinations: GlobalDestination[] = [
   {
     slug: "las-vegas",
@@ -392,11 +390,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "Nevada",
     stateEl: "Νεβάδα",
-    photoFile: "Las Vegas Strip at night - panoramio.jpg",
-    photoCreator: "David Balmer",
-    photoLicense: "CC BY 3.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Las_Vegas_Strip_at_night_-_panoramio.jpg",
+    photoFile: renderedImage("region-las-vegas"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["bellagio", "wynn-las-vegas", "venetian"],
   },
   {
@@ -409,11 +406,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "Florida",
     stateEl: "Φλόριντα",
-    photoFile: "Miami skyline at night.jpg",
-    photoCreator: "greyloch",
-    photoLicense: "CC BY-SA 2.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Miami_skyline_at_night.jpg",
+    photoFile: renderedImage("region-miami"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["hard-rock-hollywood"],
   },
   {
@@ -426,10 +422,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "Florida",
     stateEl: "Φλόριντα",
-    photoFile: "Tampa night.jpg",
-    photoCreator: "Dennis Ludlow - Sharkshock",
-    photoLicense: "CC BY-SA 4.0",
-    photoPage: "https://commons.wikimedia.org/wiki/File:Tampa_night.jpg",
+    photoFile: renderedImage("region-tampa"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["hard-rock-tampa"],
   },
   {
@@ -442,10 +438,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "California",
     stateEl: "Καλιφόρνια",
-    photoFile: "PRC exterior.jpg",
-    photoCreator: "Pechanga Resort & Casino",
-    photoLicense: "Public domain",
-    photoPage: "https://commons.wikimedia.org/wiki/File:PRC_exterior.jpg",
+    photoFile: renderedImage("region-southern-california"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["pechanga", "yaamava", "morongo"],
   },
   {
@@ -458,11 +454,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "California",
     stateEl: "Καλιφόρνια",
-    photoFile: "Sacramento, California skyline 2026.jpg",
-    photoCreator: "Quintin Soloviev",
-    photoLicense: "CC BY 4.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Sacramento,_California_skyline_2026.jpg",
+    photoFile: renderedImage("region-northern-california"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["thunder-valley"],
   },
   {
@@ -475,11 +470,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "New York",
     stateEl: "Νέα Υόρκη",
-    photoFile: "Midtown Manhattan Skyline 2026 005.jpg",
-    photoCreator: "Kidfly182",
-    photoLicense: "CC BY 4.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Midtown_Manhattan_Skyline_2026_005.jpg",
+    photoFile: renderedImage("region-new-york"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["resorts-world-nyc", "empire-city"],
   },
   {
@@ -492,11 +486,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "New Jersey",
     stateEl: "Νιου Τζέρσεϊ",
-    photoFile: "Atlantic City Boardwalk at Night.jpg",
-    photoCreator: "Lisa Andres",
-    photoLicense: "CC BY 2.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Atlantic_City_Boardwalk_at_Night.jpg",
+    photoFile: renderedImage("region-atlantic-city"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["borgata", "hard-rock-atlantic-city"],
   },
   {
@@ -509,11 +502,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "Connecticut",
     stateEl: "Κονέκτικατ",
-    photoFile: "Foxwoods Resort Casino.jpg",
-    photoCreator: "Stilfehler",
-    photoLicense: "CC BY-SA 3.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Foxwoods_Resort_Casino.jpg",
+    photoFile: renderedImage("region-connecticut"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["mohegan-sun", "foxwoods"],
   },
   {
@@ -526,11 +518,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "Maryland",
     stateEl: "Μέριλαντ",
-    photoFile: "Washington National Harbor.jpg",
-    photoCreator: "Mariyum Noor",
-    photoLicense: "CC BY-SA 4.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Washington_National_Harbor.jpg",
+    photoFile: renderedImage("region-national-harbor"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["mgm-national-harbor"],
   },
   {
@@ -543,11 +534,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "Mississippi",
     stateEl: "Μισισίπι",
-    photoFile: "Casinos and beach in Biloxi, Mississippi.jpg",
-    photoCreator: "Nicolas Henderson",
-    photoLicense: "CC BY 2.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Casinos_and_beach_in_Biloxi,_Mississippi.jpg",
+    photoFile: renderedImage("region-biloxi"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["beau-rivage"],
   },
   {
@@ -560,11 +550,10 @@ export const globalDestinations: GlobalDestination[] = [
     country: "US",
     state: "Oklahoma",
     stateEl: "Οκλαχόμα",
-    photoFile: "Choctaw Casino Durant 2023.jpg",
-    photoCreator: "Fkbowen",
-    photoLicense: "CC BY-SA 4.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Choctaw_Casino_Durant_2023.jpg",
+    photoFile: renderedImage("region-durant"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["choctaw-durant"],
   },
   {
@@ -577,16 +566,15 @@ export const globalDestinations: GlobalDestination[] = [
     country: "AE",
     state: "Ras Al Khaimah",
     stateEl: "Ρας Αλ Χάιμα",
-    photoFile: "Ras al khaimah mountains.jpg",
-    photoCreator: "Rafia aql",
-    photoLicense: "CC BY-SA 4.0",
-    photoPage:
-      "https://commons.wikimedia.org/wiki/File:Ras_al_khaimah_mountains.jpg",
+    photoFile: renderedImage("uae"),
+    photoCreator: "OpenAI Image Generation",
+    photoLicense: "AI-generated editorial illustration",
+    photoPage: null,
     venueIds: ["wynn-al-marjan"],
   },
 ];
 export function photoUrl(destination: GlobalDestination): string | null {
-  return destination.photoFile ? commons(destination.photoFile) : null;
+  return destination.photoFile ? destination.photoFile : null;
 }
 export const operatingGlobalVenues = globalVenues.filter(
   (v) => v.status === "operating",

@@ -3,6 +3,15 @@ import { countries } from "./casino-data";
 import { isApprovedRequestDestination } from "./approved-casino-directory";
 
 const requiredText = z.string().trim().min(1).max(80);
+export const mobilePhoneSchema = z
+  .string()
+  .trim()
+  .max(24)
+  .regex(/^\+[\d\s()-]{7,22}$/)
+  .refine((value) => {
+    const digits = value.replace(/\D/g, "").length;
+    return digits >= 7 && digits <= 15;
+  });
 export function localToday(now = new Date()) {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
@@ -46,7 +55,14 @@ export const serviceSchema = z.enum([
   "cruise",
   "package",
 ]);
-export const selectedServicesSchema = z.array(serviceSchema).min(1).max(6);
+export const selectedServicesSchema = z
+  .array(serviceSchema)
+  .min(1)
+  .max(6)
+  .refine(
+    (values) => new Set(values).size === values.length,
+    "duplicateServices",
+  );
 
 export const requestSearchSchema = z.object({
   interest: destinationSchema.optional().catch(undefined),
@@ -109,18 +125,11 @@ export const enquirySchema = z
     name: requiredText,
     surname: requiredText,
     email: z.string().trim().email().max(255),
-    phone: z
-      .string()
-      .trim()
-      .max(24)
-      .regex(/^\+[\d\s()-]{7,22}$/)
-      .refine(
-        (value) =>
-          value.replace(/\D/g, "").length >= 7 &&
-          value.replace(/\D/g, "").length <= 15,
-      ),
+    phone: mobilePhoneSchema,
     residence: requiredText,
     customerType: z.enum(["individual", "business"]),
+    companyName: z.string().trim().max(160).default(""),
+    services: selectedServicesSchema,
     destination: destinationSchema,
     start: departureDate,
     end: travelDateSchema,
@@ -130,6 +139,14 @@ export const enquirySchema = z
     preference: z.enum(["email", "whatsapp"]),
     consent: z.literal("on"),
   })
+  .refine(
+    (value) =>
+      value.customerType !== "business" || value.companyName.length > 0,
+    {
+      path: ["companyName"],
+      message: "companyRequired",
+    },
+  )
   .refine((value) => value.end >= value.start, {
     path: ["end"],
     message: "dateOrder",

@@ -4,9 +4,9 @@
   --deep: #001326;
   --gold: #e9ba72;
   --soft: #fcfbf8;
-  background: #fff;
+  background: #faf8f3;
   color: var(--ink);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Manrope", Arial, Helvetica, sans-serif;
   font-size: 14px;
 }
 .cb-extra * {
@@ -128,7 +128,7 @@
 }
 .cb-extra-feature-card {
   border: 1px solid #d7dce4;
-  border-radius: 6px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 7px 18px #12314c0f;
   background: var(--ink);
@@ -214,7 +214,7 @@
   inset: 0;
   background-image:
     linear-gradient(90deg, #001122f5 0%, #00152ecf 48%, #0313268a 100%),
-    radial-gradient(ellipse at top right, #80643e, #001b32 70%);
+    url("/images/rendered/cruise-ocean.webp");
   background-size: cover;
   background-position: center;
   opacity: 0.95;
@@ -295,7 +295,7 @@
 .cb-extra-concierge {
   background:
     linear-gradient(108deg, #001020f3, #002a4bd9),
-    url("/design-reference/monaco.webp") center/cover;
+    url("/images/rendered/monaco.webp") center/cover;
   color: white;
   padding: 49px max(3%, calc((100% - 1430px) / 2));
   display: grid;
@@ -536,7 +536,7 @@
 .cb-extra-finale {
   background:
     linear-gradient(95deg, #001022ee, #05263ecf),
-    url("/images/mediterranean-casino-sunset.jpg") center/cover;
+    url("/images/rendered/mediterranean-casino-sunset.webp") center/cover;
   padding: 31px max(3%, calc((100% - 1430px) / 2));
   color: white;
   display: flex;
@@ -759,4 +759,56 @@
   border-radius: 3px;
   background: radial-gradient(ellipse at bottom, #30556c, #0c2337 70%);
   border-bottom: 1px solid #eac08055;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-extra-gold-cta {
+    transition: none;
+  }
+  .cb-extra-gold-cta:hover {
+    transform: none;
+  }
+}
+
+.cb-cruise-art {
+  height: 135px;
+  overflow: hidden;
+}
+.cb-cruise-art .destination-image > img {
+  height: 100%;
+  border-radius: 0;
+}
+.cb-extra-cruise-card {
+  border-radius: 10px;
+  padding: 10px;
+}
+.cb-extra-feature-image .destination-image {
+  height: 100%;
+}
+.cb-extra-attribution {
+  margin: 0;
+  color: #d4c1a5;
+  line-height: 1.6;
+}
+@media (max-width: 640px) {
+  .cb-extra-feature-image {
+    height: 160px;
+  }
+  .cb-extra-cruise-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .cb-cruise-art {
+    height: 180px;
+  }
+  .cb-extra-cruise-card {
+    padding: 12px;
+  }
+  .cb-extra-cruise-card h3 {
+    font-size: 16px;
+  }
+  .cb-extra-cruise-card p {
+    font-size: 12px;
+    min-height: 0;
+  }
 }

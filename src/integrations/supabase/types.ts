@@ -216,6 +216,10 @@ export type Database = {
         Row: {
           created_at: string;
           customer_ref: string;
+          first_name: string | null;
+          last_name: string | null;
+          email: string | null;
+          services: string[];
           full_name: string | null;
           phone: string | null;
           residence: string | null;
@@ -226,6 +230,10 @@ export type Database = {
         Insert: {
           created_at?: string;
           customer_ref?: string;
+          first_name?: string | null;
+          last_name?: string | null;
+          email?: string | null;
+          services?: string[];
           full_name?: string | null;
           phone?: string | null;
           residence?: string | null;
@@ -236,6 +244,10 @@ export type Database = {
         Update: {
           created_at?: string;
           customer_ref?: string;
+          first_name?: string | null;
+          last_name?: string | null;
+          email?: string | null;
+          services?: string[];
           full_name?: string | null;
           phone?: string | null;
           residence?: string | null;

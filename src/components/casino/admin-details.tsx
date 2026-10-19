@@ -5,6 +5,8 @@ import { useCasino } from "./context";
 import { useAuth } from "./auth";
 import type { Enquiry } from "@/lib/enquiry-db";
 import { toast } from "sonner";
+import { EnquiryHistory } from "./crm-ui";
+import { serviceLabels } from "@/lib/crm-display";
 
 const kinds = [
   "casino",
@@ -43,7 +45,7 @@ export function AdminEnquiryDetails({
   enquiry: Enquiry;
   customerRef: string;
 }) {
-  const { t } = useCasino();
+  const { t, p } = useCasino();
   const { session, isAdmin } = useAuth();
   const qc = useQueryClient();
   const [noteDraft, setNoteDraft] = useState("");
@@ -54,7 +56,7 @@ export function AdminEnquiryDetails({
   const [saving, setSaving] = useState(false);
   const key = enquiry.id;
   const notes = useQuery({
-    queryKey: ["crm-notes", key],
+    queryKey: ["crm-notes", key, session?.user.id],
     enabled: isAdmin,
     queryFn: async () => {
       const r = await supabase
@@ -67,7 +69,7 @@ export function AdminEnquiryDetails({
     },
   });
   const tasks = useQuery({
-    queryKey: ["crm-tasks", key],
+    queryKey: ["crm-tasks", key, session?.user.id],
     enabled: isAdmin,
     queryFn: async () => {
       const r = await supabase
@@ -80,7 +82,7 @@ export function AdminEnquiryDetails({
     },
   });
   const segments = useQuery({
-    queryKey: ["crm-segments", key],
+    queryKey: ["crm-segments", key, session?.user.id],
     enabled: isAdmin,
     queryFn: async () => {
       const r = await supabase
@@ -88,19 +90,6 @@ export function AdminEnquiryDetails({
         .select("*")
         .eq("enquiry_id", key)
         .order("created_at", { ascending: true });
-      if (r.error) throw r.error;
-      return r.data;
-    },
-  });
-  const history = useQuery({
-    queryKey: ["crm-history", key],
-    enabled: isAdmin,
-    queryFn: async () => {
-      const r = await supabase
-        .from("enquiry_status_events")
-        .select("*")
-        .eq("enquiry_id", key)
-        .order("changed_at", { ascending: false });
       if (r.error) throw r.error;
       return r.data;
     },
@@ -115,18 +104,31 @@ export function AdminEnquiryDetails({
         )
       : [];
   async function run(
-    op: () => PromiseLike<{ error: { message: string } | null }>,
+    op: () => PromiseLike<{ data: unknown; error: { message: string } | null }>,
     queryKey: string,
     clear: () => void,
   ) {
+    if (saving) return;
     setSaving(true);
     try {
-      const { error } = await op();
-      if (error) throw new Error(error.message);
+      const { data, error } = await op();
+      if (error || !data) throw new Error(error?.message || "No saved record");
       clear();
-      await qc.invalidateQueries({ queryKey: [queryKey, key] });
-      toast.success(t("Saved to CRM", "Αποθηκεύτηκε στο CRM"));
-    } catch (e) {
+      try {
+        await qc.invalidateQueries(
+          { queryKey: [queryKey, key, session?.user.id], exact: true },
+          { throwOnError: true },
+        );
+        toast.success(t("Saved to CRM", "Αποθηκεύτηκε στο CRM"));
+      } catch {
+        toast.warning(
+          t(
+            "Saved to CRM, but the list could not refresh. Retry loading the list; do not submit the same record again.",
+            "Αποθηκεύτηκε στο CRM, αλλά η λίστα δεν ανανεώθηκε. Δοκιμάστε ξανά τη φόρτωση· μην υποβάλετε την ίδια εγγραφή ξανά.",
+          ),
+        );
+      }
+    } catch {
       toast.error(t("Could not save the record", "Αδυναμία αποθήκευσης"));
     } finally {
       setSaving(false);
@@ -135,7 +137,10 @@ export function AdminEnquiryDetails({
   return (
     <section
       style={{ marginTop: 24, display: "grid", gap: 16 }}
-      aria-label="Customer request details"
+      aria-label={t(
+        "Customer request details",
+        "Λεπτομέρειες αιτήματος πελάτη",
+      )}
     >
       <div
         style={{
@@ -154,8 +159,14 @@ export function AdminEnquiryDetails({
             marginBottom: 10,
           }}
         >
-          {t("Customer file", "Καρτέλα πελάτη")} · {customerRef}
+          {t("Enquiry file", "Καρτέλα αιτήματος")} · {enquiry.ref}
         </h2>
+        <p style={{ marginBottom: 16 }}>
+          {t("Customer ID", "Κωδικός πελάτη")}: {customerRef} ·{" "}
+          {enquiry.customer_type === "business"
+            ? t("Company", "Εταιρεία")
+            : t("Individual", "Ιδιώτης")}
+        </p>
         <div
           style={{
             display: "grid",
@@ -203,7 +214,11 @@ export function AdminEnquiryDetails({
           <div>
             <small>{t("Services", "Υπηρεσίες")}</small>
             <br />
-            <strong>{enquiry.services?.join(" · ") || "—"}</strong>
+            <strong>
+              {enquiry.services
+                ?.map((kind) => p(serviceLabels[kind]) || kind)
+                .join(" · ") || "—"}
+            </strong>
           </div>
           <div>
             <small>{t("Contact", "Επικοινωνία")}</small>
@@ -252,20 +267,35 @@ export function AdminEnquiryDetails({
         <h3 style={head}>
           {t("Itinerary coordination", "Συντονισμός ταξιδιού")}
         </h3>
+        {segments.isPending && <p role="status">{t("Loading…", "Φόρτωση…")}</p>}
+        {segments.isError && (
+          <p role="alert">
+            {t("Could not load these records.", "Αδυναμία φόρτωσης εγγραφών.")}{" "}
+            <button
+              type="button"
+              className="crm-text-button"
+              onClick={() => void segments.refetch()}
+            >
+              {t("Try again", "Δοκιμάστε ξανά")}
+            </button>
+          </p>
+        )}
+        {segments.isSuccess && segments.data.length === 0 && (
+          <p className="crm-help">
+            {t("No records yet.", "Δεν υπάρχουν εγγραφές ακόμη.")}
+          </p>
+        )}
         {segments.data?.map((s) => (
           <p
             key={s.id}
             style={{ padding: "9px 0", borderBottom: "1px solid #e2e8f0" }}
           >
-            <strong>{s.service_kind}</strong> · {s.summary}{" "}
-            <span style={{ color: "#957038" }}>({s.status})</span>
+            <strong>
+              {p(serviceLabels[s.service_kind]) || s.service_kind}
+            </strong>{" "}
+            · {s.summary} <span style={{ color: "#957038" }}>({s.status})</span>
           </p>
         ))}
-        {segments.isError && (
-          <p role="alert">
-            {t("Unable to load itinerary", "Αδυναμία φόρτωσης προγράμματος")}
-          </p>
-        )}
         <div
           style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 15 }}
         >
@@ -274,11 +304,11 @@ export function AdminEnquiryDetails({
             onChange={(e) =>
               setSegmentKind(e.target.value as typeof segmentKind)
             }
-            aria-label="Service kind"
+            aria-label={t("Service kind", "Είδος υπηρεσίας")}
           >
             {kinds.map((k) => (
               <option value={k} key={k}>
-                {k}
+                {p(serviceLabels[k])}
               </option>
             ))}
           </select>
@@ -286,6 +316,7 @@ export function AdminEnquiryDetails({
             style={{ flex: 1, minWidth: 240 }}
             value={segmentSummary}
             maxLength={240}
+            aria-label={t("Itinerary proposal", "Πρόταση προγράμματος")}
             onChange={(e) => setSegmentSummary(e.target.value)}
             placeholder={t(
               "Plan / proposal (not a confirmed booking)",
@@ -299,11 +330,15 @@ export function AdminEnquiryDetails({
             onClick={() =>
               void run(
                 () =>
-                  supabase.from("itinerary_segments").insert({
-                    enquiry_id: key,
-                    service_kind: segmentKind,
-                    summary: segmentSummary.trim(),
-                  }),
+                  supabase
+                    .from("itinerary_segments")
+                    .insert({
+                      enquiry_id: key,
+                      service_kind: segmentKind,
+                      summary: segmentSummary.trim(),
+                    })
+                    .select("id")
+                    .single(),
                 "crm-segments",
                 () => setSegmentSummary(""),
               )
@@ -327,6 +362,27 @@ export function AdminEnquiryDetails({
               "Εσωτερικές σημειώσεις · μόνο admin",
             )}
           </h3>
+          {notes.isPending && <p role="status">{t("Loading…", "Φόρτωση…")}</p>}
+          {notes.isError && (
+            <p role="alert">
+              {t(
+                "Could not load these records.",
+                "Αδυναμία φόρτωσης εγγραφών.",
+              )}{" "}
+              <button
+                type="button"
+                className="crm-text-button"
+                onClick={() => void notes.refetch()}
+              >
+                {t("Try again", "Δοκιμάστε ξανά")}
+              </button>
+            </p>
+          )}
+          {notes.isSuccess && notes.data.length === 0 && (
+            <p className="crm-help">
+              {t("No records yet.", "Δεν υπάρχουν εγγραφές ακόμη.")}
+            </p>
+          )}
           {notes.data?.map((n) => (
             <p
               key={n.id}
@@ -342,6 +398,10 @@ export function AdminEnquiryDetails({
             style={{ width: "100%", marginTop: 10 }}
             rows={3}
             maxLength={2000}
+            aria-label={t(
+              "Internal customer note",
+              "Εσωτερική σημείωση πελάτη",
+            )}
             value={noteDraft}
             onChange={(e) => setNoteDraft(e.target.value)}
             placeholder={t(
@@ -356,11 +416,15 @@ export function AdminEnquiryDetails({
             onClick={() =>
               void run(
                 () =>
-                  supabase.from("crm_notes").insert({
-                    enquiry_id: key,
-                    author_id: session.user.id,
-                    body: noteDraft.trim(),
-                  }),
+                  supabase
+                    .from("crm_notes")
+                    .insert({
+                      enquiry_id: key,
+                      author_id: session.user.id,
+                      body: noteDraft.trim(),
+                    })
+                    .select("id")
+                    .single(),
                 "crm-notes",
                 () => setNoteDraft(""),
               )
@@ -373,17 +437,65 @@ export function AdminEnquiryDetails({
           <h3 style={head}>
             {t("Team follow-up tasks", "Εργασίες παρακολούθησης")}
           </h3>
+          {tasks.isPending && <p role="status">{t("Loading…", "Φόρτωση…")}</p>}
+          {tasks.isError && (
+            <p role="alert">
+              {t(
+                "Could not load these records.",
+                "Αδυναμία φόρτωσης εγγραφών.",
+              )}{" "}
+              <button
+                type="button"
+                className="crm-text-button"
+                onClick={() => void tasks.refetch()}
+              >
+                {t("Try again", "Δοκιμάστε ξανά")}
+              </button>
+            </p>
+          )}
+          {tasks.isSuccess && tasks.data.length === 0 && (
+            <p className="crm-help">
+              {t("No records yet.", "Δεν υπάρχουν εγγραφές ακόμη.")}
+            </p>
+          )}
           {tasks.data?.map((task) => (
             <p
               key={task.id}
               style={{ borderBottom: "1px solid #e2e8f0", padding: "10px 0" }}
             >
-              {task.title} · <strong>{task.status}</strong>
+              {task.title}
+              <select
+                aria-label={`${t("Task status", "Κατάσταση εργασίας")}: ${task.title}`}
+                value={task.status}
+                disabled={saving}
+                onChange={(event) =>
+                  void run(
+                    () =>
+                      supabase
+                        .from("crm_tasks")
+                        .update({ status: event.target.value })
+                        .eq("id", task.id)
+                        .eq("enquiry_id", key)
+                        .select("id")
+                        .single(),
+                    "crm-tasks",
+                    () => {},
+                  )
+                }
+              >
+                <option value="open">{t("Open", "Ανοιχτή")}</option>
+                <option value="in_progress">
+                  {t("In progress", "Σε εξέλιξη")}
+                </option>
+                <option value="done">{t("Done", "Ολοκληρωμένη")}</option>
+                <option value="cancelled">{t("Cancelled", "Ακυρωμένη")}</option>
+              </select>
             </p>
           ))}
           <input
             style={{ width: "100%", margin: "10px 0" }}
             value={taskDraft}
+            aria-label={t("Follow-up task", "Εργασία παρακολούθησης")}
             maxLength={240}
             onChange={(e) => setTaskDraft(e.target.value)}
             placeholder={t(
@@ -400,7 +512,9 @@ export function AdminEnquiryDetails({
                 () =>
                   supabase
                     .from("crm_tasks")
-                    .insert({ enquiry_id: key, title: taskDraft.trim() }),
+                    .insert({ enquiry_id: key, title: taskDraft.trim() })
+                    .select("id")
+                    .single(),
                 "crm-tasks",
                 () => setTaskDraft(""),
               )
@@ -410,22 +524,7 @@ export function AdminEnquiryDetails({
           </button>
         </div>
       </div>
-      <div style={card}>
-        <h3 style={head}>
-          {t("Request status history", "Ιστορικό κατάστασης αιτήματος")}
-        </h3>
-        {history.data?.map((h) => (
-          <p key={h.id} style={{ margin: "6px 0" }}>
-            {new Date(h.changed_at).toLocaleString()} · {h.old_status || "—"} →{" "}
-            <strong>{h.new_status}</strong>
-          </p>
-        ))}
-        {history.isError && (
-          <p role="alert">
-            {t("History unavailable", "Το ιστορικό δεν είναι διαθέσιμο")}
-          </p>
-        )}
-      </div>
+      <EnquiryHistory enquiryId={key} />
       <p style={{ fontSize: 12, color: "#64748b" }}>
         {t(
           "CRM planning only. Supplier bookings, email and WhatsApp deliveries are not activated.",

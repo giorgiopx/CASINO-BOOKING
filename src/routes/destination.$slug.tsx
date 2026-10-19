@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, ExternalLink, MapPin } from "lucide-react";
 import { useCasino } from "@/components/casino/context";
+import { editorialImageAlt, editorialImageNotice } from "@/lib/visual-assets";
+import { DestinationImage } from "@/components/casino/destination-image";
 import {
   approvedCountries,
   countryVenues,
@@ -73,19 +75,9 @@ function CountryDetail() {
       </header>
       <section className="approved-container approved-main">
         <div className="approved-detail-image">
-          <img
+          <DestinationImage
             src={country.image}
-            loading="lazy"
-            alt={
-              t(country.name[0], country.name[1]) +
-              t(
-                " — editorial destination illustration",
-                " — ενδεικτική εικόνα προορισμού",
-              )
-            }
-            onError={(e) => {
-              e.currentTarget.hidden = true;
-            }}
+            alt={t(country.name[0], country.name[1]) + t(...editorialImageAlt)}
           />
         </div>
         <p className="approved-caution">
@@ -173,18 +165,7 @@ function CountryDetail() {
             </li>
           ))}
         </ul>
-        {country.imageCredit && country.imageCreditUrl && (
-          <p className="approved-source">
-            {t("Editorial image:", "Εικόνα προορισμού:")}{" "}
-            <a
-              href={country.imageCreditUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {country.imageCredit}
-            </a>
-          </p>
-        )}
+        <p className="approved-photo-credit">{t(...editorialImageNotice)}</p>
         <Link to="/destinations" className="approved-back">
           <ArrowLeft size={17} />
           {t("View all 15 countries", "Δείτε και τις 15 χώρες")}

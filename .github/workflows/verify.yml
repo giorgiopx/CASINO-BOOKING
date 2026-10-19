@@ -19,5 +19,5 @@ jobs:
       - run: bunx tsc --noEmit
       - run: bun run lint
       - run: bun run test
-      - name: Verify exact approved design images (SHA256)
-        run: node scripts/import-approved-design.mjs
+      - name: Verify preserved originals and generated image hashes and dimensions
+        run: bun run test:assets

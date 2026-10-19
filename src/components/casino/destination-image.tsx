@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { MapPin } from "lucide-react";
 import { useCasino } from "./context";
 import "./destination-image.css";
@@ -18,6 +18,16 @@ export function DestinationImage({
   const [failedSource, setFailedSource] = useState<string | null>(null);
   const failed = !src || failedSource === src;
   const loaded = !failed && loadedSource === src;
+  const imageRef = useCallback(
+    (image: HTMLImageElement | null) => {
+      // SSR images can succeed or fail before React attaches event handlers.
+      if (image?.complete && src) {
+        if (image.naturalWidth > 0) setLoadedSource(src);
+        else setFailedSource(src);
+      }
+    },
+    [src],
+  );
 
   return (
     <span
@@ -29,22 +39,28 @@ export function DestinationImage({
           className="destination-image-placeholder"
           role="img"
           aria-label={
-            alt + " — " + t("photo unavailable", "φωτογραφία μη διαθέσιμη")
+            alt +
+            " — " +
+            (failed
+              ? t("image unavailable", "εικόνα μη διαθέσιμη")
+              : t("loading image", "φόρτωση εικόνας"))
           }
         >
           <MapPin aria-hidden="true" size={28} />
           <span>
             {failed
-              ? t("Photo unavailable", "Φωτογραφία μη διαθέσιμη")
-              : t("Loading photo", "Φόρτωση φωτογραφίας")}
+              ? t("Image unavailable", "Εικόνα μη διαθέσιμη")
+              : t("Loading image", "Φόρτωση εικόνας")}
           </span>
         </span>
       )}
       {!failed && src && (
         <img
+          ref={imageRef}
           src={src}
           alt={alt}
           loading="lazy"
+          decoding="async"
           referrerPolicy="no-referrer"
           onLoad={() => setLoadedSource(src)}
           onError={() => setFailedSource(src)}

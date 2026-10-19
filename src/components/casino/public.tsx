@@ -20,29 +20,32 @@ import { Button } from "@/components/ui/button";
 import { casinos, countries, type Pair } from "@/lib/casino-data";
 import { useCasino } from "./context";
 import { Disclaimer } from "./shell";
-import hero from "@/assets/hero.jpg.asset.json";
-import greece from "@/assets/greece.jpg.asset.json";
-import slovenia from "@/assets/slovenia.jpg.asset.json";
-import cyprus from "@/assets/cyprus.jpg.asset.json";
+import { DestinationImage } from "./destination-image";
+import {
+  renderedImage,
+  heroImage,
+  editorialImageAlt,
+  editorialImageNotice,
+} from "@/lib/visual-assets";
 const destinations = [
   {
     country: 1,
-    image: cyprus.url,
+    image: renderedImage("cyprus"),
     caption: ["Mediterranean escapes", "Μεσογειακές αποδράσεις"] as Pair,
   },
   {
     country: 3,
-    image: greece.url,
+    image: renderedImage("greece"),
     caption: ["Coastlines & culture", "Ακτές και πολιτισμός"] as Pair,
   },
   {
     country: 2,
-    image: slovenia.url,
+    image: renderedImage("slovenia"),
     caption: ["Nature meets discovery", "Φύση και ανακαλύψεις"] as Pair,
   },
   {
     country: 4,
-    image: hero.url,
+    image: renderedImage("bulgaria"),
     caption: ["A new perspective", "Μια νέα οπτική"] as Pair,
   },
 ];
@@ -69,24 +72,19 @@ export function DestinationCards() {
           className="destination-card"
           key={d.country}
         >
-          <img
+          <DestinationImage
             src={d.image}
-            alt={
-              d.country === 4
-                ? t(
-                    "Illustrative resort photograph, not a Bulgarian property",
-                    "Ενδεικτική φωτογραφία θερέτρου, όχι βουλγαρικό κατάλυμα",
-                  )
-                : p(countries[d.country])
-            }
-            loading="lazy"
+            alt={p(countries[d.country]) + t(...editorialImageAlt)}
           />
           <div className="destination-card-content">
             <h3>{p(countries[d.country])}</h3>
             <p>{p(d.caption)}</p>
             {d.country === 4 && (
               <p>
-                {t("Illustrative resort image", "Ενδεικτική εικόνα θερέτρου")}
+                {t(
+                  "AI-generated destination illustration",
+                  "Ενδεικτική εικόνα προορισμού με τεχνητή νοημοσύνη",
+                )}
               </p>
             )}
             <ArrowUpRight size={18} className="destination-arrow" />
@@ -100,14 +98,20 @@ export function ResortCard({ casino }: { casino: (typeof casinos)[number] }) {
   const { t, p } = useCasino();
   return (
     <article className="resort-card">
-      <div className="resort-placeholder">
-        <Building2 />
-        <span>
+      <div className="resort-destination-image">
+        <DestinationImage
+          src={
+            destinations.find((d) => d.country === casino.country)?.image ??
+            null
+          }
+          alt={p(countries[casino.country]) + t(...editorialImageAlt)}
+        />
+        <small>
           {t(
-            "PROPERTY IMAGE PENDING APPROVAL",
-            "ΕΙΚΟΝΑ ΚΑΤΑΛΥΜΑΤΟΣ ΥΠΟ ΕΓΚΡΙΣΗ",
+            "Destination illustration · not a property photo",
+            "Εικόνα προορισμού · όχι φωτογραφία καταλύματος",
           )}
-        </span>
+        </small>
       </div>
       <div className="resort-body">
         <div className="resort-location">
@@ -302,10 +306,10 @@ export function Home() {
       <section className="hero">
         <img
           className="hero-image"
-          src={hero.url}
+          src={heroImage.src}
           alt={t(
-            "Illuminated resort swimming pool at dusk — illustrative travel photography",
-            "Φωτισμένη πισίνα θερέτρου το σούρουπο — ενδεικτική ταξιδιωτική φωτογραφία",
+            "Mediterranean sunset — AI-generated travel illustration",
+            "Μεσογειακό ηλιοβασίλεμα — ενδεικτική εικόνα με τεχνητή νοημοσύνη",
           )}
         />
         <div className="container-site hero-content">
@@ -352,8 +356,8 @@ export function Home() {
         <div className="hero-location">
           <MapPin size={12} />
           {t(
-            "The art of getting away · Illustrative resort image",
-            "Η τέχνη της απόδρασης · Ενδεικτική εικόνα θερέτρου",
+            "The art of getting away · AI-generated destination illustration",
+            "Η τέχνη της απόδρασης · Ενδεικτική εικόνα προορισμού με τεχνητή νοημοσύνη",
           )}
         </div>
       </section>
@@ -709,8 +713,8 @@ export function Destinations() {
           </div>
           <div className="notice">
             {t(
-              "Destination photography is illustrative, not a representation of a listed casino or confirmed partner. Northern Cyprus is not included as a verified jurisdiction; legal status and changing regulations must always be checked.",
-              "Οι φωτογραφίες είναι ενδεικτικές, όχι απεικόνιση καταχωρημένου καζίνο ή επιβεβαιωμένου συνεργάτη. Η Βόρεια Κύπρος δεν περιλαμβάνεται ως επαληθευμένη δικαιοδοσία· το νομικό καθεστώς και οι αλλαγές κανονισμών πρέπει πάντα να ελέγχονται.",
+              "Destination images are AI-generated illustrations, not photographs of a listed casino or confirmed partner. Northern Cyprus is not included as a verified jurisdiction; legal status and changing regulations must always be checked.",
+              "Οι εικόνες είναι συνθέσεις με τεχνητή νοημοσύνη, όχι φωτογραφίες καταχωρημένου καζίνο ή επιβεβαιωμένου συνεργάτη. Η Βόρεια Κύπρος δεν περιλαμβάνεται ως επαληθευμένη δικαιοδοσία· το νομικό καθεστώς και οι αλλαγές κανονισμών πρέπει πάντα να ελέγχονται.",
             )}
           </div>
         </div>
@@ -851,22 +855,14 @@ export function About() {
               "Συνδεθείτε για υποβολή και παρακολούθηση ταξιδιωτικών αιτημάτων με μοναδικό κωδικό πελάτη. Τα αιτήματα αποθηκεύονται στον λογαριασμό σας και εξετάζονται μέσω εργαλείων περιορισμένης πρόσβασης. Οι ειδοποιήσεις email και WhatsApp δεν έχουν συνδεθεί. Οι διευθετήσεις παρόχων επιβεβαιώνονται χωριστά.",
             )}
           </p>
-          <h2>{t("Photography credits", "Πηγές φωτογραφιών")}</h2>
+          <h2>{t("About our imagery", "Σχετικά με τις εικόνες")}</h2>
           <p>
+            {t(...editorialImageNotice)}{" "}
             {t(
-              "Illustrative travel photos by Dominik, Szőllősy Benjamin, Fajar Al Hadi and Anastasius, via Unsplash (Unsplash License). Property images remain placeholders until approved; imagery does not imply affiliation.",
-              "Ενδεικτικές ταξιδιωτικές φωτογραφίες από Dominik, Szőllősy Benjamin, Fajar Al Hadi και Anastasius, μέσω Unsplash (Άδεια Unsplash). Οι εικόνες καταλυμάτων παραμένουν προσωρινές μέχρι έγκρισης· δεν υπονοείται συνεργασία.",
+              "Images do not establish venue appearance, availability or affiliation.",
+              "Οι εικόνες δεν τεκμηριώνουν την εμφάνιση χώρων, τη διαθεσιμότητα ή συνεργασίες.",
             )}
           </p>
-          <a
-            className="text-link"
-            href="https://unsplash.com/license"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t("Photography license", "Άδεια φωτογραφιών")}
-            <ArrowUpRight />
-          </a>
         </div>
       </section>
     </main>

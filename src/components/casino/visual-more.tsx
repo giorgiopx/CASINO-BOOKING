@@ -25,6 +25,12 @@ import {
   countryVenues,
 } from "@/lib/approved-casino-directory";
 import "./visual-more.css";
+import { DestinationImage } from "./destination-image";
+import {
+  renderedImage,
+  editorialImageAlt,
+  editorialImageNotice,
+} from "@/lib/visual-assets";
 
 const featured = ["monaco", "cyprus", "italy", "france"];
 const journeys = [
@@ -35,9 +41,7 @@ const journeys = [
       "Ports, hotels and tailored travel assistance",
       "Λιμάνια, ξενοδοχεία και προσωπική ταξιδιωτική βοήθεια",
     ],
-    file: "Cruise ship in Mediterranean.jpg",
-    credit: "Mervat · CC BY-SA 4.0",
-    page: "https://commons.wikimedia.org/wiki/File:Cruise_ship_in_Mediterranean.jpg",
+    image: renderedImage("cruise-mediterranean"),
   },
   {
     en: "Island & coastal itineraries",
@@ -46,9 +50,7 @@ const journeys = [
       "Discover coastal destinations and cruise routes",
       "Γνωρίστε παράκτιους προορισμούς και διαδρομές",
     ],
-    file: "Cruise ship in the coast waters of Mykonos island. Cyclades, Agean Sea, Greece.jpg",
-    credit: "Mstyslav Chernov · CC BY-SA 3.0",
-    page: "https://commons.wikimedia.org/wiki/File:Cruise_ship_in_the_coast_waters_of_Mykonos_island._Cyclades,_Agean_Sea,_Greece.jpg",
+    image: renderedImage("cruise-islands"),
   },
   {
     en: "Worldwide cruise inspiration",
@@ -57,9 +59,7 @@ const journeys = [
       "Ask for options tailored to your interests",
       "Ζητήστε επιλογές σύμφωνα με τα ενδιαφέροντά σας",
     ],
-    file: "Sunset on a Cruise Ship (3725700094).jpg",
-    credit: "Rennett Stowe · CC BY 2.0",
-    page: "https://commons.wikimedia.org/wiki/File:Sunset_on_a_Cruise_Ship_(3725700094).jpg",
+    image: renderedImage("cruise-ocean"),
   },
 ];
 const questions: Array<{ q: [string, string]; a: [string, string] }> = [
@@ -204,16 +204,9 @@ export function VisualMore() {
             return (
               <article className="cb-extra-feature-card" key={slug}>
                 <div className="cb-extra-feature-image">
-                  <img
-                    loading="lazy"
-                    src={"/design-reference/" + slug + ".webp"}
-                    alt={
-                      t(c.name[0], c.name[1]) +
-                      t(
-                        " — illustrative travel destination",
-                        " — ενδεικτική εικόνα προορισμού",
-                      )
-                    }
+                  <DestinationImage
+                    src={c.image}
+                    alt={t(c.name[0], c.name[1]) + t(...editorialImageAlt)}
                   />
                   {i === 0 && (
                     <span className="cb-extra-feature-badge">
@@ -287,8 +280,11 @@ export function VisualMore() {
         <div className="cb-extra-cruise-cards">
           {journeys.map((j) => (
             <article key={j.en} className="cb-extra-cruise-card">
-              <div className="cb-cruise-art" aria-hidden="true">
-                <Ship size={42} strokeWidth={1} />
+              <div className="cb-cruise-art">
+                <DestinationImage
+                  src={j.image}
+                  alt={t(j.en, j.el) + t(...editorialImageAlt)}
+                />
               </div>
               <h3>{t(j.en, j.el)}</h3>
               <p>{t(j.detail[0], j.detail[1])}</p>
@@ -299,6 +295,7 @@ export function VisualMore() {
             </article>
           ))}
         </div>
+        <p className="cb-extra-attribution">{t(...editorialImageNotice)}</p>
       </section>
 
       <section className="cb-extra-concierge" id="concierge">

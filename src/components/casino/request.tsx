@@ -21,6 +21,7 @@ export function RequestPage({ defaults = {} }: { defaults?: RequestSearch }) {
   const { session, ready, available } = useAuth();
   const initial = resolveRequestDefaults(defaults);
   const [departure, setDeparture] = useState(initial.start);
+  const [customerType, setCustomerType] = useState("individual");
   const submitting = useRef(false);
   const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
@@ -59,7 +60,10 @@ export function RequestPage({ defaults = {} }: { defaults?: RequestSearch }) {
       vehicleType: v("vehicleType"),
       specialRequirements: v("specialRequirements").slice(0, 1200),
     };
-    const parsed = enquirySchema.safeParse(Object.fromEntries(f));
+    const parsed = enquirySchema.safeParse({
+      ...Object.fromEntries(f),
+      services,
+    });
     if (!parsed.success) {
       const issue = parsed.error.issues[0];
       setError(
@@ -73,15 +77,20 @@ export function RequestPage({ defaults = {} }: { defaults?: RequestSearch }) {
                 "Return date must be on or after departure.",
                 "Η επιστροφή πρέπει να είναι μετά ή ίδια με την αναχώρηση.",
               )
-            : issue?.path[0] === "phone"
+            : issue?.path[0] === "companyName"
               ? t(
-                  "Enter a valid phone number starting with + and the country code.",
-                  "Εισάγετε έγκυρο τηλέφωνο με + και κωδικό χώρας.",
+                  "Enter the company name for a business enquiry.",
+                  "Συμπληρώστε την επωνυμία για εταιρικό αίτημα.",
                 )
-              : t(
-                  "Please check the required fields, travel dates and consent.",
-                  "Ελέγξτε τα υποχρεωτικά πεδία, τις ημερομηνίες και τη συγκατάθεση.",
-                ),
+              : issue?.path[0] === "phone"
+                ? t(
+                    "Enter a valid phone number starting with + and the country code.",
+                    "Εισάγετε έγκυρο τηλέφωνο με + και κωδικό χώρας.",
+                  )
+                : t(
+                    "Please check the required fields, travel dates and consent.",
+                    "Ελέγξτε τα υποχρεωτικά πεδία, τις ημερομηνίες και τη συγκατάθεση.",
+                  ),
       );
       return;
     }
@@ -112,9 +121,7 @@ export function RequestPage({ defaults = {} }: { defaults?: RequestSearch }) {
           destination: d.destination,
           casino_name: v("casinoName").slice(0, 160) || null,
           company_name:
-            d.customerType === "business"
-              ? v("companyName").slice(0, 160) || null
-              : null,
+            d.customerType === "business" ? d.companyName || null : null,
           services,
           trip_preferences: tripPreferences,
           start_date: d.start,
@@ -233,6 +240,21 @@ export function RequestPage({ defaults = {} }: { defaults?: RequestSearch }) {
                   </div>
                 )}
                 <div className="form-grid">
+                  <label className="span-two">
+                    {t("I am enquiring as", "Υποβάλλω αίτημα ως")} *
+                    <select
+                      name="customerType"
+                      value={customerType}
+                      onChange={(event) => setCustomerType(event.target.value)}
+                    >
+                      <option value="individual">
+                        {t("Individual", "Ιδιώτης")}
+                      </option>
+                      <option value="business">
+                        {t("Company", "Εταιρεία")}
+                      </option>
+                    </select>
+                  </label>
                   <label>
                     {t("Name", "Όνομα")} *
                     <input
@@ -281,28 +303,17 @@ export function RequestPage({ defaults = {} }: { defaults?: RequestSearch }) {
                       autoComplete="country-name"
                     />
                   </label>
-                  <label>
-                    {t("Customer type", "Τύπος πελάτη")} *
-                    <select name="customerType">
-                      <option value="individual">
-                        {t("Individual", "Ιδιώτης")}
-                      </option>
-                      <option value="business">
-                        {t("Business", "Επιχείρηση")}
-                      </option>
-                    </select>
-                  </label>
-                  <label>
-                    {t(
-                      "Company name (if applicable)",
-                      "Επωνυμία εταιρείας (εάν υπάρχει)",
-                    )}
-                    <input
-                      name="companyName"
-                      maxLength={160}
-                      autoComplete="organization"
-                    />
-                  </label>
+                  {customerType === "business" && (
+                    <label>
+                      {t("Company name", "Επωνυμία εταιρείας")} *
+                      <input
+                        name="companyName"
+                        maxLength={160}
+                        required
+                        autoComplete="organization"
+                      />
+                    </label>
+                  )}
                   <label>
                     {t(
                       "Specific casino (optional)",

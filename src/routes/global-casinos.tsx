@@ -1,13 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import {
-  ArrowRight,
-  ExternalLink,
-  MapPin,
-  Search,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, ExternalLink, Search, ShieldCheck } from "lucide-react";
 import { useCasino } from "@/components/casino/context";
+import { editorialImageAlt, editorialImageNotice } from "@/lib/visual-assets";
+import { DestinationImage } from "@/components/casino/destination-image";
 import {
   searchGlobalDestinations,
   globalCasinoHotels,
@@ -110,8 +106,8 @@ function GlobalCasinos() {
         <p className="global-notice">
           <ShieldCheck size={17} />
           {t(
-            "No venue partnerships or live booking inventory are claimed. Check age limits and operating status before travel. Images depict the destination/region, not necessarily the named casino. Wikimedia photo credits are provided below.",
-            "Δεν δηλώνουμε συνεργασίες ή πραγματική διαθεσιμότητα κρατήσεων. Ελέγξτε νόμιμη ηλικία και λειτουργία πριν ταξιδέψετε. Οι εικόνες απεικονίζουν τον προορισμό, όχι απαραίτητα το συγκεκριμένο καζίνο. Αναφέρονται οι δημιουργοί των φωτογραφιών.",
+            "No venue partnerships or live booking inventory are claimed. Check age limits and operating status before travel. Images are AI-generated editorial illustrations, not photographs of the named casinos.",
+            "Δεν δηλώνουμε συνεργασίες ή πραγματική διαθεσιμότητα κρατήσεων. Ελέγξτε νόμιμη ηλικία και λειτουργία πριν ταξιδέψετε. Οι εικόνες είναι ενδεικτικές συνθέσεις με τεχνητή νοημοσύνη, όχι φωτογραφίες των καζίνο.",
           )}
         </p>
         <div className="global-result-summary">
@@ -143,27 +139,10 @@ function GlobalCasinos() {
             return (
               <article className="global-card" key={d.slug}>
                 <div className="global-card-photo">
-                  {image ? (
-                    <img
-                      loading="lazy"
-                      alt={
-                        t(d.name[0], d.name[1]) +
-                        t(
-                          " — destination image, not property image",
-                          " — εικόνα περιοχής, όχι του καταλύματος",
-                        )
-                      }
-                      src={image}
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <span className="global-photo-fallback">
-                      <MapPin size={37} />
-                    </span>
-                  )}
+                  <DestinationImage
+                    src={image}
+                    alt={t(d.name[0], d.name[1]) + t(...editorialImageAlt)}
+                  />
                   <span
                     className={
                       planned ? "global-state global-planned" : "global-state"
@@ -263,24 +242,7 @@ function GlobalCasinos() {
                     </div>
                   )}
                   <small className="global-credit">
-                    {d.photoPage && d.photoCreator && (
-                      <>
-                        <a
-                          href={d.photoPage}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {t("Photo", "Φωτογραφία")}: {d.photoCreator}
-                        </a>{" "}
-                        · {d.photoLicense} ·{" "}
-                        {t("destination image", "εικόνα προορισμού")}
-                      </>
-                    )}
-                    {!d.photoFile &&
-                      t(
-                        "Image pending rights-cleared source",
-                        "Εκκρεμεί αδειοδοτημένη φωτογραφία",
-                      )}
+                    {t(...editorialImageNotice)}
                   </small>
                 </div>
               </article>

@@ -1,10 +1,4 @@
-/**
- * CasinoBooking approved visual homepage.
- * Original visual-home layout with the user's new, uncropped sunset hero.
- * The original thirteen approved WebP assets are retained unchanged.
- * The cards are editorial previews, NOT a verified inventory or partnership claim.
- * Assets required: public/design-reference/*.webp supplied in handoff ZIP.
- */
+/** CasinoBooking editorial homepage. Original approved images remain archived unchanged. */
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useCasino } from "./context";
@@ -24,6 +18,12 @@ import {
   Dices,
   LockKeyhole,
 } from "lucide-react";
+import { DestinationImage } from "./destination-image";
+import {
+  heroImage,
+  renderedImage,
+  editorialImageAlt,
+} from "@/lib/visual-assets";
 import { globalDestinations } from "@/lib/global-casino-catalog";
 import { approvedCountries } from "@/lib/approved-casino-directory";
 import "./visual-home.css";
@@ -46,8 +46,6 @@ const destinations: Country[] = [
   { name: "Bulgaria", el: "Βουλγαρία", flag: "🇧🇬", asset: "bulgaria" },
   { name: "Croatia", el: "Κροατία", flag: "🇭🇷", asset: "croatia" },
 ];
-
-const photo = (key: string) => `/design-reference/${key}.webp`;
 
 export function VisualHome() {
   const { lang, t } = useCasino();
@@ -130,13 +128,14 @@ export function VisualHome() {
         <section className="cb-hero">
           <img
             className="cb-hero-photo"
-            src="/images/mediterranean-casino-sunset.jpg"
-            width={1280}
-            height={720}
+            src={heroImage.src}
+            width={heroImage.width}
+            height={heroImage.height}
+            loading="eager"
             fetchPriority="high"
             alt={t(
-              "Mediterranean sunset travel concept with a coastal harbour, yachts, roulette and champagne",
-              "Ταξιδιωτική σύνθεση με μεσογειακό ηλιοβασίλεμα, παραθαλάσσιο λιμάνι, γιοτ, ρουλέτα και σαμπάνια",
+              "AI-generated Mediterranean sunset travel concept with a coastal harbour, yachts, roulette and champagne",
+              "Εικόνα με τεχνητή νοημοσύνη: μεσογειακό ηλιοβασίλεμα, παραθαλάσσιο λιμάνι, γιοτ, ρουλέτα και σαμπάνια",
             )}
           />
           <div className="cb-hero-shade" aria-hidden="true" />
@@ -162,6 +161,19 @@ export function VisualHome() {
                 "Ξενοδοχεία, πτήσεις, κρουαζιέρες και concierge — με ένα δωρεάν αίτημα.",
               )}
             </p>
+            <div className="cb-hero-actions">
+              <a className="cb-hero-primary" href="#travel-enquiry">
+                {t("Plan your journey", "Οργανώστε το ταξίδι σας")}
+                <ArrowRight size={18} aria-hidden="true" />
+                <small>
+                  {t("Free travel enquiry", "Δωρεάν ταξιδιωτικό αίτημα")}
+                </small>
+              </a>
+              <Link className="cb-hero-secondary" to="/destinations">
+                {t("Explore destinations", "Εξερεύνηση προορισμών")}
+                <Globe2 size={18} aria-hidden="true" />
+              </Link>
+            </div>
           </div>
           <div className="cb-hero-caption">
             {t(
@@ -197,7 +209,16 @@ export function VisualHome() {
           </span>
         </div>
         <div className="cb-content">
-          <form className="cb-search" onSubmit={search}>
+          <form
+            id="travel-enquiry"
+            className="cb-search"
+            tabIndex={-1}
+            aria-label={t(
+              "Plan a free travel enquiry",
+              "Οργανώστε ένα δωρεάν ταξιδιωτικό αίτημα",
+            )}
+            onSubmit={search}
+          >
             <div className="cb-search-item">
               <MapPin />
               <label>
@@ -326,10 +347,9 @@ export function VisualHome() {
             <div className="cb-country-grid">
               {shown.map((c) => (
                 <article className="cb-country" key={c.name}>
-                  <img
-                    loading="lazy"
-                    src={photo(c.asset)}
-                    alt={`${t(c.name, c.el)} — ${t("illustrative destination photograph", "ενδεικτική φωτογραφία προορισμού")}`}
+                  <DestinationImage
+                    src={renderedImage(c.asset)}
+                    alt={t(c.name, c.el) + t(...editorialImageAlt)}
                   />
                   <div className="cb-country-overlay">
                     <strong>
@@ -357,8 +377,8 @@ export function VisualHome() {
             </div>
             <p className="cb-disclosure">
               {t(
-                "Destination photos reproduce the approved design reference and may be illustrative. Casino availability and venue operating status must be independently verified. We coordinate travel enquiries; no booking is confirmed on submission. Adults only.",
-                "Οι φωτογραφίες προέρχονται από το εγκεκριμένο σχεδιαστικό πρότυπο και ενδέχεται να είναι ενδεικτικές. Η λειτουργία κάθε καζίνο επιβεβαιώνεται ανεξάρτητα. Συντονίζουμε ταξιδιωτικά αιτήματα· η υποβολή δεν αποτελεί επιβεβαιωμένη κράτηση. Μόνο ενήλικες.",
+                "Destination images are AI-generated editorial illustrations, not photographs of named venues. Casino availability and venue operating status must be independently verified. We coordinate travel enquiries; no booking is confirmed on submission. Adults only.",
+                "Οι εικόνες προορισμών είναι ενδεικτικές συνθέσεις με τεχνητή νοημοσύνη, όχι φωτογραφίες συγκεκριμένων χώρων. Η λειτουργία κάθε καζίνο επιβεβαιώνεται ανεξάρτητα. Συντονίζουμε ταξιδιωτικά αιτήματα· η υποβολή δεν αποτελεί επιβεβαιωμένη κράτηση. Μόνο ενήλικες.",
               )}
             </p>
           </section>
@@ -371,12 +391,7 @@ export function VisualHome() {
           >
             <div className="cb-section-heading">
               <div>
-                <h2>
-                  {t(
-                    "Global Premium Casino Destinations",
-                    "Διεθνείς Premium Προορισμοί Καζίνο",
-                  )}
-                </h2>
+                <h2>{t("Beyond Europe", "Πέρα από την Ευρώπη")}</h2>
                 <p>
                   {t(
                     "Discover the United States, Russia and future resort development in the UAE. View casino information and official sources.",
@@ -399,10 +414,10 @@ export function VisualHome() {
                     className="cb-global-photo-card"
                     key={c.slug}
                   >
-                    <div className="cb-region-art" aria-hidden="true">
-                      <Globe2 />
-                      <span>{t("DESTINATION GUIDE", "ΟΔΗΓΟΣ ΠΡΟΟΡΙΣΜΟΥ")}</span>
-                    </div>
+                    <DestinationImage
+                      src={c.image}
+                      alt={t(c.name[0], c.name[1]) + t(...editorialImageAlt)}
+                    />
                     <span>
                       <strong>
                         {c.flag} {t(c.name[0], c.name[1])}
@@ -466,10 +481,10 @@ export function VisualHome() {
                     className="cb-global-photo-card"
                     key={d.slug}
                   >
-                    <div className="cb-region-art" aria-hidden="true">
-                      <Building2 />
-                      <span>{t("UNITED STATES", "ΗΝΩΜΕΝΕΣ ΠΟΛΙΤΕΙΕΣ")}</span>
-                    </div>
+                    <DestinationImage
+                      src={d.photoFile}
+                      alt={t(d.name[0], d.name[1]) + t(...editorialImageAlt)}
+                    />
                     <span>
                       <strong>{t(d.name[0], d.name[1])}</strong>
                       <small>

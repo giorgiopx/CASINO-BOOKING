@@ -1,0 +1,19 @@
+name: CasinoBooking isolated CRM database policies
+on:
+  pull_request:
+  push:
+    branches: ["feature/restore-lovable-casinobooking"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres-policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify migrations and policies with synthetic SQL auth contexts
+        run: node scripts/verify-crm-local.mjs

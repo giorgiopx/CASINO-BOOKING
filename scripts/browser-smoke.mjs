@@ -6,6 +6,12 @@
 import { chromium } from "playwright";
 import { strict as assert } from "node:assert";
 import { mkdir, writeFile } from "node:fs/promises";
+import { renderedImages } from "./verify-rendered-images.mjs";
+
+const heroAsset = renderedImages.find(
+  (item) => item.slug === "mediterranean-casino-sunset",
+);
+assert.ok(heroAsset, "Generated full-composition hero is present");
 
 const base = process.env.SMOKE_URL || "http://127.0.0.1:4173";
 assert.ok(
@@ -149,9 +155,9 @@ async function wholeHeroPhoto(page) {
       clippedBy,
     };
   });
-  assert.equal(layout.source, "/images/mediterranean-casino-sunset.jpg");
-  assert.equal(layout.naturalWidth, 1280);
-  assert.equal(layout.naturalHeight, 720);
+  assert.equal(layout.source, heroAsset.file);
+  assert.equal(layout.naturalWidth, heroAsset.width);
+  assert.equal(layout.naturalHeight, heroAsset.height);
   assert.equal(
     layout.objectFit,
     "contain",
@@ -161,23 +167,26 @@ async function wholeHeroPhoto(page) {
   assert.equal(layout.clipPath, "none", "Hero must not be masked");
   assert.ok(layout.width > 0 && layout.height > 0, "Hero is visible");
   assert.ok(
-    Math.abs((layout.width * 720) / 1280 - layout.height) <= 1,
-    `Hero preserves the full 16:9 composition: ${JSON.stringify(layout)}`,
+    Math.abs(
+      (layout.width * heroAsset.height) / heroAsset.width - layout.height,
+    ) <= 1,
+    `Hero preserves its full native composition: ${JSON.stringify(layout)}`,
   );
   assert.deepEqual(layout.clippedBy, [], "No ancestor crops the hero photo");
 }
 async function language(page, lang) {
   const control = page.locator(".cb-language");
-  if ((await page.locator("html").getAttribute("lang")) !== lang)
-    await control.click();
+  const changed = (await page.locator("html").getAttribute("lang")) !== lang;
+  if (changed) await control.click();
   await page.waitForFunction(
     (expected) => document.documentElement.lang === expected,
     lang,
   );
-  assert.equal(
-    await page.evaluate(() => localStorage.getItem("casinobooking.language")),
-    lang,
+  const stored = await page.evaluate(() =>
+    localStorage.getItem("casinobooking.language"),
   );
+  // A fresh visitor has no stored preference until they choose a language.
+  if (changed || stored !== null) assert.equal(stored, lang);
 }
 
 try {
@@ -210,16 +219,39 @@ try {
           );
           await noOverflow(page);
           await wholeHeroPhoto(page);
-          // Scroll each approved crop into view so lazy images are decoded as well.
-          for (const img of await page
-            .locator('.cb-country-grid img[src^="/design-reference/"]')
-            .all()) {
+          const firstPhoto = await page.locator(".cb-hero-photo").boundingBox();
+          assert.ok(
+            firstPhoto.y >= 0 && firstPhoto.y < 100,
+            "Photo begins directly below navigation",
+          );
+          assert.equal(
+            await page.locator(".cb-hero-photo").getAttribute("loading"),
+            "eager",
+          );
+          assert.equal(
+            await page.locator(".cb-hero-photo").getAttribute("fetchpriority"),
+            "high",
+          );
+          // Exercise every displayed illustration, including below-the-fold cards.
+          const homepageImages = await page
+            .locator('img[src^="/images/rendered/"]')
+            .all();
+          assert.ok(
+            homepageImages.length >= 25,
+            "All homepage image sections are present",
+          );
+          for (const img of homepageImages) {
             await img.scrollIntoViewIfNeeded();
             await img.evaluate((element) => element.decode());
             assert.ok(
               await img.evaluate((element) => element.naturalWidth > 0),
             );
           }
+          assert.equal(
+            await page.locator('[data-image-status="unavailable"]').count(),
+            0,
+            "No broken homepage illustrations",
+          );
           await page.evaluate(() => window.scrollTo(0, 0));
           await page.screenshot({
             path: `${shots}/home-${width}-${lang}.png`,
@@ -279,7 +311,43 @@ try {
 
   const page = await newPage();
   await check(
-    "All thirteen approved WebPs and the whole uploaded hero photo decode in Chromium",
+    "Social/search landing shows the main photo immediately and hero actions reach real controls",
+    async () => {
+      await visit(
+        page,
+        "/?utm_source=instagram&utm_medium=social&utm_campaign=travel",
+      );
+      await language(page, "en");
+      await wholeHeroPhoto(page);
+      assert.ok(
+        (await page
+          .locator(`link[rel="preload"][as="image"][href="${heroAsset.file}"]`)
+          .count()) > 0,
+      );
+      await page.locator(".cb-hero-primary").click();
+      await page.waitForFunction(
+        () => document.activeElement?.id === "travel-enquiry",
+      );
+      assert.equal(new URL(page.url()).hash, "#travel-enquiry");
+      await page.keyboard.press("Tab");
+      assert.ok(
+        await page
+          .locator(".cb-search select")
+          .first()
+          .evaluate((element) => element === document.activeElement),
+      );
+      await page.locator(".cb-hero-secondary").click();
+      await page.waitForURL((url) => url.pathname === "/destinations");
+      await page
+        .getByRole("heading", { level: 1, name: /destination directory/ })
+        .waitFor();
+      await visit(page, "/?utm_source=google&utm_medium=organic");
+      await wholeHeroPhoto(page);
+    },
+    page,
+  );
+  await check(
+    "All original images and 30 generated delivery illustrations decode in Chromium",
     async () => {
       await visit(page, "/");
       for (const asset of assets) {
@@ -305,6 +373,29 @@ try {
           dimensions.width > 100 && dimensions.height > 100,
           `${asset}: ${JSON.stringify(dimensions)}`,
         );
+      }
+      for (const asset of [
+        {
+          file: "/images/mediterranean-casino-sunset.jpg",
+          width: 1280,
+          height: 720,
+        },
+        ...renderedImages,
+      ]) {
+        const response = await page.context().request.get(base + asset.file);
+        assert.equal(response.status(), 200, asset.file);
+        assert.match(
+          response.headers()["content-type"] || "",
+          /image\/(webp|jpeg)/,
+          asset.file,
+        );
+        const dimensions = await page.evaluate(async (src) => {
+          const image = new Image();
+          image.src = src;
+          await image.decode();
+          return [image.naturalWidth, image.naturalHeight];
+        }, base + asset.file);
+        assert.deepEqual(dimensions, [asset.width, asset.height], asset.file);
       }
       await wholeHeroPhoto(page);
     },
@@ -456,7 +547,6 @@ try {
         "phone",
         "residence",
         "customerType",
-        "companyName",
         "flightOrigin",
         "flightDestination",
         "hotelCategory",
@@ -467,6 +557,28 @@ try {
         "consent",
       ])
         assert.equal(await page.locator(`[name="${name}"]`).count(), 1, name);
+      assert.equal(
+        await page
+          .locator(".request-layout form select")
+          .first()
+          .getAttribute("name"),
+        "customerType",
+      );
+      assert.equal(await page.locator('[name="companyName"]').count(), 0);
+      await page.locator('[name="customerType"]').selectOption("business");
+      const companyName = page.locator('[name="companyName"]');
+      assert.equal(await companyName.count(), 1);
+      assert.equal(
+        await companyName.evaluate(
+          (element) => element.required && !element.checkValidity(),
+        ),
+        true,
+      );
+      await companyName.fill("Example Travel Ltd");
+      assert.equal(
+        await companyName.evaluate((element) => element.checkValidity()),
+        true,
+      );
       assert.ok(
         await page
           .getByRole("button", { name: "Submit travel enquiry", exact: true })
@@ -583,6 +695,31 @@ try {
         );
         await noOverflow(page);
       }
+    },
+    page,
+  );
+  await check(
+    "Destination photo failures stay visible and recover after source availability returns",
+    async () => {
+      const source = "**/images/rendered/monaco.webp";
+      await page.context().route(source, (route) => route.abort("failed"));
+      await visit(page, "/destination/monaco");
+      const image = page.locator(".approved-detail-image .destination-image");
+      await page
+        .locator('.approved-detail-image [data-image-status="unavailable"]')
+        .waitFor();
+      assert.match(await image.innerText(), /Image unavailable/);
+      await page.context().unroute(source);
+      await page.reload({ waitUntil: "networkidle" });
+      await page
+        .locator('.approved-detail-image [data-image-status="loaded"]')
+        .waitFor();
+      assert.ok(
+        await image
+          .locator("img")
+          .evaluate((element) => element.complete && element.naturalWidth > 0),
+      );
+      await noOverflow(page);
     },
     page,
   );

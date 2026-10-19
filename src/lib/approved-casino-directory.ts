@@ -9,6 +9,7 @@ import {
   globalVenues,
   normalizeDirectorySearch,
 } from "./global-casino-catalog";
+import { renderedImage } from "./visual-assets";
 export type ApprovedName = [string, string];
 export type CountryKind = "europe" | "international" | "planned";
 export type ApprovedCountry = {
@@ -30,123 +31,111 @@ export type ApprovedCasino = {
   sourceChecked: string;
   gaming: "casino" | "electronic-gaming" | "future-gaming";
 };
-const commons = (file: string) =>
-  "https://commons.wikimedia.org/wiki/Special:FilePath/" +
-  encodeURIComponent(file);
 export const approvedCountries: ApprovedCountry[] = [
   {
     slug: "monaco",
     name: ["Monaco", "Μονακό"],
     flag: "🇲🇨",
     kind: "europe",
-    image: "/design-reference/monaco.webp",
+    image: renderedImage("monaco"),
   },
   {
     slug: "cyprus",
     name: ["Cyprus", "Κύπρος"],
     flag: "🇨🇾",
     kind: "europe",
-    image: "/design-reference/cyprus.webp",
+    image: renderedImage("cyprus"),
   },
   {
     slug: "greece",
     name: ["Greece", "Ελλάδα"],
     flag: "🇬🇷",
     kind: "europe",
-    image: "/design-reference/greece.webp",
+    image: renderedImage("greece"),
   },
   {
     slug: "italy",
     name: ["Italy", "Ιταλία"],
     flag: "🇮🇹",
     kind: "europe",
-    image: "/design-reference/italy.webp",
+    image: renderedImage("italy"),
   },
   {
     slug: "france",
     name: ["France", "Γαλλία"],
     flag: "🇫🇷",
     kind: "europe",
-    image: "/design-reference/france.webp",
+    image: renderedImage("france"),
   },
   {
     slug: "spain",
     name: ["Spain", "Ισπανία"],
     flag: "🇪🇸",
     kind: "europe",
-    image: "/design-reference/spain.webp",
+    image: renderedImage("spain"),
   },
   {
     slug: "portugal",
     name: ["Portugal", "Πορτογαλία"],
     flag: "🇵🇹",
     kind: "europe",
-    image: "/design-reference/portugal.webp",
+    image: renderedImage("portugal"),
   },
   {
     slug: "serbia",
     name: ["Serbia", "Σερβία"],
     flag: "🇷🇸",
     kind: "europe",
-    image: "/design-reference/serbia.webp",
+    image: renderedImage("serbia"),
   },
   {
     slug: "romania",
     name: ["Romania", "Ρουμανία"],
     flag: "🇷🇴",
     kind: "europe",
-    image: "/design-reference/romania.webp",
+    image: renderedImage("romania"),
   },
   {
     slug: "slovenia",
     name: ["Slovenia", "Σλοβενία"],
     flag: "🇸🇮",
     kind: "europe",
-    image: "/design-reference/slovenia.webp",
+    image: renderedImage("slovenia"),
   },
   {
     slug: "bulgaria",
     name: ["Bulgaria", "Βουλγαρία"],
     flag: "🇧🇬",
     kind: "europe",
-    image: "/design-reference/bulgaria.webp",
+    image: renderedImage("bulgaria"),
   },
   {
     slug: "croatia",
     name: ["Croatia", "Κροατία"],
     flag: "🇭🇷",
     kind: "europe",
-    image: "/design-reference/croatia.webp",
+    image: renderedImage("croatia"),
   },
   {
     slug: "usa",
     name: ["United States", "Ηνωμένες Πολιτείες"],
     flag: "🇺🇸",
     kind: "international",
-    image: commons("Las Vegas Strip at night - panoramio.jpg"),
-    imageCredit: "David Balmer · CC BY 3.0",
-    imageCreditUrl:
-      "https://commons.wikimedia.org/wiki/File:Las_Vegas_Strip_at_night_-_panoramio.jpg",
+    image: renderedImage("usa"),
   },
   {
     slug: "russia",
     name: ["Russia", "Ρωσία"],
     flag: "🇷🇺",
     kind: "international",
-    image: commons("Krasnaya Polyana Mountains.JPG"),
-    imageCredit: "Wikimedia Commons – Krasnaya Polyana Mountains",
-    imageCreditUrl:
-      "https://commons.wikimedia.org/wiki/File:Krasnaya_Polyana_Mountains.JPG",
+    image: renderedImage("russia"),
   },
   {
     slug: "uae",
     name: ["United Arab Emirates", "Ηνωμένα Αραβικά Εμιράτα"],
     flag: "🇦🇪",
     kind: "planned",
-    image: commons("Ras al khaimah mountains.jpg"),
-    imageCredit: "Rafia aql · CC BY-SA 4.0",
-    imageCreditUrl:
-      "https://commons.wikimedia.org/wiki/File:Ras_al_khaimah_mountains.jpg",
+    image: renderedImage("uae"),
   },
 ];
 /** 33 Europe/Russia entries, in the EXACT user-approved country order. */

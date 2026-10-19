@@ -1,13 +1,20 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCasino } from "@/components/casino/context";
 import { useAuth } from "@/components/casino/auth";
-import { fetchEnquiries, fetchMyProfile } from "@/lib/enquiry-db";
+import {
+  fetchMyEnquiries,
+  fetchMyProfile,
+  CRM_PAGE_SIZE,
+} from "@/lib/enquiry-db";
 import { requestTypes, statusPairs } from "@/lib/casino-data";
 import { casinoHead } from "@/lib/casino-seo";
 import { CustomerProfileEditor } from "@/components/casino/profile-editor";
+import { EnquiryHistory } from "@/components/casino/crm-ui";
+import { serviceLabels } from "@/lib/crm-display";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () =>
@@ -22,17 +29,23 @@ function Dashboard() {
   const { t, p } = useCasino();
   const { session, isAdmin, signOut } = useAuth();
   const userId = session?.user.id ?? "";
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const profile = useQuery({
     queryKey: ["profile", userId],
     queryFn: () => fetchMyProfile(userId),
     enabled: !!userId,
   });
-  const enquiries = useQuery({
+  const enquiries = useInfiniteQuery({
     queryKey: ["enquiries", "mine", userId],
-    queryFn: fetchEnquiries,
+    queryFn: ({ pageParam }) => fetchMyEnquiries(userId, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length === CRM_PAGE_SIZE ? pages.length : undefined,
     enabled: !!userId,
   });
-  const mine = (enquiries.data ?? []).filter((e) => e.user_id === userId);
+  const mine = (enquiries.data?.pages.flat() ?? []).filter(
+    (e) => e.user_id === userId,
+  );
 
   return (
     <main className="section">
@@ -69,6 +82,44 @@ function Dashboard() {
             {t("Sign out", "Αποσύνδεση")}
           </Button>
         </div>
+        {profile.isPending && (
+          <p role="status">
+            {t("Loading your customer card…", "Φόρτωση καρτέλας πελάτη…")}
+          </p>
+        )}
+        {profile.isError && (
+          <p role="alert" className="crm-error">
+            {t(
+              "Could not load your customer card.",
+              "Αδυναμία φόρτωσης καρτέλας πελάτη.",
+            )}{" "}
+            <button
+              type="button"
+              className="crm-text-button"
+              onClick={() => void profile.refetch()}
+            >
+              {t("Try again", "Δοκιμάστε ξανά")}
+            </button>
+          </p>
+        )}
+        {profile.isSuccess && !profile.data && (
+          <p role="alert" className="crm-error">
+            {t(
+              "Your customer card is not available. Please contact the team.",
+              "Η καρτέλα σας δεν είναι διαθέσιμη. Επικοινωνήστε με την ομάδα.",
+            )}
+          </p>
+        )}
+        <CustomerProfileEditor profile={profile.data} />
+        <h2
+          style={{
+            margin: "30px 0 16px",
+            fontSize: 26,
+            fontFamily: "Georgia, serif",
+          }}
+        >
+          {t("My enquiry history", "Το ιστορικό αιτημάτων μου")}
+        </h2>
         <div className="table-wrap">
           <table>
             <thead>
@@ -92,13 +143,32 @@ function Dashboard() {
                   </td>
                   <td>
                     {p(requestTypes[e.request_type])}
-                    <small>{e.services?.join(" · ")}</small>
+                    <small>
+                      {e.services
+                        ?.map((service) => p(serviceLabels[service]) || service)
+                        .join(" · ")}
+                    </small>
                     <small>
                       {e.start_date} → {e.end_date} · {e.party}{" "}
                       {t("adults", "ενήλικες")}
                     </small>
                   </td>
-                  <td>{p(statusPairs[e.status])}</td>
+                  <td>
+                    {p(statusPairs[e.status])}
+                    <br />
+                    <button
+                      type="button"
+                      className="crm-text-button"
+                      aria-expanded={selectedId === e.id}
+                      onClick={() =>
+                        setSelectedId(selectedId === e.id ? null : e.id)
+                      }
+                    >
+                      {selectedId === e.id
+                        ? t("Close history", "Κλείσιμο ιστορικού")
+                        : t("View history", "Προβολή ιστορικού")}
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -107,8 +177,15 @@ function Dashboard() {
             <div className="empty">{t("Loading…", "Φόρτωση…")}</div>
           )}
           {enquiries.isError && (
-            <div className="empty">
+            <div className="empty" role="alert">
               {t("Could not load enquiries.", "Αδυναμία φόρτωσης αιτημάτων.")}
+              <button
+                type="button"
+                className="crm-text-button"
+                onClick={() => void enquiries.refetch()}
+              >
+                {t("Try again", "Δοκιμάστε ξανά")}
+              </button>
             </div>
           )}
           {enquiries.isSuccess && mine.length === 0 && (
@@ -117,7 +194,21 @@ function Dashboard() {
             </div>
           )}
         </div>
-        <CustomerProfileEditor profile={profile.data} />
+        {enquiries.hasNextPage && (
+          <button
+            type="button"
+            className="crm-button"
+            disabled={enquiries.isFetching}
+            onClick={() => void enquiries.fetchNextPage()}
+          >
+            {enquiries.isFetchingNextPage
+              ? t("Loading…", "Φόρτωση…")
+              : t("Load older enquiries", "Παλαιότερα αιτήματα")}
+          </button>
+        )}
+        {selectedId && mine.some((enquiry) => enquiry.id === selectedId) && (
+          <EnquiryHistory key={selectedId} enquiryId={selectedId} />
+        )}
       </div>
     </main>
   );

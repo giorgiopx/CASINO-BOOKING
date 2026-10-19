@@ -65,9 +65,10 @@ describe("Worldwide casino research and enquiry integration", () => {
       for (const id of d.venueIds)
         expect(globalVenues.some((v) => v.id === id)).toBe(true);
       if (d.photoFile) {
-        expect(d.photoPage).toMatch(/^https:\/\/commons\.wikimedia\.org\//);
+        expect(d.photoFile).toMatch(/^\/images\/rendered\/[a-z-]+\.webp$/);
+        expect(d.photoPage).toBeNull();
         expect(d.photoCreator).toBeTruthy();
-        expect(d.photoLicense).toBeTruthy();
+        expect(d.photoLicense).toBe("AI-generated editorial illustration");
       }
     }
   });
@@ -91,6 +92,7 @@ describe("Worldwide casino research and enquiry integration", () => {
       phone: "+30 699 000 0000",
       residence: "Greece",
       customerType: "individual",
+      services: ["casino"],
       destination: "",
       start: "2026-12-10",
       end: "2026-12-15",

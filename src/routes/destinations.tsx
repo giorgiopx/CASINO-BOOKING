@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useCasino } from "@/components/casino/context";
+import { editorialImageAlt, editorialImageNotice } from "@/lib/visual-assets";
+import { DestinationImage } from "@/components/casino/destination-image";
 import {
   approvedTotals,
   isRequestableVenue,
@@ -163,19 +165,12 @@ function ApprovedDestinations() {
                   params={{ slug: country.slug }}
                   className="approved-country-photo"
                 >
-                  <img
+                  <DestinationImage
                     src={country.image}
                     alt={
                       t(country.name[0], country.name[1]) +
-                      t(
-                        " — editorial destination photograph",
-                        " — ενδεικτική εικόνα προορισμού",
-                      )
+                      t(...editorialImageAlt)
                     }
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.hidden = true;
-                    }}
                   />
                 </Link>
                 <div className="approved-country-flag" aria-hidden="true">
@@ -269,19 +264,9 @@ function ApprovedDestinations() {
                   </li>
                 ))}
               </ul>
-              {country.imageCredit && country.imageCreditUrl && (
-                <small className="approved-source">
-                  {t("Destination photo source", "Πηγή φωτογραφίας προορισμού")}
-                  :{" "}
-                  <a
-                    href={country.imageCreditUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    {country.imageCredit}
-                  </a>
-                </small>
-              )}
+              <p className="approved-photo-credit">
+                {t(...editorialImageNotice)}
+              </p>
             </section>
           ))}
         </div>

@@ -179,12 +179,10 @@
   object-fit: cover;
   display: block;
 }
-.global-photo-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #dfb570;
+.global-card-photo .destination-image-placeholder {
+  justify-content: flex-start;
+  padding-top: 57px;
+  gap: 5px;
 }
 .global-state {
   position: absolute;

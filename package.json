@@ -13,9 +13,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "test:assets": "node scripts/import-approved-design.mjs",
+    "test:assets": "node scripts/import-approved-design.mjs && node scripts/verify-rendered-images.mjs",
     "test:browser": "node scripts/browser-smoke.mjs",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run test:assets"
+    "check": "npm run typecheck && npm run lint && npm run test && npm run test:assets",
+    "test:crm:local": "node scripts/verify-crm-local.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

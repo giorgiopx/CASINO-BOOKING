@@ -13,6 +13,7 @@ const enquiry = {
   phone: "+30 699 000 0000",
   residence: "Greece",
   customerType: "individual",
+  services: ["casino"],
   destination: "Monaco",
   start: "2026-12-10",
   end: "2026-12-15",

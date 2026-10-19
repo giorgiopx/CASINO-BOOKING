@@ -1,12 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { VisualHome as Home } from "@/components/casino/visual-home";
 import { casinoHead } from "@/lib/casino-seo";
+import { heroImage } from "@/lib/visual-assets";
 export const Route = createFileRoute("/")({
-  head: () =>
-    casinoHead(
+  head: () => ({
+    ...casinoHead(
       "Casino Destinations & Free Travel Concierge",
       "Explore 15 casino destinations and request free assistance with hotels, flights, transfers, cruises and travel packages. English and Greek. Travel enquiries only.",
     ),
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: heroImage.src,
+        fetchPriority: "high",
+      },
+    ],
+  }),
   component: Page,
 });
 function Page() {

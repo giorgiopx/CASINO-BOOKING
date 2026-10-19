@@ -41,3 +41,4 @@ dist-ssr
 work/
 artifacts/
 .vercel/
+supabase/.temp/

@@ -19,6 +19,7 @@ const baseEnquiry = {
   phone: "+302100000000",
   residence: "Greece",
   customerType: "individual" as const,
+  services: ["casino"],
   start: "2026-12-10",
   end: "2026-12-15",
   party: "2",
