@@ -15,7 +15,7 @@ Lovable still reports an older commit and must not be presented as the updated b
 
 ## Next CRM phase
 
-1. Restore authorized access to the existing Supabase project and its public app configuration. Never expose service-role credentials or change customer data to make a preview work. The current connector returns no accessible projects.
+1. Obtain authorized public app configuration and staging Auth/API access for the existing Supabase project. The direct Supabase connector returns no accessible projects, but the Lovable connector successfully reads schema metadata. Seven existing CRM tables have RLS enabled; the prepared new profile columns are absent. Never expose service-role credentials or change customer data to make a preview work.
 2. Inspect the real schema and migration history before applying the prepared additive migration. Preserve existing data, roles and restrictive grants; never reset or replay broad initial grants.
 3. Use dedicated synthetic staging customer A/B and administrator accounts. Verify real signup/email verification, immutable customer IDs, profile edits, persisted requests after refresh/relogin, customer isolation, staff status/history/notes/tasks and anonymous denial through Auth/API and actual browsers.
 4. Complete verified business/contact/privacy details. Email automation remains a design specification in [EMAIL_REQUEST_AUTOMATION_FINAL_PHASE.md](EMAIL_REQUEST_AUTOMATION_FINAL_PHASE.md); no emails or WhatsApp messages are currently sent.

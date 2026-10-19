@@ -38,7 +38,9 @@ CRM code is prepared and locally tested: immutable customer references, individu
 
 The additive migration `20261018112418_customer_profile_details.sql` is local only. The owner's latest 19 October instruction leaves hosted CRM activation/certification for the next phase. See [CRM_WORKFLOW.md](CRM_WORKFLOW.md) for the precise contract, local test coverage and remaining hosted checks.
 
-The Supabase connector was rechecked on 19 October and returned `{"projects":[]}`. Consequently no hosted schema reconciliation, migration application, security-advisor review, actual signup, persisted request, two-customer/admin API isolation or authenticated CRM browser flow is certified. An unconfigured preview explicitly disables account/submission actions and never simulates a successful save. Email/WhatsApp delivery remains disconnected.
+The direct Supabase connector was rechecked on 19 October and returned `{"projects":[]}`. A later read-only check through the existing Lovable connector confirmed that Supabase is enabled and exposed schema metadata for `profiles`, `enquiries`, `user_roles`, `enquiry_status_events`, `itinerary_segments`, `crm_notes` and `crm_tasks`. All seven have RLS enabled. The new profile columns `first_name`, `last_name`, `email` and `services` are absent, confirming the prepared migration is not applied. No customer records were read and no remote writes were performed.
+
+This metadata inspection does not certify full schema/migration-history reconciliation, policy enforcement, security-advisor review, actual signup, persisted requests, two-customer/admin API isolation or authenticated CRM browser flows. Public app configuration remains unavailable. An unconfigured preview explicitly disables account/submission actions and never simulates a successful save. Email/WhatsApp delivery remains disconnected.
 
 ## Remote preview and publication
 
