@@ -1,0 +1,58 @@
+{
+  "scope": "Real Chromium public UI only. No mocked or live authenticated sessions, database writes, notifications, or RLS proof.",
+  "base": "http://127.0.0.1:4173",
+  "chromium": "154.0.8037.57",
+  "runAt": "2026-10-19T02:42:38.649Z",
+  "results": [
+    {
+      "name": "1536px homepage: approved images, EN/EL, persistence, navigation and layout",
+      "passed": true
+    },
+    {
+      "name": "768px homepage: approved images, EN/EL, persistence, navigation and layout",
+      "passed": true
+    },
+    {
+      "name": "390px homepage: approved images, EN/EL, persistence, navigation and layout",
+      "passed": true
+    },
+    {
+      "name": "Social/search landing shows the main photo immediately and hero actions reach real controls",
+      "passed": true
+    },
+    {
+      "name": "All original images and 30 generated delivery illustrations decode in Chromium",
+      "passed": true
+    },
+    {
+      "name": "Directory: 15 countries, 51 operator-listed venues, one planned; filters and restricted actions",
+      "passed": true
+    },
+    {
+      "name": "Homepage enquiry forwards destination, both dates, party and package service",
+      "passed": true
+    },
+    {
+      "name": "Service query defaults, validation and read-only enquiry form",
+      "passed": true
+    },
+    {
+      "name": "Signup link opens signup mode; consent required; account routes redirect anonymously",
+      "passed": true
+    },
+    {
+      "name": "Public navigation targets load; no payment controls or payment integrations",
+      "passed": true
+    },
+    {
+      "name": "Destination photo failures stay visible and recover after source availability returns",
+      "passed": true
+    },
+    {
+      "name": "No uncaught browser errors and no network writes attempted",
+      "passed": true
+    }
+  ],
+  "pageErrors": [],
+  "blockedWrites": []
+}

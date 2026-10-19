@@ -1,0 +1,6 @@
+src/routeTree.gen.ts
+work/
+artifacts/
+.vercel/
+.output/
+supabase/.temp/
